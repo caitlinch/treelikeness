@@ -1,0 +1,42 @@
+#nexus
+
+BEGIN Taxa;
+DIMENSIONS ntax=10;
+TAXLABELS
+[1] 'anolis_carolinensis'
+[2] 'homo_sapiens'
+[3] 'pantherophis_guttata'
+[4] 'zebra_finch'
+[5] 'gallus_gallus'
+[6] 'alligator_mississippiensis'
+[7] 'crocodylus_porosus'
+[8] 'chrysemys_picta'
+[9] 'pelomedusa_subrufa'
+[10] 'sphenodon_tuatara'
+;
+END; [Taxa]
+
+BEGIN Splits;
+DIMENSIONS ntax=10 nsplits=17;
+FORMAT labels=no weights=yes confidences=no intervals=no;
+MATRIX
+	100	 2,
+	100	 4,
+	100	 5,
+	100	 4 5,
+	100	 6,
+	100	 7,
+	100	 6 7,
+	100	 4 5 6 7,
+	100	 8,
+	100	 9,
+	100	 8 9,
+	100	 1 2 3 10,
+	100	 1 3 10,
+	100	 10,
+	100	 1 3,
+	100	 3,
+	100	 1,
+;
+END; [Splits]
+
