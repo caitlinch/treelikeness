@@ -16,6 +16,10 @@ test_statistic <- function(iqpath,path,file){
     tree_pdm[upper.tri(tree_pdm)] <- 0 # Get upper triangle and replace upper triangle coordinates (TRUE) with 0
     print(tree_pdm) # to check
     tree_sum <- sum(tree_pdm) # sum up all the pairwise distances
+    tree_pdm <- tree_pdm/tree_sum # scale matrix entries to add to 1
+    print(tree_pdm) # print scaled pdm matrix
+    tree_sum <- sum(tree_pdm) # get new tree sum
+    print(tree_sum) # print tree sum
     
     # Calculate pairwise distances from the alignment
     # Open the maximum likelihood distances file output when creating the tree in IQ-tree
@@ -25,8 +29,15 @@ test_statistic <- function(iqpath,path,file){
     mldist_pdm[upper.tri(mldist_pdm)] <- 0 # replace upper triangle coordinates (TRUE) with 0
     print(mldist_pdm) # to check
     mldist_sum <- sum(mldist_pdm) # sum all the pairwise distances
+    mldist_pdm <- mldist_pdm/mldist_sum # scale matrix entries to add to 1
+    print(mldist_pdm) # print scaled pdm matrix
+    mldist_sum <- sum(mldist_pdm) # get new tree sum
+    print(mldist_sum) # print tree sum
     
     # Divide sums
-    ts = tree_sum/mldist_sum
-    return(ts)
+    ts <- tree_sum/mldist_sum
+    divisor_pdm <- (tree_pdm/mldist_pdm)
+    print(divisor_pdm)
+    print(sum(divisor_pdm,na.rm = TRUE))
+    return()
 }
