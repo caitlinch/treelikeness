@@ -79,6 +79,7 @@ normalised.pdm.ratio <- function(iqpath,path,file){
 
 
 
+
 # Input variables and files
 alignment_path <- "/Users/caitlin/Repositories/treelikeness/raw_data" # folder where alignment is located
 alignment_paths <- list.dirs(alignment_path)
