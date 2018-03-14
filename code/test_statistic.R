@@ -51,30 +51,32 @@ pdm.ratio <- function(iqpath,path,file){
 # Test statistic based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
 # Adjust entries of alignment matrix and tree matrix to sum to one before dividing, divide result by number of entries in lower-triangle of matrix
 normalised.pdm.ratio <- function(iqpath,path,file){
+  #print("call")
   tree_pdm <- iqtree.pdm(iqpath,path,file)
   #print(tree_pdm) # to check
   tree_pdm <- normalise.matrix(tree_pdm) # adjust matrix so all entries sum to 1
   #print(tree_pdm) # print scaled pdm matrix
   tree_sum <- sum(tree_pdm) # get new tree sum
-  #print(tree_sum) # print tree sum
+  #print(tree_sum) # print tree sumT
   
   # Calculate pairwise distances from the alignment
   # Open the maximum likelihood distances file output when creating the tree in IQ-tree
   alignment_pdm <- mldist.pdm(iqpath,path,file)
-  #print(mldist_pdm) # to check
+  #print(alignment_pdm) # to check
   alignment_pdm <- normalise.matrix(alignment_pdm)
-  #print(mldist_pdm) # print scaled pdm matrix
-  mldist_sum <- sum(mldist_pdm) # get new tree sum from normalised matrix
-  #print(mldist_sum) # print tree sum
+  #print(alignment_pdm) # print scaled pdm matrix
+  alignment_sum <- sum(alignment_pdm) # get new tree sum from normalised matrix
+  #print(alignment_sum) # print tree sum
   
   # Calculate test statistic
-  divisor_pdm <- (tree_pdm/mldist_pdm) # divide tree matrix by alignment matrix
+  #print("ts")
+  divisor_pdm <- (tree_pdm/alignment_pdm) # divide tree matrix by alignment matrix
   #print(divisor_pdm)
   #print(sum(divisor_pdm,na.rm = TRUE))
   ts <- sum(divisor_pdm,na.rm = TRUE) # sum all entries except the NaN ones
-  fac <- factorial(length(names(tree_pdm)) - 1) # calculate the number of non-NaN entries (# of values in lower triangle)
+  fac <- factorial((nrow(tree_pdm)) - 1) # calculate the number of non-NaN entries (# of values in lower triangle)
   ts <- ts/fac # divide sum of all entries by number of entries
-  return(ts)
+  return(c(ts,fac))
 }
 
 
@@ -83,8 +85,7 @@ normalised.pdm.ratio <- function(iqpath,path,file){
 # Input variables and files
 alignment_path <- "/Users/caitlin/Repositories/treelikeness/raw_data" # folder where alignment is located
 alignment_paths <- list.dirs(alignment_path)
-# alignment_paths <- paste0(alignment_paths[2:length(alignment_paths)],"/") # to run all alignments in directory
-alignment_paths <- paste0(alignment_paths[2:11],"/") # to run 10 alignments
+alignment_paths <- paste0(alignment_paths[2:length(alignment_paths)],"/") # to run all alignments in directory
 alignment_file <- "alignment.nex" # name of alignment 
 iqtree_path <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program
 
@@ -95,6 +96,7 @@ library(ape)
 names <- c()
 all_ts <- c()
 all_ts_norm <- c()
+all_fac <- c()
 for (alignment in alignment_paths){
   print(alignment)
   names <- c(names,alignment)
@@ -103,7 +105,8 @@ for (alignment in alignment_paths){
   ts2 <- normalised.pdm.ratio(iqtree_path,alignment,alignment_file)
   print(ts2)
   all_ts <- c(all_ts,ts1)
-  all_ts_norm <- c(all_ts_norm,ts2)
+  all_ts_norm <- c(all_ts_norm,ts2[1])
+  all_fac <- c(all_fac,ts2[2])
 }
-  
+
 
