@@ -170,7 +170,7 @@ make_splitmatrix <- function(partition,names,alpha){
 split_decomposition <- function(taxa_names,distance_matrix){
   sets = partition2(taxa_names)
   summed_matrix = make_matrix(length(taxa_names)) # make matrix using length of names vector
-  splits_list <- c() # initialise collection of splits
+  initialise = TRUE
   for (part in sets){
     # Go through each partition and check if it's a split
     split = issplit(part,taxa_names,distance_matrix)
@@ -181,9 +181,13 @@ split_decomposition <- function(taxa_names,distance_matrix){
       matrix <- make_splitmatrix(part,taxa_names,ii)
       summed_matrix <- summed_matrix + matrix
       split_info <- list("partition" = part, "isolation index" = ii, "matrix" = matrix) # Create a little list of information about the split
-      print(split_info)
       # Add to the list of splits
-      splits_list <- append(splits_list,split_info)
+      if (initialise == TRUE){
+        splits_list <- c(list(split_info)) # initialise splits list if it doesn't exist
+        initialise <- FALSE
+      } else if (initialise == FALSE){
+        splits_list <- c(splits_list,list(split_info)) # add to splits list if it does exist
+      }
     }
   }
   # Create the output for the split decomposition
