@@ -78,6 +78,18 @@ for (al in alignments){
     bs_ts <- do.1.bootstrap(iqtree_path,bootstrap_folder,params,test_statistic=1)
     all_ts <- c(all_ts,bs_ts)
   }
+  # For the alignment, call the test statistic
+  ts <- c() # Put function call here
+  # Save the actual test statistic
+  all_ts <- c(ts,all_ts)
+  # Create a list of names for ids for the output table
+  names <- c("alignment",sprintf("bootstrap_%04d",1:(length(all_ts)-1))) # create a vector of names
+  # Create an output data frame and label the columns
+  ts_df <- data.frame(names,all_ts)
+  names(ts_df) <- c("id","test_statistic")
+  # Save the output dataframe
+  ts_df_filename <- paste0(al,"/bootstrap_test_statistics_",as.character(Sys.Date),".csv")
+  write.csv(ts_df,name = ts_df_filename)
 }
 
 
