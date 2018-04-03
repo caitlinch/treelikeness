@@ -39,18 +39,19 @@ inequality <- function(i,j,k,l,names,matrix){
   d3 <- pd(i,l,names,matrix) + pd(j,k,names,matrix)
   if (d1 < (max(d2,d3))){
     # result = TRUE
-    result <- 0
+    result <- 1 # If all quartets hold, will be 100% (a d-split)
   } else if (d1 >= max(d2,d3)){
     # result = FALSE
-    result <- 1
+    result <- 0 # the more quartets don't hold the inequality, the lower the percentage will be 
   }
   return(result)
 }
 
 
 # Check whether one subset is a d-split or not
-issplit <- function(partition,names,matrix){
-  # Create a list to store 0 if the inequality holds and 1 if it doesn't
+issplit <- function(partition,names,matrix,threshold){
+  # Create a list to store 1 if the inequality holds and 0 if it doesn't
+  # Used to check the percentage against the threshold (both must be 1 for a d-split as in Bandelt and Dress 1992)
   its <- c()
   # Find all combinations for the first subset
   combs1 <- choose2(partition[[1]])
@@ -69,13 +70,17 @@ issplit <- function(partition,names,matrix){
       its <- c(its,calculate_inequality)
     }
   }
-  summed <- sum(its)
-  if (summed == 0){
-    # If inequality holds, sum will be 0
+  summed <- sum(its) # sum all the iterations
+  percentage <- summed/length(its) # divide the sum by the number of iterations to get a decimal value
+  if (summed >= threshold){
+    # If inequality holds, sum will be equal to or greater than the threshold
+    # For threshold = 1 (a pure d-split), the result will only be a split if all quartets hold the inequality
+    # This is a split!
     split_result = TRUE
   } 
-  if (summed > 0){
-    # If doesn't hold, sum larger than 0
+  if (summed < threshold){
+    # If doesn't hold, the percentage is lower than the threshold (e.g. some of te inequalities are false for a pure d-split)
+    # This is not a split
     split_result = FALSE
   }
   return(split_result)
@@ -167,13 +172,17 @@ make_splitmatrix <- function(partition,names,alpha){
 }
 
 # Calculate all partitions
-split_decomposition <- function(taxa_names,distance_matrix){
+# Specify threshold as a decimal (e.g. 1, 0.7, 0.5).
+# If threshold = 1, all quartets must meet the four point condition for the split to be a d-split
+# If threshold < 1, at least that percentage of quartets must meet the four point condition for the split to be counted as a split
+# The threshold allows for a relaxed form of split decomposition 
+split_decomposition <- function(taxa_names,distance_matrix,threshold = 1){
   sets = partition2(taxa_names)
   summed_matrix = make_matrix(length(taxa_names)) # make matrix using length of names vector
   initialise = TRUE
   for (part in sets){
     # Go through each partition and check if it's a split
-    split = issplit(part,taxa_names,distance_matrix)
+    split = issplit(part,taxa_names,distance_matrix,threshold)
     if (split == TRUE){
       # If it is a split calculate the isolation index
       ii <- isolation_index(part,taxa_names,distance_matrix)
