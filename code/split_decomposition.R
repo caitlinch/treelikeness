@@ -194,15 +194,3 @@ split_decomposition <- function(taxa_names,distance_matrix){
   op <- list(splits_list, summed_matrix)
   return(op)
 }
-
-
-
-# Enter distance matrix and taxa labels for practicing
-d <- t(matrix(c(0,0,0,0,0,0,0,4.0,0,0,0,0,0,0,5.0,1.0,0,0,0,0,0,7.0,3.0,2.0,0,0,0,0,13.0,9.0,8.0,6.0,0,0,
-                0,8.0,12.0,13.0,11.0,5.0,0,0,6.0,10.0,11.0,13.0,7.0,2.0,0),
-              nrow = 7, ncol = 7)) # transpose as R filles by columns first not by rows first
-taxa <- c("A","B","C","D","E","F","G")
-rownames(d) <- taxa # label rownames with taxa
-colnames(d) <- taxa # label colnames with taxa
-a = split_decomposition(taxa,d)
-

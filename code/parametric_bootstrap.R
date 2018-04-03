@@ -1,4 +1,22 @@
-parametric.bootstrap1 <- function(ntaxa,nsites = 1000){
+# Given a folder that contains an IQ-tree output, extract the model used, alignment length and number of taxa
+get.simulation.parameters <- function(folder_path){
+  # Read in the summary information about the alignment
+  alignment_info <- read.table(paste0(folder_path,"/alignment.nex-seq-summary.txt"),header = TRUE)
+  # Extract the number of taxa 
+  ntaxa <- nrow(alignment_info)
+  # Extract the length of the alignment - take maximum length of all input sequences
+  nsites <- max(alignment_info$Sequence_length)
+  
+}
+
+# Given the relevant information, run one parametric bootstrap
+do.1.bootstrap <- function(folder_path) {
+  params <- get.simulation.parameters(folder_path)
+  ntaxa <- 
+  nsites <-
+  model <- 
+  
+  # Start the parametric bootstrap process
   # 1. Simulate a tree
     # simulate a birth-death tree on a fixed number of extant taxa
         # n = number of taxa, numbsim = # of trees to simulate, lambda = speciation rate
@@ -31,8 +49,3 @@ parametric.bootstrap1 <- function(ntaxa,nsites = 1000){
     # to convert to nexus: write.nexus.data(dna_sim, file = "/Users/caitlin/Downloads/test.nexus")
 }
 
-library(TreeSim)
-library(ape)
-library(phytools)
-library(phangorn)
-ntaxa <- 10

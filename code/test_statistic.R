@@ -78,35 +78,3 @@ normalised.pdm.ratio <- function(iqpath,path,file){
   ts <- ts/fac # divide sum of all entries by number of entries
   return(c(ts,fac))
 }
-
-
-
-
-# Input variables and files
-alignment_path <- "/Users/caitlin/Repositories/treelikeness/raw_data" # folder where alignment is located
-alignment_paths <- list.dirs(alignment_path)
-alignment_paths <- paste0(alignment_paths[2:length(alignment_paths)],"/") # to run all alignments in directory
-alignment_file <- "alignment.nex" # name of alignment 
-iqtree_path <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program
-
-# Open packages
-library(ape)
-
-# Run test statistic(s) 
-names <- c()
-all_ts <- c()
-all_ts_norm <- c()
-all_fac <- c()
-for (alignment in alignment_paths){
-  print(alignment)
-  names <- c(names,alignment)
-  ts1 <- pdm.ratio(iqtree_path,alignment,alignment_file)
-  print(ts1)
-  ts2 <- normalised.pdm.ratio(iqtree_path,alignment,alignment_file)
-  print(ts2)
-  all_ts <- c(all_ts,ts1)
-  all_ts_norm <- c(all_ts_norm,ts2[1])
-  all_fac <- c(all_fac,ts2[2])
-}
-
-
