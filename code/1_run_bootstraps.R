@@ -6,8 +6,6 @@ library(TreeSim)
 library(phytools)
 library(phangorn)
 library(base)
-library(stringr) # for reading iq-tree output - currently unused
-library(readtext) # for reading iq-tree output - currently unused
 
 # Set working directory
 # maindir <- "/Users/caitlin/Repositories/treelikeness/" # for laptop
@@ -64,6 +62,8 @@ for (al in alignments){
   params <- get.simulation.parameters(al)
   # generate a list of ids for each simulation
   ids <- sprintf("%04d",1:nbootstrap)
+  # create somewhere to store all the test statistics from the bootstraps
+  all_ts <- c()
   for (id in ids){
     bootstrap_folder <- paste0(al,"/",id,"/") # make the filepath this bootstrap will be stored in
     # create a folder to store all the information about this bootstrap (if it doesn't already exist)
@@ -75,7 +75,8 @@ for (al in alignments){
     # test statistic = 1 calls the divide matrix test statistic
     # test statistic = 2 calls the matrix differences test statistic (unfinished)
     # test statistic = 3 calls the split decomposition test statistic (unfinished)
-    do.1.bootstrap(iqtree_path,bootstrap_folder,params,test_statistic=1)
+    bs_ts <- do.1.bootstrap(iqtree_path,bootstrap_folder,params,test_statistic=1)
+    all_ts <- c(all_ts,bs_ts)
   }
 }
 
