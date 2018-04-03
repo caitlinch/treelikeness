@@ -60,6 +60,7 @@ alignments <- paste0(alignments_folder,list.files(alignments_folder))
 for (al in alignments){
   # extract information from the alignment.nex summary text file and the .iqtree file in the al folder
   # need these files to extract information to run the parametric bootstrap
+  # parameters in order: number of taxa, number of sites, substitution database
   params <- get.simulation.parameters(al)
   # generate a list of ids for each simulation
   ids <- sprintf("%04d",1:nbootstrap)
@@ -70,7 +71,11 @@ for (al in alignments){
       dir.create(bootstrap_folder)
     }
     # call the parametric bootstrap function on the folder of interest
-    do.1.bootstrap(bootstrap_folder,params)
+    # pick test statistic based on numbering from grant proposal (Cherryh 2018)
+    # test statistic = 1 calls the divide matrix test statistic
+    # test statistic = 2 calls the matrix differences test statistic (unfinished)
+    # test statistic = 3 calls the split decomposition test statistic (unfinished)
+    do.1.bootstrap(iqtree_path,bootstrap_folder,params,test_statistic=1)
   }
 }
 
