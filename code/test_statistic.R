@@ -78,3 +78,4 @@ split.decomposition.statistic <- function(taxa_names,distance_matrix,phylogeneti
   # Divide by sum of all split weights
   # Return test statistic
 }
+
