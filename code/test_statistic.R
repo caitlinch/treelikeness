@@ -70,5 +70,11 @@ normalised.pdm.diff.sum <- function(iqpath,path){
 }
 
 split.decomposition.statistic <- function(taxa_names,distance_matrix,phylogenetic_tree){
-  
+  # Open/get matrix
+  # Get split decomposition
+  # Get tree
+  # Which splits in the decomposition are in the tree (e.g. which are monophyletic)?
+  # Sum split weights of splits in tree
+  # Divide by sum of all split weights
+  # Return test statistic
 }
