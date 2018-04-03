@@ -5,10 +5,13 @@ library(ape)
 library(TreeSim)
 library(phytools)
 library(phangorn)
-library(readtext) # for reading iq-tree output
+library(base)
+library(stringr) # for reading iq-tree output - currently unused
+library(readtext) # for reading iq-tree output - currently unused
 
 # Set working directory
-maindir <- "/Users/caitlin/Repositories/treelikeness/"
+# maindir <- "/Users/caitlin/Repositories/treelikeness/" # for laptop
+maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 setwd(maindir)
 
 # Source files for functions
@@ -16,7 +19,7 @@ source(paste0(maindir,"code/split_decomposition.R"))
 source(paste0(maindir,"code/parametric_bootstrap.R"))
 source(paste0(maindir,"code/test_statistic.R"))
 
-
+##### Code from first drafts of functions ####
 ## Test code for split decomposition functions
 # # Enter distance matrix and taxa labels for practicing
 # d <- t(matrix(c(0,0,0,0,0,0,0,4.0,0,0,0,0,0,0,5.0,1.0,0,0,0,0,0,7.0,3.0,2.0,0,0,0,0,13.0,9.0,8.0,6.0,0,0,
@@ -28,30 +31,47 @@ source(paste0(maindir,"code/test_statistic.R"))
 # a = split_decomposition(taxa,d)
 
 
+# Code from writing test statistics to call IQ-TREE on each alignment  
+# ## Test code to call test statistics and run them
+# # # Input variables and files
+# alignment_path <- "/Users/caitlin/Repositories/treelikeness/raw_data" # folder where alignment is located
+# alignment_paths <- list.dirs(alignment_path)
+# alignment_paths <- paste0(alignment_paths[2:length(alignment_paths)],"/") # to run all alignments in directory
+# alignment_file <- "alignment.nex" # name of alignment 
+# 
+# for (alignment in alignment_paths){
+#    print(alignment)
+#    system(paste0(iqtree_path," -s ",alignment,alignment_file," -nt AUTO -redo"))
+# }
 
-## Test code to call test statistics and run them
-# # Input variables and files
-alignment_path <- "/Users/caitlin/Repositories/treelikeness/raw_data" # folder where alignment is located
-alignment_paths <- list.dirs(alignment_path)
-alignment_paths <- paste0(alignment_paths[2:length(alignment_paths)],"/") # to run all alignments in directory
-alignment_file <- "alignment.nex" # name of alignment 
-iqtree_path <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program
 
-for (alignment in alignment_paths){
-   print(alignment)
-   system(paste0(iqtree_path," -s ",alignment,alignment_file," -nt AUTO -redo"))
-}
+##### Bootstrap code ####
 
 ### User Input Parameters
-nbootstrap <- 3 # the number of parametric bootstraps you'd like to run
-filepath <- "" # The folder containing all of the datasets of interest
+nbootstrap        <- 3 # the number of parametric bootstraps you'd like to run
+alignments_folder <- paste0(maindir,"raw_data/") # The folder containing all of the datasets of interest
+iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 
 
-### To run the parametric bootstrap 99/999 times
-# generate a list of ids for each simulation
-ids <- sprintf("%04d",1:nbootstrap)
-for (id in ids){
-  # call the parametric bootstrap function on the folder of interest
+### To run the parametric bootstrap nbootstrap (e.g. 9/99/999) times on each alignment in the alignments folder:
+# get a list of the folders (each folder = 1 alignment) in the raw_data folder
+alignments <- paste0(alignments_folder,list.files(alignments_folder))
+# iterate through each of the alignments
+for (al in alignments){
+  # extract information from the alignment.nex summary text file and the .iqtree file in the al folder
+  # need these files to extract information to run the parametric bootstrap
+  params <- get.simulation.parameters(al)
+  # generate a list of ids for each simulation
+  ids <- sprintf("%04d",1:nbootstrap)
+  for (id in ids){
+    bootstrap_folder <- paste0(al,"/",id,"/") # make the filepath this bootstrap will be stored in
+    # create a folder to store all the information about this bootstrap (if it doesn't already exist)
+    if (dir.exists(bootstrap_folder) == FALSE){
+      dir.create(bootstrap_folder)
+    }
+    # call the parametric bootstrap function on the folder of interest
+    do.1.bootstrap(bootstrap_folder,params)
+  }
 }
 
 
