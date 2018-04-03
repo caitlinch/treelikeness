@@ -30,7 +30,7 @@ normalise.matrix <- function(matrix){
   matrix <- matrix/sum # scale matrix entries to add to 1
 }
 
-# Test statistic based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
+# Test statistic 1: based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
 pdm.ratio <- function(iqpath,path){
   tree_pdm <- iqtree.pdm(iqpath,path)
   #print(tree_pdm) # to check
@@ -48,33 +48,27 @@ pdm.ratio <- function(iqpath,path){
   return(ts)
 }
 
-# Test statistic based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
+# Test statistic 2: sum of the absolute differences of the normalised distance matrices
 # Adjust entries of alignment matrix and tree matrix to sum to one before dividing, divide result by number of entries in lower-triangle of matrix
-normalised.pdm.ratio <- function(iqpath,path){
-  #print("call")
+normalised.pdm.diff.sum <- function(iqpath,path){
+  # Calculate the pairwise differences matrix for the tree and normalise it
   tree_pdm <- iqtree.pdm(iqpath,path)
-  #print(tree_pdm) # to check
   tree_pdm <- normalise.matrix(tree_pdm) # adjust matrix so all entries sum to 1
-  #print(tree_pdm) # print scaled pdm matrix
-  tree_sum <- sum(tree_pdm) # get new tree sum
-  #print(tree_sum) # print tree sumT
   
-  # Calculate pairwise distances from the alignment
+  # Calculate pairwise distances from the alignment and normalise it
   # Open the maximum likelihood distances file output when creating the tree in IQ-tree
   alignment_pdm <- mldist.pdm(iqpath,path)
-  #print(alignment_pdm) # to check
   alignment_pdm <- normalise.matrix(alignment_pdm)
-  #print(alignment_pdm) # print scaled pdm matrix
-  alignment_sum <- sum(alignment_pdm) # get new tree sum from normalised matrix
-  #print(alignment_sum) # print tree sum
   
-  # Calculate test statistic
-  #print("ts")
-  divisor_pdm <- (tree_pdm/alignment_pdm) # divide tree matrix by alignment matrix
-  #print(divisor_pdm)
-  #print(sum(divisor_pdm,na.rm = TRUE))
-  ts <- sum(divisor_pdm,na.rm = TRUE) # sum all entries except the NaN ones
-  fac <- factorial((nrow(tree_pdm)) - 1) # calculate the number of non-NaN entries (# of values in lower triangle)
-  ts <- ts/fac # divide sum of all entries by number of entries
-  return(c(ts,fac))
+  # Find the absolute difference between the tree pdm and the alignment pdm
+  # gives the relative proportion that each element takes up
+  diff_pdm <- abs(tree_pdm - alignment_pdm)
+  # sum the difference matrix to get the test statistic
+  ts <- sum(diff_pdm)
+  # return the test statistic
+  return(ts)
+}
+
+split.decomposition.statistic <- function(taxa_names,distance_matrix,phylogenetic_tree){
+  
 }
