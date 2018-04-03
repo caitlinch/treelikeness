@@ -1,4 +1,4 @@
-# R program to calculate test statistics for quantifying tree likeness
+# R functions to calculate 3 test statistics for quantifying tree likeness
 
 # Function to call IQ-tree and return a pairwise distance matrix
 iqtree.pdm <- function(iqpath,path,file){
