@@ -10,38 +10,19 @@ get.simulation.parameters <- function(folder_path){
   nsites <- max(alignment_info$Sequence_length)
   # read in the IQ-TREE file to get substitution model and parameters
   iqtree_file <- paste0(folder_path,"/alignment.nex.iqtree")
-  iq_db <- readLines(iqtree_file)
-  start_ind      <- which(iq_db == "SUBSTITUTION PROCESS")
-  model_ind      <- start_ind+3
-  rate_ind       <- start_ind+5
-  AC_ind         <- start_ind+7
-  AG_ind         <- start_ind+8
-  AT_ind         <- start_ind+9
-  CG_ind         <- start_ind+10
-  CT_ind         <- start_ind+11
-  GT_ind         <- start_ind+12
-  a_freq         <- start_ind+16
-  c_freq         <- start_ind+17
-  g_freq         <- start_ind+18
-  t_freq         <- start_ind+19
-  rate_matrix    <- (start_ind+23):(start_ind+26)
-  model_rate_het <- (start_ind+28):(start_ind+29)
-  # cat matrix has variable number of rows, but starts 31 rows after start_ind
-  cat_start <- start_ind+31
-  # first find all places where there's an empty row
-  empty_rows <- which(iq_db == "")
-  empty_rows <- empty_rows[empty_rows > cat_start]
-  # find closest number to start of matrix: this will be the empty row after the matrix finishes
-  cat_end <- which.min(abs(empty_rows)-cat_start)
-  cat_matrix <- cat_start:cat_end
-  
-  # parameters in order: number of taxa, number of sites, 
-  pms <- list(ntaxa,nsites)
+  iq_df <- readLines(iqtree_file)
+  # get the start and end of the substitution parameters section in the iqtree file
+  start_ind      <- which(iq_df == "SUBSTITUTION PROCESS")+3
+  end_ind        <- which(iq_df == "MAXIMUM LIKELIHOOD TREE")-2
+  # extract the substitution model lines of the iq_df
+  subs_df <- iq_df[start_ind:end_ind]
+  # parameters in order: number of taxa, number of sites, substitution database
+  pms <- list(ntaxa,nsites,subs_df)
   return(pms)
 }
 
 # Given the relevant information, run one parametric bootstrap
-do.1.bootstrap <- function(folder_path,parameters) {
+do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
   params <- get.simulation.parameters(folder_path)
   ntaxa <- 
   nsites <-
@@ -74,9 +55,20 @@ do.1.bootstrap <- function(folder_path,parameters) {
     rownames(dna_sim) <- tree_sim$tip.label
     dna_sim <- as.DNAbin(dna_sim)
   }
-
+  # save alignment as a nexus file
+  op_file <- paste0(folder_path,"/alignment.nexus")
+  write.nexus.data(dna_sim, file = op_file)
+  
   # 4. Calculate tree likeness of that alignment
-    # need to read in nexus to IQ-tree?
-    # to convert to nexus: write.nexus.data(dna_sim, file = "/Users/caitlin/Downloads/test.nexus")
+  # calculate the test statistic using numbers from the grant proposal  
+  if (test_statistic ==1){
+    ts <- pdm.ratio(iq_path,op_file)
+  } else if (test_statistic == 2){
+    ts <- normalised.pdm.ratio(iq)
+  } else if (test_statistic == 3){
+    print("haven't written the third test statistic yet")
+  } else{
+    break
+  }
 }
 
