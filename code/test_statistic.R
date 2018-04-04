@@ -1,12 +1,18 @@
 # R functions to calculate 3 test statistics for quantifying tree likeness
 
-# Function to call IQ-tree and return a pairwise distance matrix
+# Function to call IQ-tree and run it
+call.IQTREE <- function(iqtree_path,alignment_path){
+  # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
+  if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
+    # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
+    system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -redo")) # call IQ-tree!
+  }
+}
+
+# Function get a tree from IQ-tree and return a pairwise distance matrix
 iqtree.pdm <- function(iqpath,path){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
-  if (file.exists(paste0(path,".treefile")) == FALSE){
-    # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
-    system(paste0(iqpath," -s ",path," -nt AUTO -redo")) # call IQ-tree!
-  }
+  call.IQTREE(iqpath,path)
   # Now the tree has been created, open it up
   tree <- read.tree(paste0(path,".treefile")) # read in the tree created in IQ-tree
   pdm <- cophenetic.phylo(tree) # get pairwise distance matrix for the taxa - note that this mirrors across the diagonal! (doesn't have half filled with 0's)
