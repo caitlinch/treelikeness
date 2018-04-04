@@ -64,7 +64,7 @@ do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
   if (test_statistic ==1){
     ts <- pdm.ratio(iq_path,op_file)
   } else if (test_statistic == 2){
-    ts <- normalised.pdm.ratio(iq)
+    ts <- normalised.pdm.ratio(iq_path,op_file)
   } else if (test_statistic == 3){
     print("haven't written the third test statistic yet")
   } else{
