@@ -146,18 +146,18 @@ isolation_index <- function(partition,names,matrix){
 
 
 # Create a matrix of the right size
-make_matrix <- function(num){
+make.matrix <- function(num){
   mat <- matrix(0,nrow = num,ncol = num)
   return(mat)
 }
 
 
 # Create a matrix based on the partition
-make_splitmatrix <- function(partition,names,alpha){
+make.splitmatrix <- function(partition,names,alpha){
   # For a tree AB-CD, the distance AB and CD should be 0, and AC=BC=AD=BC=alpha (alpha is the isolation index)
   # The matrix would then be [[0 0 a a], [ 0,0,a,a], [a,a,0,0], [a,a,0,0]]
   # Create a matrix of the same number of rows and columns as the original matrix
-  mat <- make_matrix(length(names))
+  mat <- make.matrix(length(names))
   pd <- choose2(names)
   ss1 <- partition[[1]]
   ss2 <- partition[[2]]
@@ -176,9 +176,9 @@ make_splitmatrix <- function(partition,names,alpha){
 # If threshold = 1, all quartets must meet the four point condition for the split to be a d-split
 # If threshold < 1, at least that percentage of quartets must meet the four point condition for the split to be counted as a split
 # The threshold allows for a relaxed form of split decomposition 
-split_decomposition <- function(taxa_names,distance_matrix,threshold = 1){
+split.decomposition <- function(taxa_names,distance_matrix,threshold = 1){
   sets = partition2(taxa_names)
-  summed_matrix = make_matrix(length(taxa_names)) # make matrix using length of names vector
+  summed_matrix = make.matrix(length(taxa_names)) # make matrix using length of names vector
   initialise = TRUE
   for (part in sets){
     # Go through each partition and check if it's a split
@@ -187,7 +187,7 @@ split_decomposition <- function(taxa_names,distance_matrix,threshold = 1){
       # If it is a split calculate the isolation index
       ii <- isolation_index(part,taxa_names,distance_matrix)
       # Use that isolation index to create a matrix
-      matrix <- make_splitmatrix(part,taxa_names,ii)
+      matrix <- make.splitmatrix(part,taxa_names,ii)
       summed_matrix <- summed_matrix + matrix
       split_info <- list("partition" = part, "isolation index" = ii, "matrix" = matrix) # Create a little list of information about the split
       # Add to the list of splits
