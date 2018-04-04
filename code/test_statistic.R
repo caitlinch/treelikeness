@@ -83,10 +83,10 @@ normalised.pdm.diff.sum <- function(iqpath,path){
 split.decomposition.statistic <- function(iq_path,path){
   # original function parameters: taxa_names,distance_matrix,phylogenetic_tree
   # Run IQ-tree if it hasn't already been run
-  call.IQTREE(iqpath,path)
+  call.IQTREE(iqpath,filepath)
   # Open pairwise distance matrix from IQ-TREE (use mldist matrix because it uses a model to compensate for saturation)
-  pdm <- mldist.pdm(path)
-  taxa <- mldist.taxa(path)
+  pdm <- mldist.pdm(filepath)
+  taxa <- mldist.taxa(filepath)
   # Get split decomposition
   splits <- split.decomposition(taxa, pdm, threshold = 1)
   # Which splits in the decomposition are in the tree (e.g. which are monophyletic)?
