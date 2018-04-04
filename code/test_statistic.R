@@ -21,14 +21,23 @@ iqtree.pdm <- function(iqpath,path){
 }
 
 # Function to open a maximum likelihood distances file from IQ tree and return a pairwise distance matrix
-mldist.pdm <- function(iqpath,path){
-  # Open the maximum likelihood distances file output when creating the tree in IQ-tree
+mldist.pdm <- function(path){
+  # Open the maximum likelihood distances file output from creating the tree in IQ-tree
   filename <- paste0(path,".mldist")
   pdm <- read.table(filename,header=FALSE,skip=1) # read in mldist file
   pdm <- pdm[2:ncol(pdm)] # remove first column (taxa names)
   pdm[upper.tri(pdm)] <- 0 # replace upper triangle coordinates (TRUE) with 0
   return(pdm)
 }  
+
+# Function to open a maximum likelihood distances file from IQ tree and return the taxa names
+mldist.taxa <- function(path){
+  # Open the maximum likelihood distances file output from creating the tree in IQ-tree
+  filename <- paste0(path,".mldist")
+  pdm <- read.table(filename,header=FALSE,skip=1) # read in mldist file
+  taxa_names <- as.character(pdm[,1]) # extract first column (list of taxa names)
+  return(taxa_names)
+}
 
 # Function to scale entries in a matrix so they sum to 1
 normalise.matrix <- function(matrix){
@@ -42,7 +51,7 @@ pdm.ratio <- function(iqpath,path){
   tree_sum <- sum(tree_pdm) # sum up all the pairwise distances
   
   # Calculate pairwise distances from the alignment
-  alignment_pdm <- mldist.pdm(iqpath,path)
+  alignment_pdm <- mldist.pdm(path)
   alignment_sum <- sum(alignment_pdm) # sum all the pairwise distances
   
   # Divide sums to obtain test statistic
@@ -59,7 +68,7 @@ normalised.pdm.diff.sum <- function(iqpath,path){
   
   # Calculate pairwise distances from the alignment and normalise it
   # Open the maximum likelihood distances file output when creating the tree in IQ-tree
-  alignment_pdm <- mldist.pdm(iqpath,path)
+  alignment_pdm <- mldist.pdm(path)
   alignment_pdm <- normalise.matrix(alignment_pdm)
   
   # Find the absolute difference between the tree pdm and the alignment pdm
@@ -75,8 +84,11 @@ split.decomposition.statistic <- function(iq_path,path){
   # original function parameters: taxa_names,distance_matrix,phylogenetic_tree
   # Run IQ-tree if it hasn't already been run
   call.IQTREE(iqpath,path)
-  # Open/get matrix
+  # Open pairwise distance matrix from IQ-TREE (use mldist matrix because it uses a model to compensate for saturation)
+  pdm <- mldist.pdm(path)
+  taxa <- mldist.taxa(path)
   # Get split decomposition
+  splits <- split.decomposition(taxa, pdm, threshold = 1)
   # Which splits in the decomposition are in the tree (e.g. which are monophyletic)?
   # Sum split weights of splits in tree
   # Divide by sum of all split weights
