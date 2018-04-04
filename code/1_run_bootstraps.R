@@ -88,8 +88,8 @@ for (al in alignments){
   ts_df <- data.frame(names,all_ts)
   names(ts_df) <- c("id","test_statistic")
   # Save the output dataframe
-  ts_df_filename <- paste0(al,"/bootstrap_test_statistics_",as.character(Sys.Date),".csv")
-  write.csv(ts_df,name = ts_df_filename)
+  ts_df_filename <- paste0(al,"/bootstrap_test_statistics_",as.character(Sys.Date()),".csv")
+  write.csv(ts_df,file = ts_df_filename)
 }
 
 
