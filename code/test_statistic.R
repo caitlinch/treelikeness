@@ -39,15 +39,11 @@ normalise.matrix <- function(matrix){
 # Test statistic 1: based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
 pdm.ratio <- function(iqpath,path){
   tree_pdm <- iqtree.pdm(iqpath,path)
-  #print(tree_pdm) # to check
   tree_sum <- sum(tree_pdm) # sum up all the pairwise distances
-  #print(tree_sum) # print tree sum
   
   # Calculate pairwise distances from the alignment
   alignment_pdm <- mldist.pdm(iqpath,path)
-  #print(mldist_pdm) # to check
   alignment_sum <- sum(alignment_pdm) # sum all the pairwise distances
-  #print(mldist_sum) # print tree sum
   
   # Divide sums to obtain test statistic
   ts <- tree_sum/alignment_sum
@@ -75,10 +71,12 @@ normalised.pdm.diff.sum <- function(iqpath,path){
   return(ts)
 }
 
-split.decomposition.statistic <- function(taxa_names,distance_matrix,phylogenetic_tree){
+split.decomposition.statistic <- function(iq_path,path){
+  # original function parameters: taxa_names,distance_matrix,phylogenetic_tree
+  # Run IQ-tree if it hasn't already been run
+  call.IQTREE(iqpath,path)
   # Open/get matrix
   # Get split decomposition
-  # Get tree
   # Which splits in the decomposition are in the tree (e.g. which are monophyletic)?
   # Sum split weights of splits in tree
   # Divide by sum of all split weights
