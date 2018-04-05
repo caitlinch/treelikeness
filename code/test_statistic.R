@@ -45,6 +45,13 @@ normalise.matrix <- function(matrix){
   matrix <- matrix/sum # scale matrix entries to add to 1
 }
 
+# Function to open an IQ-TREE generated tree given the name of the alignment
+open.tree <- function(path){
+  tree_file <- paste0(path,".treefile")
+  tree <- read.tree(tree_file)
+  return(tree)
+}
+
 # Test statistic 1: based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
 pdm.ratio <- function(iqpath,path){
   tree_pdm <- iqtree.pdm(iqpath,path)
@@ -80,18 +87,56 @@ normalised.pdm.diff.sum <- function(iqpath,path){
   return(ts)
 }
 
+# Test statistic 3: proportion of all split weights present in the tree
+# Find which splits are in the tree and sum those split weights, divide by sum of all split weights
 split.decomposition.statistic <- function(iq_path,path){
-  # original function parameters: taxa_names,distance_matrix,phylogenetic_tree
-  # Run IQ-tree if it hasn't already been run
-  call.IQTREE(iqpath,filepath)
+  ## Run IQ-tree if it hasn't already been run
+  call.IQTREE(iqpath,path)
+  
+  ## Calculate the split decomposition
   # Open pairwise distance matrix from IQ-TREE (use mldist matrix because it uses a model to compensate for saturation)
-  pdm <- mldist.pdm(filepath)
-  taxa <- mldist.taxa(filepath)
+  pdm <- mldist.pdm(path)
+  taxa <- mldist.taxa(path)
   # Get split decomposition
   splits <- split.decomposition(taxa, pdm, threshold = 1)
-  # Which splits in the decomposition are in the tree (e.g. which are monophyletic)?
-  # Sum split weights of splits in tree
-  # Divide by sum of all split weights
+ 
+  ## Open the tree estimated by IQ-TREE
+  tree <- open.tree(path)
+  
+  ## Identify which splits in the split decomposition are in the tree (e.g. which are monophyletic)
+  # Initialise sum of weights-of-splits-in-tree
+  intree_sum <- 0
+  # Initialise sum of weights of all splits
+  all_sum <- 0
+  # Iterate through each split
+  splits_list <- splits[[1]]
+  for (s in splits_list){
+    # Extract the subsets of taxa for the split
+    ss1 <- s$partition$a
+    ss2 <- s$partition$b
+    print(ss1)
+    print(ss2)
+    # Test whether the split is in the tree
+    ss1_mono <- is.monophyletic(tree,ss1)
+    ss2_mono <- is.monophyletic(tree,ss2)
+    # If both are true then add the split weight to the sum of split weights from splits in the tree
+    # (if one is true, the other must be true - reduces to (A,B) where A and B are the two monophyletic clades)
+    # Checks both just to be sure 
+    if (ss1_mono == TRUE & ss2_mono == TRUE){
+      print(TRUE)
+      intree_sum <- intree_sum + s$isolation_index
+    } else {
+      print(FALSE)
+    }
+    # Add the split weight to the all_sum regardless of whether the split is in the tree
+    # to have running total of the sum of split weights
+    all_sum <- all_sum + s$isolation_index
+    print(s$isolation_index)
+  }
+  
+  ## Calculate test statistic
+  # Divid sum of weights-of-splits-in-tree by sum of weights-of-all-splits
+  ts <- intree_sum/all_sum
   # Return test statistic
+  return(ts)
 }
-
