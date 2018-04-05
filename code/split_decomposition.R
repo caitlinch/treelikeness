@@ -72,13 +72,13 @@ issplit <- function(partition,names,matrix,threshold){
   }
   summed <- sum(its) # sum all the iterations
   percentage <- summed/length(its) # divide the sum by the number of iterations to get a decimal value
-  if (summed >= threshold){
+  if (percentage >= threshold){
     # If inequality holds, sum will be equal to or greater than the threshold
     # For threshold = 1 (a pure d-split), the result will only be a split if all quartets hold the inequality
     # This is a split!
     split_result = TRUE
   } 
-  if (summed < threshold){
+  if (percentage < threshold){
     # If doesn't hold, the percentage is lower than the threshold (e.g. some of te inequalities are false for a pure d-split)
     # This is not a split
     split_result = FALSE
@@ -189,7 +189,7 @@ split.decomposition <- function(taxa_names,distance_matrix,threshold = 1){
       # Use that isolation index to create a matrix
       matrix <- make.splitmatrix(part,taxa_names,ii)
       summed_matrix <- summed_matrix + matrix
-      split_info <- list("partition" = part, "isolation index" = ii, "matrix" = matrix) # Create a little list of information about the split
+      split_info <- list("partition" = part, "isolation_index" = ii, "matrix" = matrix) # Create a little list of information about the split
       # Add to the list of splits
       if (initialise == TRUE){
         splits_list <- c(list(split_info)) # initialise splits list if it doesn't exist
