@@ -1,26 +1,5 @@
 # R functions to run parametric bootstrap
 
-# Given a folder that contains an IQ-tree output, extract the model used, alignment length and number of taxa
-get.simulation.parameters <- function(folder_path){
-  # Read in the summary information about the alignment
-  alignment_info <- read.table(paste0(folder_path,"/alignment.nex-seq-summary.txt"),header = TRUE)
-  # Extract the number of taxa 
-  ntaxa <- nrow(alignment_info)
-  # Extract the length of the alignment - take maximum length of all input sequences
-  nsites <- max(alignment_info$Sequence_length)
-  # read in the IQ-TREE file to get substitution model and parameters
-  iqtree_file <- paste0(folder_path,"/alignment.nex.iqtree")
-  iq_df <- readLines(iqtree_file)
-  # get the start and end of the substitution parameters section in the iqtree file
-  start_ind      <- which(iq_df == "SUBSTITUTION PROCESS")+3
-  end_ind        <- which(iq_df == "MAXIMUM LIKELIHOOD TREE")-2
-  # extract the substitution model lines of the iq_df
-  subs_df <- iq_df[start_ind:end_ind]
-  # parameters in order: number of taxa, number of sites, substitution database
-  pms <- list(ntaxa,nsites,subs_df)
-  return(pms)
-}
-
 # Given the relevant information, run one parametric bootstrap
 do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
   params <- get.simulation.parameters(folder_path)
@@ -70,5 +49,33 @@ do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
   } else{
     break
   }
+}
+
+# Given a .iqtree file, a number of replicates and an output directory, this function will
+# generate that number of alignments in the output directory with the parameters from 
+# the .iqtree file (number of taxa, number of sites, rates
+# and base frequencies)
+
+
+
+# Given a .iqtree file, this function will extract the relevant parameters
+get.simulation.parameters <- function(folder_path){
+  # Read in the summary information about the alignment
+  alignment_info <- read.table(paste0(folder_path,"/alignment.nex-seq-summary.txt"),header = TRUE)
+  # Extract the number of taxa 
+  ntaxa <- nrow(alignment_info)
+  # Extract the length of the alignment - take maximum length of all input sequences
+  nsites <- max(alignment_info$Sequence_length)
+  # read in the IQ-TREE file to get substitution model and parameters
+  iqtree_file <- paste0(folder_path,"/alignment.nex.iqtree")
+  iq_df <- readLines(iqtree_file)
+  # get the start and end of the substitution parameters section in the iqtree file
+  start_ind      <- which(iq_df == "SUBSTITUTION PROCESS")+3
+  end_ind        <- which(iq_df == "MAXIMUM LIKELIHOOD TREE")-2
+  # extract the substitution model lines of the iq_df
+  subs_df <- iq_df[start_ind:end_ind]
+  # parameters in order: number of taxa, number of sites, substitution database
+  pms <- list(ntaxa,nsites,subs_df)
+  return(pms)
 }
 
