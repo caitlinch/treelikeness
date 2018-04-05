@@ -114,8 +114,6 @@ split.decomposition.statistic <- function(iq_path,path){
     # Extract the subsets of taxa for the split
     ss1 <- s$partition$a
     ss2 <- s$partition$b
-    print(ss1)
-    print(ss2)
     # Test whether the split is in the tree
     ss1_mono <- is.monophyletic(tree,ss1)
     ss2_mono <- is.monophyletic(tree,ss2)
@@ -123,15 +121,11 @@ split.decomposition.statistic <- function(iq_path,path){
     # (if one is true, the other must be true - reduces to (A,B) where A and B are the two monophyletic clades)
     # Checks both just to be sure 
     if (ss1_mono == TRUE & ss2_mono == TRUE){
-      print(TRUE)
       intree_sum <- intree_sum + s$isolation_index
-    } else {
-      print(FALSE)
     }
     # Add the split weight to the all_sum regardless of whether the split is in the tree
     # to have running total of the sum of split weights
     all_sum <- all_sum + s$isolation_index
-    print(s$isolation_index)
   }
   
   ## Calculate test statistic
