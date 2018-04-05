@@ -101,10 +101,10 @@ get.simulation.parameters <- function(dotiqtree_file){
     mrh2_name <- gsub(" ","_",mrh2_name) # change the name to be easy to parse
     
     # make a list of the rows for the output dataframe
-    names <- c("file_name","n_taxa","n_sites","substitution_model", "A-C_rate","A-G_rate","A-T_rate","C-G_rate","C-T_rate","G-T_rate","A_freq","C_freq",
+    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model", "A-C_rate","A-G_rate","A-T_rate","C-G_rate","C-T_rate","G-T_rate","A_freq","C_freq",
                "G_freq","T_freq","model_of_rate_heterogeneity",mrh2_name)
     # Make a list of the output rows for the output dataframe
-    op <- c(op1,op2,op3,op4,rate1,rate2,rate3,rate4,rate5,rate6,sf1,sf2,sf3,sf4,mrh1,mrh2)
+    op <- c(op1,"DNA",op2,op3,op4,rate1,rate2,rate3,rate4,rate5,rate6,sf1,sf2,sf3,sf4,mrh1,mrh2)
     # Create the output dataframe
     op_df <- data.frame(names,op)
     # Name the columns
@@ -161,9 +161,9 @@ get.simulation.parameters <- function(dotiqtree_file){
   } else if (input_ls[[1]][7]=="amino-acid"){ # alternatively if the data is amino acid sites
     # do nothing for now whoops haha (add this in after you've done the DNA part)
     # make a list of the rows for the output dataframe
-    names <- c("file_name","n_taxa","n_sites","substitution_model")
+    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model")
     # Make a list of the output rows for the output dataframe
-    op <- c(op1,op2,op3,op4)
+    op <- c(op1,"amino-acid",op2,op3,op4)
     op_df <- data.frame(names,op)
     names(op_df) <- c("parameter","value")
     params <- op_df
