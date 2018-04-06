@@ -154,19 +154,48 @@ get.simulation.parameters <- function(dotiqtree_file){
     
     # Create a list of the three dataframes
     # This will be the output 
-    params <- list(op_df,q_df,g_df)
+    params <- list(op_df,g_df,q_df)
     # Name the parameters so they're easy to access once you've outputted the data
-    names(params) <- c("parameters","Q_rate_matrix","gamma_categories")
+    names(params) <- c("parameters","gamma_categories","Q_rate_matrix")
     
   } else if (input_ls[[1]][7]=="amino-acid"){ # alternatively if the data is amino acid sites
-    # do nothing for now whoops haha (add this in after you've done the DNA part)
+    # Extract model of rate heterogeneity
+    mrh1      <- strsplit(iq_file[[grep("Model of rate heterogeneity:",iq_file)]],":")[[1]][2] # Extract model of rate heterogeneity 
+    mrh2      <- as.numeric(strsplit(iq_file[[(grep("Model of rate heterogeneity:",iq_file)+1)]],":")[[1]][2]) # Line after the "model of rate heterogeneity" varies - extract it regardless of what it is 
+    mrh2_name <- strsplit(iq_file[[(grep("Model of rate heterogeneity:",iq_file)+1)]],":")[[1]][1] # As the line varies, extract the name for the output dataframe
+    mrh2_name <- gsub(" ","_",mrh2_name) # change the name to be easy to parse
+    # Extract state frequencies
+    sf1      <- strsplit(iq_file[[grep("State frequencies:",iq_file)]],":")[[1]][2]
+    
     # make a list of the rows for the output dataframe
-    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model")
-    # Make a list of the output rows for the output dataframe
-    op <- c(op1,"amino-acid",op2,op3,op4)
+    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model","model_of_rate_heterogeneity",mrh2_name,"state_frequencies")
+    # Make a list of the output rows for the first output dataframe
+    op <- c(op1,"amino-acid",op2,op3,op4,mrh1,mrh2,sf1)
     op_df <- data.frame(names,op)
     names(op_df) <- c("parameter","value")
-    params <- op_df
+    
+    #Create the matrix for discrete gamma categories
+    g_start <- grep(" Category",iq_file)+1 # get the index for the first line of the gamma categories matrix
+    empty   <- which(iq_file=="") # get indexes of all empty lines
+    empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
+    g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
+    g1 <- c() # initialise columns to store data in
+    g2 <- c()
+    g3 <- c()
+    # Iterate through rows in gamma matrix
+    for (i in g_start:g_end){
+      row <- strsplit(iq_file[[i]],"        ") # split the rows on the long strong of 0's in the middle
+      g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
+      g2 <- c(g2,as.numeric(row[[1]][2]))
+      g3 <- c(g3,as.numeric(row[[1]][3]))
+    }
+    g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
+    names(g_df) <- c("category","relative_rate","proportion") # name the columns
+    
+    # Create a list of the dataframes - this will be the output
+    params <- list(op_df,g_df)
+    # Name the parameters si tget're easy to access once you've outputted the data
+    names(params) <- c("parameters","gamma_categories")
   }
   
   # Now the information has been collected, create an output dataframe
