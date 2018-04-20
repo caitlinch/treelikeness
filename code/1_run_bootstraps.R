@@ -92,8 +92,22 @@ for (al in alignments){
   write.csv(ts_df,file = ts_df_filename)
 }
 
-
-
+# For Suha
+alignments <- paste0(alignments_folder,list.files(alignments_folder))
+alignments <- alignments[c(1,3,5,6,7,8,9,10)]
+for (al in alignments){
+  new_file_name <- paste0("/Users/caitlincherryh/Documents/Repositories/treelikeness/processed_data/splitDecomposition/",strsplit(al,"/")[[1]][8],"splitDecomposition.txt")
+  path <- paste0(al, "/alignment.nex")
+  ## Calculate the split decomposition
+  # Open pairwise distance matrix from IQ-TREE (use mldist matrix because it uses a model to compensate for saturation)
+  pdm <- mldist.pdm(path)
+  taxa <- mldist.taxa(path)
+  # Get split decomposition
+  splits <- split.decomposition(taxa, pdm, threshold = 1)
+  sink(new_file_name)
+  print(splits)
+  sink()
+}
 
 
 
