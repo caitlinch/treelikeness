@@ -91,7 +91,7 @@ normalised.pdm.diff.sum <- function(iqpath,path){
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights
 split.decomposition.statistic <- function(iq_path,path){
   ## Run IQ-tree if it hasn't already been run
-  call.IQTREE(iqpath,path)
+  call.IQTREE(iqpath,path) # path refers to an alignments
   
   ## Calculate the split decomposition
   # Open pairwise distance matrix from IQ-TREE (use mldist matrix because it uses a model to compensate for saturation)
