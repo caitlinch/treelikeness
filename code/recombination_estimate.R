@@ -6,16 +6,16 @@ library(ggplot2)
 # Data gathered from literature
 insects_rate <- c(9.7, 19, 16, 4.4, 14.0, 6.2, 4.8, 3.2, 2.5, 5.4, 1.0, 0.3, 0.8, 0.1, 2.6, 0.3, 3.1, 1.6, 
                   6.1, 5.5, 1.2, 2.3, 0.8, 2.9, 4.0, 8.3, 5, 4.1, 6.9) # recombination rate in cM/Mb
-insects_rate <- insects_rate*10e6 # insects rate in cM/bp
-insects_rate <- insects_rate*0.01 # insects rate in M/bp
+insects_rate <- insects_rate/10e6 # insects rate in cM/bp
+insects_rate <- insects_rate/100 # insects rate in M/bp
 insects_geneLength <- c(1346) # mean gene length for eukaryotes in bp
 insects_treeDepth <- c(479,434,420,407,396) # origin of insects clade in Mya
 insects_genLength <- c(9.37,12.23, 48.12, 51.84, 22.97,55.57, 28.16,30.07) # generation length in days
 insects_genLength <- (insects_genLength/(365*10e6)) # generation length in Mya
 
 mammals_rate <- c(0.92,0.6,0.56,1.26,1.04,1.23,1.133,0.734,1.026,1.100,0.762,1.196) # recombination rate in cM/Mb
-mammals_rate <- mammals_rate*10e6 # mammals rate in M/bp
-mammals_rate <- mammals_rate*0.01 # mammals rate in M/bp
+mammals_rate <- mammals_rate/10e6 # mammals rate in cM/bp
+mammals_rate <- mammals_rate/100 # mammals rate in M/bp
 mammals_geneLength <- c(1346) # mean gene length for eukaryotes in bp
 mammals_treeDepth <- c(88,90,80,100,84,122,92.1,108.1,93.9,108.7) # origin of Placentalia clade in Mya
 mammals_genLength <- c(880,1700,1095,3410,4290,3438,3190,6200,73,110,730,1095,1095,1460,1460,1825,1825,3650) # generation length in days
@@ -41,14 +41,14 @@ mammals_crossPointsUpper <- max(mammals_rate)*mammals_geneLength
 mammals_crossPointsLower <- min(mammals_rate)*mammals_geneLength
 mammals_crossPointsMean <- mean(mammals_rate)*mammals_geneLength
 
-# To get recombination rate: recombination rate = (# cross. points)/(# gens)
+# To get recombination rate: recombination rate = (# cross. points)*(# gens)
 insects_minRate <- insects_crossPointsLower*insects_numGensLower
 insects_maxRate <- insects_crossPointsUpper*insects_numGensUpper
 insects_meanRate <- insects_crossPointsMean*insects_numGensMean
 
-mammals_minRate <- mammals_crossPointsUpper/mammals_numGensUpper
-mammals_maxRate <- mammals_crossPointsLower/mammals_numGensLower
-mammals_meanRate <- mammals_crossPointsMean/mammals_numGensMean
+mammals_maxRate <- mammals_crossPointsUpper*mammals_numGensUpper
+mammals_minRate <- mammals_crossPointsLower*mammals_numGensLower
+mammals_meanRate <- mammals_crossPointsMean*mammals_numGensMean
 
 #To output csv:
 type <- c("insects", "insects", "insects", "mammals", "mammals", "mammals")
