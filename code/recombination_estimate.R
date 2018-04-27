@@ -32,7 +32,7 @@ mammals_numGensUpper <- max(mammals_treeDepth)/(min(mammals_genLength)) # Get th
 mammals_numGensLower <- min(mammals_treeDepth)/(max(mammals_genLength)) # Get the smallest number of generations that could have happened
 mammals_numGensMean   <- mean(mammals_treeDepth)/(mean(mammals_genLength)) # Get the mean number of generations that could have happened
 
-# To get # of crossing over points: # cross. points = crossing over rate / length of gene [((cM/Mb)/Mb) = (cM/Mb)/(Mb/1) = (cM/Mb)*(1/Mb)
+# To get # of crossing over points: # cross. points = crossing over rate / length of gene
 insects_crossPointsUpper <- max(insects_rate)*insects_geneLength  
 insects_crossPointsLower <- min(insects_rate)*insects_geneLength
 insects_crossPointsMean <- mean(insects_rate)*insects_geneLength
