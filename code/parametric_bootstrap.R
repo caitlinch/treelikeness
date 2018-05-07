@@ -21,7 +21,7 @@ do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
     # make the rate variation in the tree
   rate_var <- tree_sim
   rate_var$edge.length <- tree_sim$edge.length * rlnorm(length(tree_sim$edge.length), meanlog = log(mol_rate), sdlog = mrate_sd)
-    # scale tree to have total depth of 0.6 million years (CHECK THIS VALUE & FIND A BIOLOGICAL REASON FOR IT)
+    # scale tree to have total depth of 0.6 (CHECK THIS VALUE & FIND A BIOLOGICAL REASON FOR IT)
   rate_var <- rescale(rate_var,"depth",0.6)
 
   # 3. Simulate an alignment 
