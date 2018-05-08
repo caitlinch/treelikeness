@@ -1,11 +1,13 @@
 # Code to simulate some alignments, run test statistics on them and see what happens
 
 # Open packages
-library(ape)
 library(TreeSim)
 library(phytools)
+library(seqinr)
+library(ape)
 library(phangorn)
 library(base)
+library(tictoc)
 
 # Set working directory
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
@@ -82,11 +84,11 @@ treefiles <- alignments[grep("treefile",alignments)]
 
 ## Run test statistics on these alignments
 # Set timer
-
+tic("alignments")
 # Set output directory
 output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/"
 # Set alignment directory
-aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments"
+aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
 setwd(aldir)
 als <- c("alignment_phylo_5050.nexus","alignment_phylo_depth.nexus","alignment_phylo_taxa.nexus","simbac_0.2R_ext.fasta","simbac_0.2R_int.fasta","simbac_160taxa.fasta")
 # Open the SimBac alignments
@@ -100,24 +102,35 @@ df <- data.frame(matrix(nrow=0,ncol=6))
 for (al in alignments){
   # run PHIPACK
   phi_path <- "/Applications/PhiPack/Phi"
-  phi_command <- paste0(phi_path," -f ",al)
-  system(phi_command) #call phipack
+  filetype = tail(strsplit(al,"\\.")[[1]],n=1) # extract file format
+  if (filetype == "fasta"){
+    # if the alignment is already in fasta format, run PhiPack through R
+    phi_command <- paste0(phi_path," -f ",al) # assemble system command
+    system(phi_command) #call phipack
+  } else if (filetype == "nexus"){
+    # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
+    data = read.nexus.data(al) # read in nexus format alignment
+    fasta.name <- paste0(al,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
+    write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
+    phi_command <- paste0(phi_path," -f ",fasta.name) # assemble system command as above
+    system(phi_command) # run PHI test on the new fasta alignment
+  }
   phi_file <- paste0(aldir,"Phi.log")
   phi_file <- readLines(phi_file)
   ind      <- grep("PHI",phi_file)
   phi_sig <- as.numeric(strsplit(phi_file[15],":")[[1]][2])
   
-  # run 3SEQ
-  seq_path <- "/Applications/3seq/3seq"
-  seq_command <- paste0(seq_path," -f ", al," -d -p")
-  system(seq_command) #call 3SEQ
+  # for now, don't run 3SEQ
+  #seq_path <- "/Applications/3seq/3seq"
+  #seq_command <- paste0(seq_path," -f ", al," -d -p")
+  #system(seq_command) #call 3SEQ
   seq_sig <- 0 # put results from 3SEQ here
   
   # run pdm ratio
-  pdmr <- pdm.ratio(iq_path = iqtree_path, path = al)
+  pdmr <- pdm.ratio(iqpath = iqtree_path, path = al)
   
   # run normalised.pdm.difference.sum
-  npds <- normalised.pdm.diff.sum(iq_path = iqtree_path, path = al)
+  npds <- normalised.pdm.diff.sum(iqpath = iqtree_path, path = al)
   
   # run split decomposition
   sd <- split.decomposition.statistic(iq_path = iqtree_path, path = al)
@@ -129,5 +142,6 @@ for (al in alignments){
 
 # Format output dataframe
 names(df) <- c("alignment","PHI","3SEQ","pdm_ratio","pdm_difference","split_decomposition")
+toc()
 
 # Make some plots
