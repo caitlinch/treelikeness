@@ -6,6 +6,16 @@ test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_da
 system(paste0(simbac_path," -N 160 -B 1300 -G 1000000 -R 0.00 -o ", test_folder,"simbac_160taxa.fasta -c ",test_folder,"clonal_frame_160taxa.nwk"))
 system(paste0(simbac_path," -N 10 -B 1300 -G 1000000 -R 0.2 -o ", test_folder,"simbac_0.2R_int.fasta -c ",test_folder,"clonal_frame_0.2R_int.nwk"))
 system(paste0(simbac_path," -N 10 -B 1300 -G 1000000 -r 0.02 -R 0.00 -o ",test_folder, "simbac_0.2R_ext.fasta -c ",test_folder,"clonal_frame_0.2R_ext.nwk"))
+
+# Create a function to make SimBac alignments
+SimBac_make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate = 0.01, internal_recombination, external_recombination, id = ""){
+  # note - site specific mutation rate defaults to 0.01 when not specified
+  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",id,".fasta")
+  simbac_command <- paste0(simbac_path," -N ",ntaxa," -B ",nsites," -G ",gap," -T ",mutation_rate," -R ",internal_recombination,
+                           " -r ",external_recombination," -o ",output_file)
+  system(simbac_command)
+}
+
 # Create extreme phylogenetic alignments
 # 1. Simulate a tree
 # simulate a birth-death tree on a fixed number of extant taxa
@@ -47,4 +57,5 @@ write.nexus.data(dna_sim_taxa, file = op_file)
 op_file <- paste0(test_folder,"/alignment_phylo_5050.nexus")
 write.nexus.data(dna_sim_5050, file = op_file)
 
-# Create a function to make SimBac alignments
+# Create a function to make phylogenetic alignments (as outlined in simulation scheme)
+phylo_make1 <- 
