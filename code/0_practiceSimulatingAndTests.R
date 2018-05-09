@@ -96,17 +96,22 @@ alignments <- paste0(aldir,als)
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 # Create storage dataframe
-df <- data.frame(matrix(nrow=0,ncol=6))
+df <- data.frame(matrix(nrow=0,ncol=8))
 # Run test statistics on each alignment
 # Record values for test statistics
 for (al in alignments){
-  # run PHIPACK
+  # run PHIPACK and 3seq
   phi_path <- "/Applications/PhiPack/Phi"
   filetype = tail(strsplit(al,"\\.")[[1]],n=1) # extract file format
+  id <- tail(strsplit(al,"/")[[1]],n=1)
   if (filetype == "fasta"){
     # if the alignment is already in fasta format, run PhiPack through R
     phi_command <- paste0(phi_path," -f ",al) # assemble system command
     system(phi_command) #call phipack
+    
+    seq_path <- "/Applications/3seq/3seq"
+    seq_command <- paste0(seq_path," -f ", al," -d -p -id ",id)
+    system(seq_command) #call 3SEQ
   } else if (filetype == "nexus"){
     # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
     data = read.nexus.data(al) # read in nexus format alignment
@@ -114,17 +119,37 @@ for (al in alignments){
     write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
     phi_command <- paste0(phi_path," -f ",fasta.name) # assemble system command as above
     system(phi_command) # run PHI test on the new fasta alignment
+    
+    seq_path <- "/Applications/3seq/3seq"
+    seq_command <- paste0(seq_path," -f ", fasta.name," -p -id ",id)
+    system(seq_command) #call 3SEQ
   }
+  # Extract significance from Phi Pack output
   phi_file <- paste0(aldir,"Phi.log")
   phi_file <- readLines(phi_file)
   ind      <- grep("PHI",phi_file)
   phi_sig <- as.numeric(strsplit(phi_file[15],":")[[1]][2])
   
-  # for now, don't run 3SEQ
-  #seq_path <- "/Applications/3seq/3seq"
-  #seq_command <- paste0(seq_path," -f ", al," -d -p")
-  #system(seq_command) #call 3SEQ
-  seq_sig <- 0 # put results from 3SEQ here
+  # Extract output from 3Seq output
+  seq_dir <- "/Applications/3seq/" # location of 3seq executable
+  seq_files <- list.files(seq_dir) # get the list of 3seq output files
+  seq_files <- seq_files[grep(id,seq_files)] # prune to only include files for this id
+  seq_file <- paste0(seq_dir,seq_files[grep("log",seq_files)]) # get full path to log file
+  seq_log <- readLines(seq_file) # open file
+  ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
+  num_trips <- seq_log[ind]
+  num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
+  num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
+  ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
+  num_dis <- seq_log[ind]
+  num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
+  num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
+  # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
+  ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
+  seq_sig <- seq_log[ind]
+  seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
+  seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
+  
   
   # run pdm ratio
   pdmr <- pdm.ratio(iqpath = iqtree_path, path = al)
@@ -136,12 +161,13 @@ for (al in alignments){
   sd <- split.decomposition.statistic(iq_path = iqtree_path, path = al)
   
   # Collectt results
-  row <- c(al,phi_sig,seq_sig,pdmr,npds,sd)
+  row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd)
   df <- rbind(df,row)
 }
 
 # Format output dataframe
-names(df) <- c("alignment","PHI","3SEQ","pdm_ratio","pdm_difference","split_decomposition")
+names(df) <- c("alignment","PHI","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","pdm_ratio","pdm_difference","split_decomposition")
+write.csv(df,file = "/Users/caitlincherryh/Documents/Results/test_alignments_results.csv")
 toc()
 
 # Make some plots
