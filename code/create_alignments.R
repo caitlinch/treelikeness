@@ -48,10 +48,8 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
   K <- 1-J
   J_start <- 1 # find starting index for tree 1
   J_end <- floor(nsites*J) # find ending index for tree 1
-  print(J_end)
   K_start <- 1 # find starting index for tree 2
   K_end <- floor(nsites*K)  # find ending index for tree 2
-  print(K_end)
   if ((K_end+J_end) < nsites){
     # If there are less than 1300 base pairs due to rounding
     add <- 1300-(K_end+J_end) # work out how many base pairs to add
@@ -76,7 +74,7 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
   alignment1_concat <- alignment1[1:ntaxa,J_start:J_end] # get the proportion of first alignment
   alignment2_concat <- alignment2[1:ntaxa,K_start:K_end] # get the proportion of second alignment
   dna_sim <- cbind(alignment1_concat,alignment2_concat) # concatenate the alignments
-  output_name <- paste0(output_name_template,J,"J_",id,".nexus") # create a name for the output file
+  output_name <- paste0(output_name_template,"J",J,id,".nexus") # create a name for the output file
   write.nexus.data(dna_sim, file = output_name) # write the output as a nexus file
 }
 
