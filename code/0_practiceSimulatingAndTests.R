@@ -143,12 +143,15 @@ for (al in alignments){
   
   
   # run pdm ratio
+  print("pdm")
   pdmr <- pdm.ratio(iqpath = iqtree_path, path = al)
   
   # run normalised.pdm.difference.sum
+  print("npds")
   npds <- normalised.pdm.diff.sum(iqpath = iqtree_path, path = al)
   
   # run split decomposition
+  print("sd")
   sd <- split.decomposition.statistic(iq_path = iqtree_path, path = al)
   
   # Collectt results
