@@ -17,6 +17,17 @@ setwd(maindir)
 source(paste0(maindir,"code/split_decomposition.R"))
 source(paste0(maindir,"code/parametric_bootstrap.R"))
 source(paste0(maindir,"code/test_statistic.R"))
+source(paste0(maindir,"code/create_alignments.R"))
+
+# Create alignments
+simbac_path <- "/Users/caitlincherryh/Documents/Repositories/SimBac/SimBac"
+output_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
+ntaxa <- 20
+nsites <- 1300
+gap <- 1000000
+mutation_rate <- 0.01
+id <- "tests"
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.00, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
 
 # Run IQ-tree in each alignment
 # Get the list of files in the folder
