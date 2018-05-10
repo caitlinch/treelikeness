@@ -74,7 +74,7 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
   alignment1_concat <- alignment1[1:ntaxa,J_start:J_end] # get the proportion of first alignment
   alignment2_concat <- alignment2[1:ntaxa,K_start:K_end] # get the proportion of second alignment
   dna_sim <- cbind(alignment1_concat,alignment2_concat) # concatenate the alignments
-  output_name <- paste0(output_name_template,"J",J,id,".nexus") # create a name for the output file
+  output_name <- paste0(output_name_template,"J",J,"_",id,".nexus") # create a name for the output file
   write.nexus.data(dna_sim, file = output_name) # write the output as a nexus file
 }
 
