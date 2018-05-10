@@ -35,6 +35,15 @@ SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.01
 SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.10, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
 SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.20, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
 
+# Add extra parameters needed to create the phylogenetic alignments
+birth_rate = 0.5
+death_rate = 0
+tree_age = 1
+mol_rate = 0.1
+mol_rate_sd = 0.1
+K_vector = c(0,0.01,0.05,0.1,0.5) # proportion of second tree in the mosaic alignment (here 0 - 50% in 1% increments for a total of 51 alignments. Must be in decimals)
+phylo.make1(output_folder, ntaxa, nsites, birth_rate, death_rate, tree_age, mol_rate, mol_rate_sd, K_vector,id)
+
 # Run IQ-tree in each alignment
 # Get the list of files in the folder
 test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
