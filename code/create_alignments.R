@@ -27,7 +27,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   # scale tree to have a total depth of tree age
   phylo_sim <- rescale(phylo_sim,"depth",tree_age)
   # If the J vector is empty, simply simulate DNA along the tree
-  if (length(J_vec)==0){
+  if (length(K_vector)==0){
     dna_sim <- as.DNAbin(simSeq(phylo_sim),l = nsites) # simulating along the tree 
     output_name <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_noRecombination_",id,".nexus") # for trees with no recombination
     write.nexus.data(dna_sim, file = output_name) # output data as a nexus file
@@ -36,9 +36,10 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
     # If there are elements in the J vector, need to create a 2nd alignment to concatenate at those intervals
     phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
     J_vector <- 1 - K_vector # proportion of first tree that will be included
-    dna_sim_1 <- as.DNAbin(simSeq(phylo_sim),l = nsites) # simulate along the entire first tree
-    dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2),l = nsites) # simulate along the entire second tree
+    dna_sim_1 <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulate along the entire first tree
+    dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2,l = nsites)) # simulate along the entire second tree
     output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_")
+    lapply(J_vector,mosaic.alignment,nsites,ntaxa,output_name_template,id,dna_sim_1,dna_sim_2)
   }
 }
 
@@ -47,8 +48,10 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
   K <- 1-J
   J_start <- 1 # find starting index for tree 1
   J_end <- floor(nsites*J) # find ending index for tree 1
+  print(J_end)
   K_start <- 1 # find starting index for tree 2
   K_end <- floor(nsites*K)  # find ending index for tree 2
+  print(K_end)
   if ((K_end+J_end) < nsites){
     # If there are less than 1300 base pairs due to rounding
     add <- 1300-(K_end+J_end) # work out how many base pairs to add
@@ -59,21 +62,21 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
       J_end <- J_end + add
     }
   }
-    if ((K_end+J_end) > nsites){
-      # If there are less than 1300 base pairs due to rounding
-      subtract <- (K_end+J_end)-1300 # work out how many base pairs to subtract
-      rand <- sample(c("J","K"),1) # randomly pick J or K, remove base pairs from one so the total is 1300
-      if (rand == "K"){
-        K_end <- K_end - subtract
-      } else if (rand == "K"){
-        J_end <- J_end - subtract
-      }
+  if ((K_end+J_end) > nsites){
+    # If there are less than 1300 base pairs due to rounding
+    subtract <- (K_end+J_end)-1300 # work out how many base pairs to subtract
+    rand <- sample(c("J","K"),1) # randomly pick J or K, remove base pairs from one so the total is 1300
+    if (rand == "K"){
+      K_end <- K_end - subtract
+    } else if (rand == "K"){
+      J_end <- J_end - subtract
     }
+  }
   # Create a new mosaic alignment using the start and end indices
   alignment1_concat <- alignment1[1:ntaxa,J_start:J_end] # get the proportion of first alignment
   alignment2_concat <- alignment2[1:ntaxa,K_start:K_end] # get the proportion of second alignment
   dna_sim <- cbind(alignment1_concat,alignment2_concat) # concatenate the alignments
-  output_name <- paste0(output_name_template,J,"_",id,".nexus") # create a name for the output file
+  output_name <- paste0(output_name_template,J,"J_",id,".nexus") # create a name for the output file
   write.nexus.data(dna_sim, file = output_name) # write the output as a nexus file
 }
 
