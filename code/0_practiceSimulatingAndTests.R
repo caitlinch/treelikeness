@@ -44,6 +44,11 @@ mol_rate_sd = 0.1
 K_vector = c(0,0.01,0.05,0.1,0.5) # proportion of second tree in the mosaic alignment (here 0 - 50% in 1% increments for a total of 51 alignments. Must be in decimals)
 phylo.make1(output_folder, ntaxa, nsites, birth_rate, death_rate, tree_age, mol_rate, mol_rate_sd, K_vector,id)
 
+# Get a list of all the alignment files
+aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
+setwd(aldir)
+alignments <- list.files(aldir) 
+
 # Run IQ-tree in each alignment
 # Get the list of files in the folder
 test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
@@ -73,13 +78,7 @@ tic("alignments")
 # Set output directory
 output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/"
 # Set alignment directory
-aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
-setwd(aldir)
-all_files <- ls(aldir) 
 # Open the SimBac alignments
-simbac_als <- all_files[grep("fasta",all_files)]
-phylo_als <- all_files[grep("nexus",all_files)]
-alignments <- c(simbac_als,phylo_als)
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 # Create storage dataframe
