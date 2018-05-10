@@ -96,7 +96,8 @@ for (al in alignments){
     system(phi_command) #call phipack
     
     seq_path <- "/Applications/3seq/3seq"
-    seq_command <- paste0(seq_path," -f ", al," -d -p -id ",id)
+    #seq_command <- paste0(seq_path," -f ", al," -d -p -id ",id)
+    seq_command <- paste0(seq_path," -f ", al," -d -p")
     system(seq_command) #call 3SEQ
   } else if (filetype == "nexus"){
     # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
@@ -107,7 +108,8 @@ for (al in alignments){
     system(phi_command) # run PHI test on the new fasta alignment
     
     seq_path <- "/Applications/3seq/3seq"
-    seq_command <- paste0(seq_path," -f ", fasta.name," -p -id ",id)
+    #seq_command <- paste0(seq_path," -f ", fasta.name," -p -id ",id)
+    seq_command <- paste0(seq_path," -f ", fasta.name," -d -p")
     system(seq_command) #call 3SEQ
   }
   # Extract significance from Phi Pack output
@@ -117,7 +119,7 @@ for (al in alignments){
   phi_sig <- as.numeric(strsplit(phi_file[15],":")[[1]][2])
   
   # Extract output from 3Seq output
-  seq_dir <- "/Applications/3seq/" # location of 3seq executable
+  seq_dir <- test_folder # location of 3seq executable
   seq_files <- list.files(seq_dir) # get the list of 3seq output files
   seq_files <- seq_files[grep(id,seq_files)] # prune to only include files for this id
   seq_file <- paste0(seq_dir,seq_files[grep("log",seq_files)]) # get full path to log file
