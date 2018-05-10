@@ -28,6 +28,12 @@ gap <- 1000000
 mutation_rate <- 0.01
 id <- "tests"
 SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.00, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.00, 0.01, id) # Order: mutation_rate, internal recombination, external recombination
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.00, 0.05, id) # Order: mutation_rate, internal recombination, external recombination
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.00, 0.10, id) # Order: mutation_rate, internal recombination, external recombination
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.01, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.10, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
+SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.20, 0.00, id) # Order: mutation_rate, internal recombination, external recombination
 
 # Run IQ-tree in each alignment
 # Get the list of files in the folder
