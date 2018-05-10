@@ -72,6 +72,7 @@ for (treefile in treefiles){
   dev.off()
 }
 
+setwd(test_folder)
 ## Run test statistics on these alignments
 # Set timer
 tic("alignments")
@@ -96,7 +97,7 @@ for (al in alignments){
     system(phi_command) #call phipack
     
     seq_path <- "/Applications/3seq/3seq"
-    seq_command <- paste0(seq_path," -f ", al," -d -p -id ",id)
+    seq_command <- paste0(seq_path," -f ", al," -d -id ",id)
     system(seq_command) #call 3SEQ
   } else if (filetype == "nexus"){
     # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
@@ -107,10 +108,11 @@ for (al in alignments){
     system(phi_command) # run PHI test on the new fasta alignment
     
     seq_path <- "/Applications/3seq/3seq"
-    seq_command <- paste0(seq_path," -f ", fasta.name," -p -id ",id)
+    seq_command <- paste0(seq_path," -f ", fasta.name," -id ",id)
     system(seq_command) #call 3SEQ
   }
   # Extract significance from Phi Pack output
+  print("get phi")
   phi_file <- paste0(aldir,"Phi.log")
   phi_file <- readLines(phi_file)
   ind      <- grep("PHI",phi_file)
@@ -120,18 +122,21 @@ for (al in alignments){
   seq_dir <- test_folder # location of 3seq executable
   seq_files <- list.files(seq_dir) # get the list of 3seq output files
   seq_files <- seq_files[grep(id,seq_files)] # prune to only include files for this id
-  seq_file <- paste0(seq_dir,seq_files[grep("log",seq_files)]) # get full path to log file
+  seq_file <- paste0(seq_dir,seq_files[grep("3s.log",seq_files)]) # get full path to log file
   seq_log <- readLines(seq_file) # open file
   ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
+  print("trips")
   num_trips <- seq_log[ind]
   num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
   num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
   ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
+  print("recomb")
   num_dis <- seq_log[ind]
   num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
   num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
   # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
   ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
+  print("sig")
   seq_sig <- seq_log[ind]
   seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
   seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
