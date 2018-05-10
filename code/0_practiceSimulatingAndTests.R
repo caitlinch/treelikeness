@@ -75,9 +75,11 @@ output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/"
 # Set alignment directory
 aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
 setwd(aldir)
-als <- c("alignment_phylo_5050.nexus","alignment_phylo_depth.nexus","alignment_phylo_taxa.nexus","simbac_0.2R_ext.fasta","simbac_0.2R_int.fasta","simbac_160taxa.fasta")
+all_files <- ls(aldir) 
 # Open the SimBac alignments
-alignments <- paste0(aldir,als)
+simbac_als <- all_files[grep("fasta",all_files)]
+phylo_als <- all_files[grep("nexus",all_files)]
+alignments <- c(simbac_als,phylo_als)
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 # Create storage dataframe
