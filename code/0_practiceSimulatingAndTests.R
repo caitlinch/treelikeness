@@ -96,8 +96,7 @@ for (al in alignments){
     system(phi_command) #call phipack
     
     seq_path <- "/Applications/3seq/3seq"
-    #seq_command <- paste0(seq_path," -f ", al," -d -p -id ",id)
-    seq_command <- paste0(seq_path," -f ", al," -d -p")
+    seq_command <- paste0(seq_path," -f ", al," -d -p -id ",id)
     system(seq_command) #call 3SEQ
   } else if (filetype == "nexus"){
     # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
@@ -108,8 +107,7 @@ for (al in alignments){
     system(phi_command) # run PHI test on the new fasta alignment
     
     seq_path <- "/Applications/3seq/3seq"
-    #seq_command <- paste0(seq_path," -f ", fasta.name," -p -id ",id)
-    seq_command <- paste0(seq_path," -f ", fasta.name," -d -p")
+    seq_command <- paste0(seq_path," -f ", fasta.name," -p -id ",id)
     system(seq_command) #call 3SEQ
   }
   # Extract significance from Phi Pack output
