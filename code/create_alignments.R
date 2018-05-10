@@ -1,7 +1,7 @@
 # Functions to create alignments for simulations with a coalescent or phylogenetic approach
 
 # Create a function to make SimBac alignments
-SimBac_make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate = 0.01, internal_recombination, external_recombination, id = ""){
+SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate = 0.01, internal_recombination, external_recombination, id = ""){
   # note - site specific mutation rate defaults to 0.01 when not specified in SimBac
   # Good default gap size is 1,000,000 (1000000)
   output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",id,".fasta")
@@ -13,7 +13,7 @@ SimBac_make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
 # Provide K_vector in decimals (e.g. 1% = 0.01, 50% = 0.5)
 # K is the proportion of the SECOND tree that will be included
-phylo_make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_rate = 0, tree_age, mol_rate = 0.1, mol_rate_sd = 0.1, K_vector = c(),id=""){
+phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_rate = 0, tree_age, mol_rate = 0.1, mol_rate_sd = 0.1, K_vector = c(),id=""){
   # 1. Simulate a tree
   # simulate a birth-death tree on a fixed number of extant taxa
   # n = number of taxa, numbsim = # of trees to simulate, lambda = speciation rate [good default = 0.5 from Duchenne and Lanfear (2015)]
