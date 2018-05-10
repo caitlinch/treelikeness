@@ -58,6 +58,14 @@ for (al in alignments[1:3]){
 test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
 alignments <- paste0(test_folder,list.files(test_folder))
 treefiles <- alignments[grep("treefile",alignments)]
+for (treefile in treefiles){
+  tree_id <- strsplit(tail(strsplit(treefile,"/")[[1]],1),"\\.")[[1]][1]
+  tree_output_file <- paste0("/Users/caitlincherryh/Documents/TestAlignmentResults/",tree_id,".pdf")
+  tree <- read.tree(treefile)
+  pdf(tree_output_file)
+  plot(tree)
+  dev.off()
+}
 
 ## Run test statistics on these alignments
 # Set timer
@@ -144,7 +152,7 @@ for (al in alignments){
 
 # Format output dataframe
 names(df) <- c("alignment","PHI","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","pdm_ratio","pdm_difference","split_decomposition")
-write.csv(df,file = "/Users/caitlincherryh/Documents/Results/test_alignments_results.csv")
+write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_alignments_results.csv")
 toc()
 
 # Make some plots
