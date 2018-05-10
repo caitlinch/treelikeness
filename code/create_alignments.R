@@ -10,12 +10,10 @@ SimBac_make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
   system(simbac_command)
 }
 
-# want to feed in a vector of J % that you want to test
-
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
-# Provide J_vector in decimals (e.g. 1% = 0.01, 50% = 0.5)
-# J is the proportion of the SECOND tree that will be included
-phylo_make1 <- function(ntaxa, nsites, birth_rate = 0.5, death_rate = 0, tree_age, mol_rate = 0.1, mol_rate_sd = 0.1, J_vector = c()){
+# Provide K_vector in decimals (e.g. 1% = 0.01, 50% = 0.5)
+# K is the proportion of the SECOND tree that will be included
+phylo_make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_rate = 0, tree_age, mol_rate = 0.1, mol_rate_sd = 0.1, K_vector = c(),id=""){
   # 1. Simulate a tree
   # simulate a birth-death tree on a fixed number of extant taxa
   # n = number of taxa, numbsim = # of trees to simulate, lambda = speciation rate [good default = 0.5 from Duchenne and Lanfear (2015)]
@@ -30,31 +28,52 @@ phylo_make1 <- function(ntaxa, nsites, birth_rate = 0.5, death_rate = 0, tree_ag
   phylo_sim <- rescale(phylo_sim,"depth",tree_age)
   # If the J vector is empty, simply simulate DNA along the tree
   if (length(J_vec)==0){
-    dna_sim <- as.DNAbin(simSeq(phylo_sim),l = nsites)
+    dna_sim <- as.DNAbin(simSeq(phylo_sim),l = nsites) # simulating along the tree 
+    output_name <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_noRecombination_",id,".nexus") # for trees with no recombination
+    write.nexus.data(dna_sim, file = output_name) # output data as a nexus file
   }
   else {
     # If there are elements in the J vector, need to create a 2nd alignment to concatenate at those intervals
     phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
-    K_vector <- 1 - J_vector # proportion of first tree that will be included
-    dna_sim_1 <- as.DNAbin(simSeq(phylo_sim),l = K_vector*nsites) # simulate along the entire first tree
-    dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2),l = J_vector*nsites) # simulate along the entire second tree
-    
+    J_vector <- 1 - K_vector # proportion of first tree that will be included
+    dna_sim_1 <- as.DNAbin(simSeq(phylo_sim),l = nsites) # simulate along the entire first tree
+    dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2),l = nsites) # simulate along the entire second tree
+    output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_")
   }
 }
 
+# Want a function that, given a J value and 2 alignments (in DNAbin format), makes a concatenated alignment containing J% of tree 1 and saves it
+mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,alignment2){
+  K <- 1-J
+  J_start <- 1 # find starting index for tree 1
+  J_end <- floor(nsites*J) # find ending index for tree 1
+  K_start <- 1 # find starting index for tree 2
+  K_end <- floor(nsites*K)  # find ending index for tree 2
+  if ((K_end+J_end) < nsites){
+    # If there are less than 1300 base pairs due to rounding
+    add <- 1300-(K_end+J_end) # work out how many base pairs to add
+    rand <- sample(c("J","K"),1) # randomly pick J or K, add base pairs to one so the total is 1300
+    if (rand == "K"){
+      K_end <- K_end + add
+    } else if (rand == "K"){
+      J_end <- J_end + add
+    }
+  }
+    if ((K_end+J_end) > nsites){
+      # If there are less than 1300 base pairs due to rounding
+      subtract <- (K_end+J_end)-1300 # work out how many base pairs to subtract
+      rand <- sample(c("J","K"),1) # randomly pick J or K, remove base pairs from one so the total is 1300
+      if (rand == "K"){
+        K_end <- K_end - subtract
+      } else if (rand == "K"){
+        J_end <- J_end - subtract
+      }
+    }
+  # Create a new mosaic alignment using the start and end indices
+  alignment1_concat <- alignment1[1:ntaxa,J_start:J_end] # get the proportion of first alignment
+  alignment2_concat <- alignment2[1:ntaxa,K_start:K_end] # get the proportion of second alignment
+  dna_sim <- cbind(alignment1_concat,alignment2_concat) # concatenate the alignments
+  output_name <- paste0(output_name_template,J,"_",id,".nexus") # create a name for the output file
+  write.nexus.data(dna_sim, file = output_name) # write the output as a nexus file
+}
 
-# 4. Simulate an alignment 
-# simulate the sequence alignment based on the tree and number of sites
-dna_sim_depth <- as.DNAbin(simSeq(rate_var_depth, l = 1300))
-
-dna_sim_J <- as.DNAbin(simSeq(rate_var_J, l = 650))
-dna_sim_K <- as.DNAbin(simSeq(rate_var_K, l = 650))
-# concatenate alignments J and K
-dna_sim_5050 <- cbind(dna_sim_J,dna_sim_K)
-# save alignment as a nexus file
-op_file <- paste0(test_folder,"/alignment_phylo_depth.nexus")
-write.nexus.data(dna_sim_depth, file = op_file)
-op_file <- paste0(test_folder,"/alignment_phylo_taxa.nexus")
-write.nexus.data(dna_sim_taxa, file = op_file)
-op_file <- paste0(test_folder,"/alignment_phylo_5050.nexus")
-write.nexus.data(dna_sim_5050, file = op_file)
