@@ -30,10 +30,10 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   if (length(K_vector)==0){
     dna_sim <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulating along the tree 
     output_name <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_noRecombination_",id,".nexus") # for trees with no recombination
-    write.nexus.data(dna_sim,file=output_name,format = "dna",interleaved = FALSE) # output data as a nexus file
+    write.nexus.data(dna_sim,file=output_name,format = "dna",interleaved = TRUE, datablock = FALSE) # output data as a nexus file
     # open the nexus file and delete the interleave = YES part so IQ-TREE can read it
     nexus <- readLines(output_name) # open the new nexus file
-    ind <- grep("FORMAT DATATYPE",nexus) # find which line
+    ind <- grep("BEGIN CHARACTERS",nexus)+2  # find which line
     nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
     writeLines(nexus,output_name) # output the edited nexus file
   }
@@ -79,11 +79,11 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
   alignment1_concat <- alignment1[1:ntaxa,J_start:J_end] # get the proportion of first alignment
   alignment2_concat <- alignment2[1:ntaxa,K_start:K_end] # get the proportion of second alignment
   dna_sim <- cbind(alignment1_concat,alignment2_concat) # concatenate the alignments
-  output_name <- paste0(output_name_template,"J",J,"_",id,".nexus") # create a name for the output file
-  write.nexus.data(dna_sim,file=output_name,format = "dna",interleaved = FALSE) # write the output as a nexus file
-  # open the nexus file and delete the interleave = YES part so IQ-TREE can read it
+  output_name <- paste0(output_name_template,"K",K,"_",id,".nexus") # create a name for the output file 
+  write.nexus.data(dna_sim,file=output_name,format = "dna",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
+  # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
   nexus <- readLines(output_name) # open the new nexus file
-  ind <- grep("FORMAT DATATYPE",nexus) # find which line
+  ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
   nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
   writeLines(nexus,output_name) # output the edited nexus file
 }
