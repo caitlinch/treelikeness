@@ -170,6 +170,3 @@ toc()
 
 # Make some plots
 
-# SplitsTree command line practics
-#splitstree_path <- "/Users/caitlincherryh/Documents/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
-#test_file <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_J0.5_tests.nexus"
