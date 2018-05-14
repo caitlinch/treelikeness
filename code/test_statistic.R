@@ -89,7 +89,7 @@ normalised.pdm.diff.sum <- function(iqpath,path){
 
 # Test statistic 3: proportion of all split weights present in the tree
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights
-split.decomposition.statistic <- function(iq_path,path){
+split.decomposition.manual.statistic <- function(iq_path,path){
   ## Run IQ-tree if it hasn't already been run
   call.IQTREE(iqpath,path) # path refers to an alignments
   
@@ -133,4 +133,27 @@ split.decomposition.statistic <- function(iq_path,path){
   ts <- intree_sum/all_sum
   # Return test statistic
   return(ts)
+}
+
+# Files for SplitsTree practice
+alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
+splitstree_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
+splitstree_output <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests_splits.nexus"
+
+# Test statistic 3: proportion of all split weights present in the tree
+# Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
+SplitsTree.decomposition.statistic <- function(iq_path, splitstree_path, path){
+  ## Run IQ-tree if it hasn't already been run
+  call.IQTREE(iqpath,path) # path = path to alignment
+  
+  ## Calculate the split decomposition
+  call.SplitsTree(splitstree_path,alignment_path)
+  # Retrieve the file name for the splits output file
+  splits.file <- splits.filename(alignment_path)
+  # Format the splits file so it's a series of taxa groups
+  
+  ## Open the tree estimated by IQ-TREE
+  tree <- open.tree(path)
+  
+  
 }
