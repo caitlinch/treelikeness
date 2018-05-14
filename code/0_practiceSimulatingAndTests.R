@@ -7,6 +7,7 @@ library(seqinr)
 library(ape)
 library(phangorn)
 library(base)
+library(RSplitsTree)
 library(tictoc)
 
 # Set working directory
@@ -18,6 +19,9 @@ source(paste0(maindir,"code/split_decomposition.R"))
 source(paste0(maindir,"code/parametric_bootstrap.R"))
 source(paste0(maindir,"code/test_statistic.R"))
 source(paste0(maindir,"code/create_alignments.R"))
+
+## If running 3seq remotely, need to specify the ptable before the first run so that 3seq knows where to look
+#system("./3seq -f mtDNA.aln -ptable PvalueTable500 -id myFirstRun") # this command associates the Ptable with 3seq - needs a sample alignment to run correctly.
 
 # Create alignments
 simbac_path <- "/Users/caitlincherryh/Documents/Repositories/SimBac/SimBac"
@@ -55,19 +59,19 @@ test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_da
 alignments <- paste0(test_folder,list.files(test_folder))
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
-for (al in alignments[1:3]){
+for (al in alignments){
   call.IQTREE(iqtree_path,al)
 }
 
 # plot trees
 test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
-alignments <- paste0(test_folder,list.files(test_folder))
-treefiles <- alignments[grep("treefile",alignments)]
+all_files <- paste0(test_folder,list.files(test_folder))
+treefiles <- all_files[grep("treefile",all_files)]
 for (treefile in treefiles){
-  tree_id <- strsplit(tail(strsplit(treefile,"/")[[1]],1),"\\.")[[1]][1]
+  tree_id <- tail(strsplit(treefile,"/")[[1]],1)
   tree_output_file <- paste0("/Users/caitlincherryh/Documents/TestAlignmentResults/",tree_id,".pdf")
   tree <- read.tree(treefile)
-  pdf(tree_output_file)
+  pdf(file = tree_output_file)
   plot(tree)
   dev.off()
 }
@@ -165,3 +169,7 @@ write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_a
 toc()
 
 # Make some plots
+
+# SplitsTree command line practics
+#splitstree_path <- "/Users/caitlincherryh/Documents/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
+#test_file <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_J0.5_tests.nexus"
