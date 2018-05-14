@@ -151,6 +151,7 @@ SplitsTree.decomposition.statistic <- function(iq_path, splitstree_path, path){
   # Retrieve the file name for the splits output file
   splits.file <- splits.filename(alignment_path)
   # Format the splits file so it's a series of taxa groups
+  readLines(splits.file)
   
   ## Open the tree estimated by IQ-TREE
   tree <- open.tree(path)
