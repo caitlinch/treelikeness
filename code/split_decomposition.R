@@ -204,8 +204,8 @@ split.decomposition <- function(taxa_names,distance_matrix,threshold = 1){
   return(op)
 }
 
-# Run split decomposition using SplitsTree
-call.SplitsTree <- function(splitstree_path,alignment_path){
+# Function to create a file name for the SplitsTree output
+splits.filename <- function(alignment_path){
   suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
   # Create a identifiable name for the output file from splitstree
   if (suffix == "fasta"){
@@ -216,8 +216,14 @@ call.SplitsTree <- function(splitstree_path,alignment_path){
     # Add "_splits" into the filename (so can find file later)
     output_path <- gsub(".nexus","_splits.nexus",alignment_path)
   }
-  # Call splitstree and do the split decomposition, save the results
-  splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path,"; UPDATE SplitDecomposition; SAVE FILE=", output_path,"; QUIT'")
+  return(output_path)
+}
+
+# Run split decomposition using SplitsTree
+call.SplitsTree <- function(splitstree_path,alignment_path){
+  output_path <- splits.filename(alignment_path)
+  # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
+  splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path,"; UPDATE SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
   system(splitstree_command)
 }
 
