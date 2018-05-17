@@ -96,6 +96,7 @@ iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree pro
 SplitsTree4_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 # Create storage dataframe
 df <- data.frame(matrix(nrow=0,ncol=8))
+string <- c()
 # Run test statistics on each alignment
 # Record values for test statistics
 for (al in alignments){
@@ -169,6 +170,7 @@ for (al in alignments){
   # Collectt results
   row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd)
   df <- rbind(df,row)
+  string <- c(string,row)
 }
 
 # Format output dataframe
