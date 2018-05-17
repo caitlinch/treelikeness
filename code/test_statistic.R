@@ -139,22 +139,62 @@ split.decomposition.manual.statistic <- function(iq_path,path){
 alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
 splitstree_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 splitstree_output <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests_splits.nexus"
+iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 
 # Test statistic 3: proportion of all split weights present in the tree
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
-SplitsTree.decomposition.statistic <- function(iq_path, splitstree_path, path){
-  ## Run IQ-tree if it hasn't already been run
+SplitsTree.decomposition.statistic <- function(iqpath, splitstree_path, path){
+  # Run IQ-tree if it hasn't already been run
   call.IQTREE(iqpath,path) # path = path to alignment
-  
-  ## Calculate the split decomposition
-  call.SplitsTree(splitstree_path,alignment_path)
+  # Calculate the split decomposition
+  call.SplitsTree(splitstree_path,path)
   # Retrieve the file name for the splits output file
-  splits.file <- splits.filename(alignment_path)
-  # Format the splits file so it's a series of taxa groups
-  readLines(splits.file)
-  
+  splits.filepath <- splits.filename(path)
+  # Extract the splits 
+  splits <- read.nexus.splits(splits.filepath) # Open the splits from SplitsTree
   ## Open the tree estimated by IQ-TREE
   tree <- open.tree(path)
   
-  
+  # Test each split to see whether it's in the tree
+  # Make sure to feed in each line using [x] into the apply function, not [[x]] or the attributes (taxa names, weights) won't be passed to the test.monophyly function
+  tree_ii_sum <- 0 # create a vector to store split weights
+  for (i in 1:length(splits)){
+    # Iterate through each of the rows in the splits dataframe
+    test_ii <- test.monophyly(splits[i],tree) # test for monophyly
+    tree_ii_sum <- tree_ii_sum + test_ii # add weight to running sum (or 0 if split not in tree)
+  }
+  # Get the sum of all split weights
+  all_ii_sum <- sum.all.ii(splits)
+  # Divide the sum of split weights in the tree by the sum of all split weights
+  ts <- tree_ii_sum / all_ii_sum
+  # Return the test statistic result
+  return(ts)
+}
+
+# Function to test monophyly of a split, and if it's monophyletic, return the isolation index.
+test.monophyly <- function(split, tree){
+  # Extract the bipartition subsets from the tree
+  ss1 <- split[[1]] # get the indices of all taxa in the split
+  taxa <- attr(split,"labels") # get the names of all taxa in the tree
+  ss1_taxa <- taxa[ss1] # use the split indices to get the taxa names from the split
+  ss2_taxa <- setdiff(taxa,ss1_taxa) # take the elements from taxa not in subset 1 to get the elements in ss2
+  # Test whether the split is in the tree by seeing whether ss1 and ss2 are monophyletic
+  ss1_mono <- is.monophyletic(tree,ss1_taxa)
+  ss2_mono <- is.monophyletic(tree,ss2_taxa)
+  # If both are true then add the split weight to the sum of split weights from splits in the tree
+  # (if one is true, the other must be true - reduces to (A,B) where A and B are the two monophyletic clades)
+  # Checks both just to be sure 
+  # If they're not both tre
+  if (ss1_mono == TRUE & ss2_mono == TRUE){
+    ii <- attr(split, "weights") # set the isolation index to the split weight
+  } else {
+    ii <- 0 # set the isolation index to 0 as this split is not in the tree
+  }
+  return(ii)
+}
+
+# Function to sum all weights from a splits nexus file
+sum.all.ii <- function(splits){
+  total_ii <- sum(attr(splits,"weights"))
+  return(total_ii)
 }
