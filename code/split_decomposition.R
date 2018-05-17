@@ -224,7 +224,6 @@ call.SplitsTree <- function(splitstree_path,alignment_path){
   output_path <- splits.filename(alignment_path)
   # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
   splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
-  print(splitstree_command)
   system(splitstree_command)
 }
 
