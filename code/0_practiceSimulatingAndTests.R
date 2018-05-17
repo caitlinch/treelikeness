@@ -86,6 +86,8 @@ output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/"
 # Open the SimBac alignments
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
+# Set splitstree path
+SplitsTree4_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 # Create storage dataframe
 df <- data.frame(matrix(nrow=0,ncol=8))
 # Run test statistics on each alignment
@@ -156,7 +158,7 @@ for (al in alignments){
   
   # run split decomposition
   print("sd")
-  sd <- split.decomposition.statistic(iq_path = iqtree_path, path = al)
+  sd <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al)
   
   # Collectt results
   row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd)
