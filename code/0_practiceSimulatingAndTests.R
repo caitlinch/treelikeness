@@ -1,5 +1,11 @@
 # Code to simulate some alignments, run test statistics on them and see what happens
 
+# Files for SplitsTree practice
+alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
+splitstree_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
+splitstree_output <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests_splits.nexus"
+iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
+
 # Open packages
 library(TreeSim)
 library(phytools)

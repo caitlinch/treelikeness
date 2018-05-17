@@ -135,12 +135,6 @@ split.decomposition.manual.statistic <- function(iq_path,path){
   return(ts)
 }
 
-# Files for SplitsTree practice
-alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
-splitstree_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
-splitstree_output <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests_splits.nexus"
-iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
-
 # Test statistic 3: proportion of all split weights present in the tree
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
 SplitsTree.decomposition.statistic <- function(iqpath, splitstree_path, path){
