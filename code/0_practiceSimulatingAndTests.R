@@ -14,6 +14,8 @@ library(ape)
 library(phangorn)
 library(base)
 library(tictoc)
+library(ggplot2)
+library(reshape2)
 
 # Set working directory
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
@@ -181,4 +183,37 @@ write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_a
 toc()
 
 # Make some plots
+# Create dataframes for each of the three types of test simulations
+phylo_plot_df <- df[1:5,]
+K <- c(0,0.01,0.05,0.1,0.5)
+phylo_plot_df <- cbind(phylo_plot_df,K)
+phylo_plot_df <- phylo_plot_df[,c(9,2,5,6,7,8)]
+phylo_plot_df <- melt(phylo_plot_df, id.vars="K")
+phylo_plot_df[,2] <- as.character(phylo_plot_df[,2])
+phylo_plot <- ggplot(phylo_plot_df,aes(x=K,y=value,col=variable))+geom_point()+
+  labs(x = "K (% alignment 2)",  y = "Statistic value", title = "Test Statistic Scores - Phylogenetic")
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_phylogenetic.pdf"
+ggsave(filename = file_name, plot = phylo_plot, device = "pdf")
 
+
+internal_plot_df <- df[c(6,10:12),]
+internal_recombination <- c(0,0.01,0.1,0.2)
+internal_plot_df <- cbind(internal_plot_df,internal_recombination)
+internal_plot_df <- internal_plot_df[,c(9,2,5,6,7,8)]
+internal_plot_df <- melt(internal_plot_df,id.vars="internal_recombination")
+internal_plot_df[,2] <- as.character(internal_plot_df[,2])
+internal_plot <- ggplot(internal_plot_df,aes(x=internal_recombination,y=value,col=variable))+geom_point()+
+  labs(x = "Internal recombination (%)", y = "Statistic value", title = "Test Statistic Scores - Internal recombination")
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_internalRecombination.pdf"
+ggsave(filename = file_name, plot = internal_plot, device = "pdf")
+
+external_plot_df <- df[6:9,]
+external_recombination <- c(0,0.01,0.05,0.1)
+external_plot_df <- cbind(external_plot_df,external_recombination)
+external_plot_df <- external_plot_df[,c(9,2,5,6,7,8)]
+external_plot_df <- melt(external_plot_df,id.vars="external_recombination")
+external_plot_df[,2] <- as.character(external_plot_df[,2])
+external_plot <- ggplot(external_plot_df,aes(x=external_recombination,y=value,col=variable))+geom_point()+
+  labs(x = "External recombination (%)", y = "Statistic value", title = "Test Statistic Scores - External recombination")
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_externalRecombination.pdf"
+ggsave(filename = file_name, plot = external_plot, device = "pdf")
