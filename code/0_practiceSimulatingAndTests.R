@@ -13,7 +13,6 @@ library(seqinr)
 library(ape)
 library(phangorn)
 library(base)
-library(RSplitsTree)
 library(tictoc)
 
 # Set working directory
