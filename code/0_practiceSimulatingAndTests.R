@@ -200,6 +200,10 @@ phylo_plot <- ggplot(phylo_plot_df,aes(x=K,y=value,col=variable))+geom_point()+
   labs(x = "K (% alignment 2)",  y = "Statistic value", title = "Test Statistic Scores - Phylogenetic")
 file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_phylogenetic.pdf"
 ggsave(filename = file_name, plot = phylo_plot, device = "pdf")
+phylo_plot <- ggplot(phylo_plot_df,aes(x=K,y=value,col=variable))+geom_point()+geom_line()+
+  labs(x = "K (% alignment 2)",  y = "Statistic value", title = "Test Statistic Scores - Phylogenetic")
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_phylogenetic_lines.pdf"
+ggsave(filename = file_name, plot = phylo_plot, device = "pdf")
 
 
 internal_plot_df <- df[c(6,10:12),]
@@ -212,6 +216,10 @@ internal_plot <- ggplot(internal_plot_df,aes(x=internal_recombination,y=value,co
   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Test Statistic Scores - Internal recombination")
 file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_internalRecombination.pdf"
 ggsave(filename = file_name, plot = internal_plot, device = "pdf")
+internal_plot <- ggplot(internal_plot_df,aes(x=internal_recombination,y=value,col=variable))+geom_point()+geom_line()+
+  labs(x = "Internal recombination (%)", y = "Statistic value", title = "Test Statistic Scores - Internal recombination")
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_internalRecombination_lines.pdf"
+ggsave(filename = file_name, plot = internal_plot, device = "pdf")
 
 external_plot_df <- df[6:9,]
 external_recombination <- c(0,0.01,0.05,0.1)
@@ -222,6 +230,10 @@ external_plot_df[,2] <- as.character(external_plot_df[,2])
 external_plot <- ggplot(external_plot_df,aes(x=external_recombination,y=value,col=variable))+geom_point()+
   labs(x = "External recombination (%)", y = "Statistic value", title = "Test Statistic Scores - External recombination")
 file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_externalRecombination.pdf"
+ggsave(filename = file_name, plot = external_plot, device = "pdf")
+external_plot <- ggplot(external_plot_df,aes(x=external_recombination,y=value,col=variable))+geom_point()+geom_line()+
+  labs(x = "External recombination (%)", y = "Statistic value", title = "Test Statistic Scores - External recombination")
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_externalRecombination_lines.pdf"
 ggsave(filename = file_name, plot = external_plot, device = "pdf")
 
 # Save output df with simulation conditions
