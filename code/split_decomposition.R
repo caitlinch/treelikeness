@@ -225,17 +225,17 @@ call.SplitsTree <- function(splitstree_path,alignment_path){
   if (suffix == "fasta"){
     # If the file is a fasta file, convert it to nexus file format
     data <- read.fasta(alignment_path) # read in the fasta data
-    alignment_path <- paste0(alignment_path,".nexus") # create a name for the nexus alignment (just the fasta alignment with a .nexus tacked on)
-    write.nexus.data(data, file = alignment_path,format = "dna",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file)
+    alignment_path_converted <- paste0(alignment_path,".nexus") # create a name for the nexus alignment (just the fasta alignment with a .nexus tacked on)
+    write.nexus.data(data, file = alignment_path_converted,format = "dna",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file)
     # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
-    nexus <- readLines(alignment_path) # open the new nexus file
+    nexus <- readLines(alignment_path_converted) # open the new nexus file
     ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
     nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
     writeLines(nexus,alignment_path) # output the edited nexus file
   }
   output_path <- splits.filename(alignment_path) # create an output path
   # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
-  splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
+  splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
   system(splitstree_command) # Call the splitstree command using the system 
 }
 
