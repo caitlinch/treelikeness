@@ -1,4 +1,5 @@
 # Code to simulate some alignments, run test statistics on them and see what happens
+tic("run")
 
 # Files for SplitsTree practice
 alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
@@ -216,3 +217,19 @@ external_plot <- ggplot(external_plot_df,aes(x=external_recombination,y=value,co
   labs(x = "External recombination (%)", y = "Statistic value", title = "Test Statistic Scores - External recombination")
 file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_externalRecombination.pdf"
 ggsave(filename = file_name, plot = external_plot, device = "pdf")
+
+# Save output df with simulation conditions
+# names consistent across both file formats - order is: method_ntaxa_nsites_internalRecombination_externalRecombination_treeDepth_K_id
+names_split <- strsplit(df[,1],"_") # split names
+# Extract each simulation parameter from the names
+ntaxa <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+2]
+nspecies <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+3]
+internal_recombination <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+4]
+external_recombination <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+5]
+tree_depth <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+6]
+K <- gsub("K","",unlist(names_split)[seq(1,length(unlist(names_split)),9)+7])
+id <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+8]
+df2 <- data.frame(id,ntaxa,nspecies,internal_recombination,external_recombination,tree_depth,K,df[,2:8])
+write.csv(df2,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_alignments_ParamsResults.csv")
+
+toc()
