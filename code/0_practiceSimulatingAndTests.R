@@ -169,7 +169,8 @@ for (al in alignments){
   
   # Collectt results
   row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd) # collect all the information
-  df <- df[row_num,] <- row # assign information to correct row in dataframe
+  print(row)
+  df[row_num,] <- row # assign information to correct row in dataframe
   string <- c(string,row) # update string that just contains all data (only doing this in case df doesn't work)
   row_num <- row_num + 1 # iterate up the row number to do the next row in the dataframe
 }
