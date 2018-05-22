@@ -4,7 +4,7 @@
 SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate = 0.01, internal_recombination, external_recombination, id = ""){
   # note - site specific mutation rate defaults to 0.01 when not specified in SimBac
   # Good default gap size is 1,000,000 (1000000)
-  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",id,".fasta")
+  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_NA_NA_",id,".fasta")
   simbac_command <- paste0(simbac_path," -N ",ntaxa," -B ",nsites," -G ",gap," -T ",mutation_rate," -R ",internal_recombination,
                            " -r ",external_recombination," -o ",output_file)
   system(simbac_command)
@@ -29,7 +29,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   # If the J vector is empty, simply simulate DNA along the tree
   if (length(K_vector)==0){
     dna_sim <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulating along the tree 
-    output_name <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_noRecombination_",id,".nexus") # for trees with no recombination
+    output_name <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_K0_",id,".nexus") # for trees with no recombination
     write.nexus.data(dna_sim,file=output_name,format = "dna",interleaved = TRUE, datablock = FALSE) # output data as a nexus file
     # open the nexus file and delete the interleave = YES part so IQ-TREE can read it
     nexus <- readLines(output_name) # open the new nexus file
@@ -43,7 +43,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
     J_vector <- 1 - K_vector # proportion of first tree that will be included
     dna_sim_1 <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulate along the entire first tree
     dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2,l = nsites)) # simulate along the entire second tree
-    output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_",tree_age,"_")
+    output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_")
     lapply(J_vector,mosaic.alignment,nsites,ntaxa,output_name_template,id,dna_sim_1,dna_sim_2)
   }
 }
