@@ -94,8 +94,9 @@ iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree pro
 # Set splitstree path
 SplitsTree4_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 # Create storage dataframe
-df <- data.frame(matrix(nrow=0,ncol=8))
-string <- c()
+df <- data.frame(matrix(nrow=length(alignments),ncol=8)) # create an empty dataframe of the correct size
+string <- c() # empty string to store all the info
+row_num <- 1 # make an id for the row number (used to slot the alignment results into the right row in the dataframe)
 # Run test statistics on each alignment
 # Record values for test statistics
 for (al in alignments){
@@ -167,9 +168,10 @@ for (al in alignments){
   sd <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al)
   
   # Collectt results
-  row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd)
-  df <- rbind(df,row)
-  string <- c(string,row)
+  row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd) # collect all the information
+  df <- df[row_num,] <- row # assign information to correct row in dataframe
+  string <- c(string,row) # update string that just contains all data (only doing this in case df doesn't work)
+  row_num <- row_num + 1 # iterate up the row number to do the next row in the dataframe
 }
 
 # Format output dataframe
