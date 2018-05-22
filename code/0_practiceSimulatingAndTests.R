@@ -179,11 +179,17 @@ for (al in alignments){
 
 # Format output dataframe
 names(df) <- c("alignment","PHI","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","pdm_ratio","pdm_difference","split_decomposition")
+# Convert each column except the names to numeric (so get actual test statistic values)
+for(i in 2:8) {
+  df[,i] <- as.numeric(as.character(df[,i]))
+}
 write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_alignments_results.csv")
 toc()
 
 # Make some plots
 # Create dataframes for each of the three types of test simulations
+# Plot each set of values
+
 phylo_plot_df <- df[1:5,]
 K <- c(0,0.01,0.05,0.1,0.5)
 phylo_plot_df <- cbind(phylo_plot_df,K)
