@@ -2,8 +2,7 @@
 
 # Files for SplitsTree practice
 alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
-splitstree_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
-splitstree_output <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests_splits.nexus"
+splitstree_path <- "/Users/caitlincherryh/Documents/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 
 # Open packages
@@ -94,7 +93,7 @@ output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/"
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 # Set splitstree path
-SplitsTree4_path <- "/Users/caitlincherryh/Documents/test_splitstree/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
+SplitsTree4_path <- "/Users/caitlincherryh/Documents/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 # Create storage dataframe
 df <- data.frame(matrix(nrow=length(alignments),ncol=8)) # create an empty dataframe of the correct size
 string <- c() # empty string to store all the info
