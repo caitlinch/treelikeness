@@ -232,6 +232,8 @@ call.SplitsTree <- function(splitstree_path,alignment_path){
     ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
     nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
     writeLines(nexus,alignment_path) # output the edited nexus file
+  } else if (suffix == "nexus"){
+    alignment_path_converted <- alignment_path
   }
   output_path <- splits.filename(alignment_path) # create an output path
   # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
