@@ -23,7 +23,6 @@ setwd(maindir)
 
 # Source files for functions
 source(paste0(maindir,"code/split_decomposition.R"))
-source(paste0(maindir,"code/parametric_bootstrap.R"))
 source(paste0(maindir,"code/test_statistic.R"))
 source(paste0(maindir,"code/create_alignments.R"))
 
@@ -189,6 +188,8 @@ toc()
 # Make some plots
 # Create dataframes for each of the three types of test simulations
 # Plot each set of values
+# And for plotting, if the scales are different you can use `facet_wrap()` with `scales = "free_y"`
+
 
 phylo_plot_df <- df[1:5,]
 K <- c(0,0.01,0.05,0.1,0.5)
