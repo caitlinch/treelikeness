@@ -26,6 +26,10 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   phylo_sim$edge.length <- tree_sim$edge.length * rlnorm(length(tree_sim$edge.length), meanlog = log(mol_rate), sdlog = mol_rate_sd)
   # scale tree to have a total depth of tree age
   phylo_sim <- rescale(phylo_sim,"depth",tree_age)
+  # Save the tree
+  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".pdf"))
+  plot.phylo(phylo_sim)
+  dev.off()
   # If the J vector is empty, simply simulate DNA along the tree
   if (length(K_vector)==0){
     dna_sim <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulating along the tree 
@@ -40,6 +44,9 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   else {
     # If there are elements in the J vector, need to create a 2nd alignment to concatenate at those intervals
     phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
+    pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".pdf"))
+    plot.phylo(phylo_sim_2)
+    dev.off()
     J_vector <- 1 - K_vector # proportion of first tree that will be included
     dna_sim_1 <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulate along the entire first tree
     dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2,l = nsites)) # simulate along the entire second tree
