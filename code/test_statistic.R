@@ -66,7 +66,7 @@ pdm.ratio <- function(iqpath,path){
   return(ts)
 }
 
-# Test statistic 2: sum of the absolute differences of the normalised distance matrices
+# Test statistic 2a: sum of the absolute differences of the normalised distance matrices
 # Adjust entries of alignment matrix and tree matrix to sum to one before dividing, divide result by number of entries in lower-triangle of matrix
 normalised.pdm.diff.sum <- function(iqpath,path){
   # Calculate the pairwise differences matrix for the tree and normalise it
@@ -83,6 +83,29 @@ normalised.pdm.diff.sum <- function(iqpath,path){
   diff_pdm <- abs(tree_pdm - alignment_pdm)
   # sum the difference matrix to get the test statistic
   ts <- sum(diff_pdm)
+  # return the test statistic
+  return(ts)
+}
+
+# Test statistic 2b: mean of the absolute differences of the normalised distance matrices
+# Adjust entries of alignment matrix and tree matrix to sum to one before dividing, divide result by number of entries in lower-triangle of matrix
+# More comparable then test statistic 2a as datasets with different numbers of taxa and therefore different matrix sizes will be normalised
+#     to the number of taxa (because the mean is just the sum divided by the number of values).
+normalised.pdm.diff.mean <- function(iqpath,path){
+  # Calculate the pairwise differences matrix for the tree and normalise it
+  tree_pdm <- iqtree.pdm(iqpath,path)
+  tree_pdm <- normalise.matrix(tree_pdm) # adjust matrix so all entries sum to 1
+  
+  # Calculate pairwise distances from the alignment and normalise it
+  # Open the maximum likelihood distances file output when creating the tree in IQ-tree
+  alignment_pdm <- mldist.pdm(path)
+  alignment_pdm <- normalise.matrix(alignment_pdm)
+  
+  # Find the absolute difference between the tree pdm and the alignment pdm
+  # gives the relative proportion that each element takes up
+  diff_pdm <- abs(tree_pdm - alignment_pdm)
+  # sum the difference matrix to get the test statistic
+  ts <- mean(diff_pdm)
   # return the test statistic
   return(ts)
 }
