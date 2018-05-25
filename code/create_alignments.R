@@ -45,6 +45,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   else {
     # If there are elements in the J vector, need to create a 2nd alignment to concatenate at those intervals
     phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
+    # to get SPR distance between the trees: SPR.dist()
     pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".pdf"))
     plot.phylo(phylo_sim_2)
     dev.off()
