@@ -161,7 +161,8 @@ for (al in alignments){
   
   # Extract quartet mapping (proportion of preserved quartets - the number of quartets in the  )
   print("IQ-Tree Quartet Mapping")
-  
+  iq_log_path <- paste0(al,".iqtree")
+  iq_log <- readLines(iq_log_path)
   
   # run pdm ratio (TS1)
   print("Splittable Percentage")
