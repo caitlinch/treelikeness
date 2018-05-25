@@ -30,7 +30,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
   pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".pdf"))
   plot.phylo(phylo_sim)
   dev.off()
-  saveRDS(phylo_sim, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".RData"))
+  write.tree(phylo_sim, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".treefile"), tree.names = TRUE)
   # If the J vector is empty, simply simulate DNA along the tree
   if (length(K_vector)==0){
     dna_sim <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulating along the tree 
@@ -48,7 +48,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_ra
     pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".pdf"))
     plot.phylo(phylo_sim_2)
     dev.off()
-    saveRDS(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".RData"))
+    write.tree(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".treefile"), tree.names = TRUE)
     J_vector <- 1 - K_vector # proportion of first tree that will be included
     dna_sim_1 <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulate along the entire first tree
     dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2,l = nsites)) # simulate along the entire second tree
