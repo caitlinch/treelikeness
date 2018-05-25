@@ -220,7 +220,7 @@ splits.filename <- function(alignment_path){
 }
 
 # Run split decomposition using SplitsTree
-call.SplitsTree <- function(splitstree_path,alignment_path){
+call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm){
   suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
   if (suffix == "fasta"){
     # If the file is a fasta file, convert it to nexus file format
@@ -236,8 +236,13 @@ call.SplitsTree <- function(splitstree_path,alignment_path){
     alignment_path_converted <- alignment_path
   }
   output_path <- splits.filename(alignment_path) # create an output path
+  if (network_algorithm == "split decomposition"){
+    # Create the splitstree command
+    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
+  } else if (network_algorithm == "neighbournet"){
+    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=NeighbourNet; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
+  }
   # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
-  splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
   system(splitstree_command) # Call the splitstree command using the system 
 }
 

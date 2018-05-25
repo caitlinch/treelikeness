@@ -107,11 +107,11 @@ for (al in alignments){
   id <- tail(strsplit(al,"/")[[1]],n=1)
   if (filetype == "fasta"){
     # if the alignment is already in fasta format, run PhiPack through R
-    phi_command <- paste0(phi_path," -f ",al) # assemble system command
+    phi_command <- paste0(phi_path," -f ",al, " -v") # assemble system command
     system(phi_command) #call phipack
     
     seq_path <- "/Applications/3seq/3seq"
-    seq_command <- paste0(seq_path," -f ", al," -d -id ",id)
+    seq_command <- paste0(seq_path," -f ", al, " -v")
     system(seq_command) #call 3SEQ
   } else if (filetype == "nexus"){
     # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
@@ -126,50 +126,65 @@ for (al in alignments){
     system(seq_command) #call 3SEQ
   }
   # Extract significance from Phi Pack output
-  print("get phi")
+  print("PhiPack run")
   phi_file <- paste0(aldir,"Phi.log")
   phi_file <- readLines(phi_file)
-  ind      <- grep("PHI",phi_file)
-  phi_sig <- as.numeric(strsplit(phi_file[15],":")[[1]][2])
+  ind      <- grep("Analytical",phi_file)
+  phi_sig <- as.numeric(strsplit(phi_file[ind],":")[[1]][2])
+  phi_mean <- as.numeric(strsplit(x[ind+2],"      ","")[[1]][2])
+  phi_var <- as.numeric(strsplit(x[ind+3],"      ","")[[1]][2])
+  phi_obs <- as.numeric(strsplit(x[ind+4],"      ","")[[1]][2])
   
   # Extract output from 3Seq output
+  print("3SEQ run")
   seq_dir <- test_folder # location of 3seq executable
   seq_files <- list.files(seq_dir) # get the list of 3seq output files
   seq_files <- seq_files[grep(id,seq_files)] # prune to only include files for this id
   seq_file <- paste0(seq_dir,seq_files[grep("3s.log",seq_files)]) # get full path to log file
   seq_log <- readLines(seq_file) # open file
   ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
-  print("trips")
+  
   num_trips <- seq_log[ind]
   num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
   num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
   ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
-  print("recomb")
+
   num_dis <- seq_log[ind]
   num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
   num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
   # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
   ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
-  print("sig")
+
   seq_sig <- seq_log[ind]
   seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
   seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
   
+  # Extract quartet mapping (proportion of preserved quartets - the number of quartets in the  )
+  print("IQ-Tree Quartet Mapping")
   
-  # run pdm ratio
-  print("pdm")
-  pdmr <- pdm.ratio(iqpath = iqtree_path, path = al)
   
-  # run normalised.pdm.difference.sum
-  print("npds")
+  # run pdm ratio (TS1)
+  print("Splittable Percentage")
+  splittable_percentage <- pdm.ratio(iqpath = iqtree_path, path = al)
+  
+  # run normalised.pdm.difference.sum (TS2a)
+  print("Normalised PDM Difference, Summed")
   npds <- normalised.pdm.diff.sum(iqpath = iqtree_path, path = al)
   
-  # run split decomposition
-  print("sd")
-  sd <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al)
+  # run normalised pdm difference average (TS2b)
+  print("Normalised PDM Difference, Mean")
+  npdm <- normalised.pdm.diff.mean(iqpath = iqtree_path, path = al)
   
-  # Collectt results
-  row <- c(al,phi_sig,num_trips,num_dis,seq_sig,pdmr,npds,sd) # collect all the information
+  # run split decomposition (TS3)
+  print("Split Decomposition")
+  sd <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al,network_algorithm = "split decomposition")
+  
+  # run NeighbourNet (TS3, with neighbour net not split decomposition)
+  print("NeighbourNet")
+  nn <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al,network_algorithm = "neighbournet")
+  
+  # Collect results
+  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,splittable_percentage,npdm,npda,sd) # collect all the information
   print(row)
   df[row_num,] <- row # assign information to correct row in dataframe
   string <- c(string,row) # update string that just contains all data (only doing this in case df doesn't work)
@@ -177,9 +192,10 @@ for (al in alignments){
 }
 
 # Format output dataframe
-names(df) <- c("alignment","PHI","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","pdm_ratio","pdm_difference","split_decomposition")
+names(df) <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value",
+               "splittable_percentage","pdm_difference","pdm_average","split_decomposition")
 # Convert each column except the names to numeric (so get actual test statistic values)
-for(i in 2:8) {
+for(i in 2:ncol(df)) {
   df[,i] <- as.numeric(as.character(df[,i]))
 }
 write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_alignments_results.csv")

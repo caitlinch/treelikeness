@@ -160,11 +160,13 @@ split.decomposition.manual.statistic <- function(iq_path,path){
 
 # Test statistic 3: proportion of all split weights present in the tree
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
-SplitsTree.decomposition.statistic <- function(iqpath, splitstree_path, path){
+# network_algorithm - either "split decomposition" or "neighbournet" - defines which transformation will be applied
+#       to the alignment to turn it into a network in SplitsTree
+SplitsTree.decomposition.statistic <- function(iqpath, splitstree_path, path,network_algorithm){
   # Run IQ-tree if it hasn't already been run
   call.IQTREE(iqpath,path) # path = path to alignment
   # Calculate the split decomposition
-  call.SplitsTree(splitstree_path,path)
+  call.SplitsTree(splitstree_path,path,network_algorithm)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
   # Extract the splits 
