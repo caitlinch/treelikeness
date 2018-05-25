@@ -184,7 +184,7 @@ for (al in alignments){
   nn <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al,network_algorithm = "neighbournet")
   
   # Collect results
-  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,splittable_percentage,npdm,npda,sd) # collect all the information
+  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,splittable_percentage,npdm,npda,sd,nn) # collect all the information
   print(row)
   df[row_num,] <- row # assign information to correct row in dataframe
   string <- c(string,row) # update string that just contains all data (only doing this in case df doesn't work)
@@ -193,7 +193,7 @@ for (al in alignments){
 
 # Format output dataframe
 names(df) <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value",
-               "splittable_percentage","pdm_difference","pdm_average","split_decomposition")
+               "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
 # Convert each column except the names to numeric (so get actual test statistic values)
 for(i in 2:ncol(df)) {
   df[,i] <- as.numeric(as.character(df[,i]))
