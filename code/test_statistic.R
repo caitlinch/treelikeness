@@ -5,7 +5,7 @@ call.IQTREE <- function(iqtree_path,alignment_path){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
   if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
     # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
-    system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -redo")) # call IQ-tree!
+    system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -lmap ALL -redo")) # call IQ-tree!
   }
 }
 
