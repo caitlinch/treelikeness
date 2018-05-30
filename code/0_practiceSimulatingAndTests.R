@@ -163,6 +163,15 @@ for (al in alignments){
   print("IQ-Tree Quartet Mapping")
   iq_log_path <- paste0(al,".iqtree")
   iq_log <- readLines(iq_log_path)
+  ind <- grep("Number of fully resolved  quartets",iq_log)
+  resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of partly resolved quartets",iq_log)
+  partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of unresolved",iq_log)
+  unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of quartets",iq_log)
+  total_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  prop_resolved <- resolved_q/total_q
   
   # run pdm ratio (TS1)
   print("Splittable Percentage")
@@ -185,7 +194,8 @@ for (al in alignments){
   nn <- SplitsTree.decomposition.statistic(iqpath = iqtree_path, splitstree_path = SplitsTree4_path, path = al,network_algorithm = "neighbournet")
   
   # Collect results
-  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,splittable_percentage,npdm,npda,sd,nn) # collect all the information
+  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
+           splittable_percentage,npdm,npda,sd,nn) # collect all the information
   print(row)
   df[row_num,] <- row # assign information to correct row in dataframe
   string <- c(string,row) # update string that just contains all data (only doing this in case df doesn't work)
@@ -194,7 +204,8 @@ for (al in alignments){
 
 # Format output dataframe
 names(df) <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value",
-               "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+               "num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets", "splittable_percentage",
+               "pdm_difference","pdm_average","split_decomposition", "neighbour_net")
 # Convert each column except the names to numeric (so get actual test statistic values)
 for(i in 2:ncol(df)) {
   df[,i] <- as.numeric(as.character(df[,i]))
