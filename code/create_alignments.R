@@ -70,17 +70,13 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
       J_sites <- J_sites - subtract
     }
   }
-  #dna_sim_a <- phyDat2alignment(simSeq(phylo_sim,l = J_sites)) # simulate along the first tree
-  #dna_sim_concat <- dna_sim_a # copy the first alignment as the concatenated alignment to get details about the alignment
-  #dna_sim_b <- phyDat2alignment(simSeq(phylo_sim_2,l = K_sites)) # simulate along the second tree
-  #dna_sim_concat$seq <- paste0(phyDat2alignment(a)$seq,phyDat2alignment(b)$seq) # concatenate the alignments together 
 
-  dna_sim_1 <- simSeq(phylo_sim,l = K_sites)
-  dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites)
-  dna_sim <- c(dna_sim_1,dna_sim_2)
+  # simulate the DNA along the trees, using the J and K proportions.
+  dna_sim_1 <- simSeq(phylo_sim,l = K_sites) # simulate sites along the first tree
+  dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites) # simulate sites along the second tree
+  dna_sim <- c(dna_sim_1,dna_sim_2) # concatenate the two alignments
   output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,".nexus") # create a name for the output file
   write.phyDat(dna_sim,file = output_name_template, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
-  #write.nexus.data(dna_sim ,file=output_name_template, format = "protein", interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
   
   # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
   nexus <- readLines(output_name_template) # open the new nexus file
@@ -90,12 +86,12 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   
   # output a text file with all the parameters
   output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,"_params.csv") # create a name for the output file 
-  row <- c("phylogenetic",ntaxa,nsites,birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id)
-  names <- c("method","n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id")
-  df <- data.frame(matrix(nrow=0,ncol=11))
-  df <- rbind(df,row)
-  names(df) <- names
-  write.csv(df, file = output_name_template)
+  row <- c("phylogenetic",ntaxa,nsites,birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id) # gather up all the variables
+  names <- c("method","n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
+  df <- data.frame(matrix(nrow=0,ncol=11)) # make an empty dataframe
+  df <- rbind(df,row) # attach the info to the empty df
+  names(df) <- names # rename it so it's pretty and also actually helpful
+  write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
