@@ -70,19 +70,16 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
       J_sites <- J_sites - subtract
     }
   }
-  dna_sim_a <- phyDat2alignment(simSeq(phylo_sim,l = J_sites)) # simulate along the first tree
-  print(dna_sim_a)
-  dna_sim_concat <- dna_sim_a # copy the first alignment as the concatenated alignment to get details about the alignment
-  dna_sim_b <- phyDat2alignment(simSeq(phylo_sim_2,l = K_sites)) # simulate along the second tree
-  print(dna_sim_b)
-  dna_sim_concat$seq <- paste0(phyDat2alignment(a)$seq,phyDat2alignment(b)$seq) # concatenate the alignments together 
-  print(dna_sim_concat)
+  #dna_sim_a <- phyDat2alignment(simSeq(phylo_sim,l = J_sites)) # simulate along the first tree
+  #dna_sim_concat <- dna_sim_a # copy the first alignment as the concatenated alignment to get details about the alignment
+  #dna_sim_b <- phyDat2alignment(simSeq(phylo_sim_2,l = K_sites)) # simulate along the second tree
+  #dna_sim_concat$seq <- paste0(phyDat2alignment(a)$seq,phyDat2alignment(b)$seq) # concatenate the alignments together 
+
   dna_sim_1 <- simSeq(phylo_sim,l = K_sites)
   dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites)
   dna_sim <- c(dna_sim_1,dna_sim_2)
-  print(dna_sim)
   output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,".nexus") # create a name for the output file
-  write.phyDat(dna_sim,file = output_name_template, format = "nexus")
+  write.phyDat(dna_sim,file = output_name_template, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
   #write.nexus.data(dna_sim ,file=output_name_template, format = "protein", interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
   
   # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
@@ -189,3 +186,4 @@ mosaic.alignment <- function(J,nsites,ntaxa,output_name_template,id,alignment1,a
   writeLines(nexus,output_name) # output the edited nexus file
 }
 
+?
