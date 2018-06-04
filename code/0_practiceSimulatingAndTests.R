@@ -1,5 +1,4 @@
 # Code to simulate some alignments, run test statistics on them and see what happens
-tic("run")
 
 # Files for SplitsTree practice
 alignment_path <- "/Users/caitlincherryh/Documents/test_splitstree/Phylo_20_1300_1_K0.5_tests.nexus"
@@ -7,15 +6,17 @@ splitstree_path <- "/Users/caitlincherryh/Documents/Executables/SplitsTree.app/C
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
 
 # Open packages
-library(TreeSim)
-library(phytools)
 library(seqinr)
 library(ape)
+library(TreeSim)
+library(phytools)
 library(phangorn)
 library(base)
 library(tictoc)
 library(ggplot2)
 library(reshape2)
+
+tic("run")
 
 # Set working directory
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
@@ -31,7 +32,7 @@ source(paste0(maindir,"code/create_alignments.R"))
 
 # Create alignments
 simbac_path <- "/Users/caitlincherryh/Documents/Repositories/SimBac/SimBac"
-output_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
+output_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/"
 ntaxa <- 20
 nsites <- 1300
 gap <- 1000000
@@ -47,20 +48,21 @@ SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, 0.20
 
 # Add extra parameters needed to create the phylogenetic alignments
 birth_rate = 0.5
+death_rate = 0
 tree_age = 1
 mol_rate = 0.1
 mol_rate_sd = 0.1
 K_vector = c(0,0.01,0.05,0.1,0.5) # proportion of second tree in the mosaic alignment (here 0 - 50% in 1% increments for a total of 51 alignments. Must be in decimals)
-phylo.make1(output_folder, ntaxa, nsites, birth_rate, tree_age, mol_rate, mol_rate_sd, K_vector,id)
+phylo.make1(output_folder, ntaxa, nsites, birth_rate, death_rate, tree_age, mol_rate, mol_rate_sd, K_vector,id)
 
 # Get a list of all the alignment files
-aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
+aldir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/"
 setwd(aldir)
 alignments <- list.files(aldir) 
 
 # Run IQ-tree in each alignment
 # Get the list of files in the folder
-test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
+test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/"
 alignments <- paste0(test_folder,list.files(test_folder))
 # Set IQ-TREE path
 iqtree_path       <- "/Applications/iqtree/bin/iqtree" # location of IQ-tree program 
@@ -69,12 +71,12 @@ for (al in alignments){
 }
 
 # plot trees
-test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments/"
+test_folder <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/"
 all_files <- paste0(test_folder,list.files(test_folder))
 treefiles <- all_files[grep("treefile",all_files)]
 for (treefile in treefiles){
   tree_id <- tail(strsplit(treefile,"/")[[1]],1)
-  tree_output_file <- paste0("/Users/caitlincherryh/Documents/TestAlignmentResults/",tree_id,".pdf")
+  tree_output_file <- paste0("/Users/caitlincherryh/Documents/TestAlignmentResults2/",tree_id,".pdf")
   tree <- read.tree(treefile)
   pdf(file = tree_output_file)
   plot(tree)
@@ -86,7 +88,7 @@ setwd(test_folder)
 # Set timer
 tic("alignments")
 # Set output directory
-output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/"
+output_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/"
 # Set alignment directory
 # Open the SimBac alignments
 # Set IQ-TREE path
@@ -147,13 +149,13 @@ for (al in alignments){
   num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
   num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
   ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
-
+  
   num_dis <- seq_log[ind]
   num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
   num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
   # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
   ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
-
+  
   seq_sig <- seq_log[ind]
   seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
   seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
@@ -209,7 +211,7 @@ names(df) <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","
 for(i in 2:ncol(df)) {
   df[,i] <- as.numeric(as.character(df[,i]))
 }
-write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_alignments_results.csv")
+write.csv(df,file = "/Users/caitlincherryh/Documents/TestAlignmentResults2/test_alignments_results.csv")
 toc()
 
 # Make some plots
@@ -226,11 +228,11 @@ phylo_plot_df <- melt(phylo_plot_df, id.vars="K")
 phylo_plot_df[,2] <- as.character(phylo_plot_df[,2])
 phylo_plot <- ggplot(phylo_plot_df,aes(x=K,y=value,col=variable))+geom_point()+
   labs(x = "K (% alignment 2)",  y = "Statistic value", title = "Test Statistic Scores - Phylogenetic")
-file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_phylogenetic.pdf"
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/testStatisticScores_phylogenetic.pdf"
 ggsave(filename = file_name, plot = phylo_plot, device = "pdf")
 phylo_plot <- ggplot(phylo_plot_df,aes(x=K,y=value,col=variable))+geom_point()+geom_line()+
   labs(x = "K (% alignment 2)",  y = "Statistic value", title = "Test Statistic Scores - Phylogenetic")
-file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_phylogenetic_lines.pdf"
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/testStatisticScores_phylogenetic_lines.pdf"
 ggsave(filename = file_name, plot = phylo_plot, device = "pdf")
 
 
@@ -242,11 +244,11 @@ internal_plot_df <- melt(internal_plot_df,id.vars="internal_recombination")
 internal_plot_df[,2] <- as.character(internal_plot_df[,2])
 internal_plot <- ggplot(internal_plot_df,aes(x=internal_recombination,y=value,col=variable))+geom_point()+
   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Test Statistic Scores - Internal recombination")
-file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_internalRecombination.pdf"
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/testStatisticScores_internalRecombination.pdf"
 ggsave(filename = file_name, plot = internal_plot, device = "pdf")
 internal_plot <- ggplot(internal_plot_df,aes(x=internal_recombination,y=value,col=variable))+geom_point()+geom_line()+
   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Test Statistic Scores - Internal recombination")
-file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_internalRecombination_lines.pdf"
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/testStatisticScores_internalRecombination_lines.pdf"
 ggsave(filename = file_name, plot = internal_plot, device = "pdf")
 
 external_plot_df <- df[6:9,]
@@ -257,11 +259,11 @@ external_plot_df <- melt(external_plot_df,id.vars="external_recombination")
 external_plot_df[,2] <- as.character(external_plot_df[,2])
 external_plot <- ggplot(external_plot_df,aes(x=external_recombination,y=value,col=variable))+geom_point()+
   labs(x = "External recombination (%)", y = "Statistic value", title = "Test Statistic Scores - External recombination")
-file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_externalRecombination.pdf"
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/testStatisticScores_externalRecombination.pdf"
 ggsave(filename = file_name, plot = external_plot, device = "pdf")
 external_plot <- ggplot(external_plot_df,aes(x=external_recombination,y=value,col=variable))+geom_point()+geom_line()+
   labs(x = "External recombination (%)", y = "Statistic value", title = "Test Statistic Scores - External recombination")
-file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults/testStatisticScores_externalRecombination_lines.pdf"
+file_name <- "/Users/caitlincherryh/Documents/TestAlignmentResults2/testStatisticScores_externalRecombination_lines.pdf"
 ggsave(filename = file_name, plot = external_plot, device = "pdf")
 
 # Save output df with simulation conditions
@@ -276,6 +278,6 @@ tree_depth <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+6]
 K <- gsub("K","",unlist(names_split)[seq(1,length(unlist(names_split)),9)+7])
 id <- unlist(names_split)[seq(1,length(unlist(names_split)),9)+8]
 df2 <- data.frame(id,ntaxa,nspecies,internal_recombination,external_recombination,tree_depth,K,df[,2:8])
-write.csv(df2,file = "/Users/caitlincherryh/Documents/TestAlignmentResults/test_alignments_ParamsResults.csv")
+write.csv(df2,file = "/Users/caitlincherryh/Documents/TestAlignmentResults2/test_alignments_ParamsResults.csv")
 
 toc()
