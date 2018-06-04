@@ -18,7 +18,7 @@ SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
 
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
 # K is the proportion of the SECOND tree that will be included (provide a single value)
-phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate = 0.1, mol_rate_sd = 0.1, K = 0,id=""){
+phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, K = 0,id){
   # Randomly select a death rate using a uniform distribution from 0 to 99% of the birth rate
   death_rate = runif(1,min = 0, max = (0.99*birth_rate))
   # 1. Simulate a tree
@@ -48,11 +48,105 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   plot.phylo(phylo_sim_2)
   dev.off()
   write.tree(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".treefile"), tree.names = TRUE)
-  J_vector <- 1 - K_vector # proportion of first tree that will be included
-  dna_sim_1 <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulate along the entire first tree
-  dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2,l = nsites)) # simulate along the entire second tree
-  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_")
-  lapply(J_vector,mosaic.alignment,nsites,ntaxa,output_name_template,id,dna_sim_1,dna_sim_2)
+  J <- 1 - K # proportion of first tree that will be included
+  J_sites <- nsites * J # find number of sites to model from first tree
+  K_sites <- nsites * K # find number of sites to model from second tree
+  if ((J_sites+K_sites) < nsites){ 
+    # if there are less sites then necessary, randomly add the missing sites to either tree one or tree 2
+    add <- nsites - (J_sites+K_sites)
+    rand <- sample(c("J","K"),1)
+    if (rand == "K"){
+      K_sites <- K_sites + add
+    } else if (rand == "J"){
+      J_sites <- J_sites + add
+    }
+  } else if ((J_sites+K_sites) > nsites){
+    # if there are more sites then necessary, randomly subtract the missing sites from either tree one or tree 2
+    subtract <- (J_sites+K_sites) - nsites
+    rand <- sample(c("J","K"),1)
+    if (rand == "K"){
+      K_sites <- K_sites - subtract
+    } else if (rand == "J"){
+      J_sites <- J_sites - subtract
+    }
+  }
+  dna_sim_a <- phyDat2alignment(simSeq(phylo_sim,l = J_sites)) # simulate along the first tree
+  print(dna_sim_a)
+  dna_sim_concat <- dna_sim_a # copy the first alignment as the concatenated alignment to get details about the alignment
+  dna_sim_b <- phyDat2alignment(simSeq(phylo_sim_2,l = K_sites)) # simulate along the second tree
+  print(dna_sim_b)
+  dna_sim_concat$seq <- paste0(phyDat2alignment(a)$seq,phyDat2alignment(b)$seq) # concatenate the alignments together 
+  print(dna_sim_concat)
+  dna_sim_1 <- simSeq(phylo_sim,l = K_sites)
+  dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites)
+  dna_sim <- c(dna_sim_1,dna_sim_2)
+  print(dna_sim)
+  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,".nexus") # create a name for the output file
+  write.phyDat(dna_sim,file = output_name_template, format = "nexus")
+  #write.nexus.data(dna_sim ,file=output_name_template, format = "protein", interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
+  
+  # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+  nexus <- readLines(output_name_template) # open the new nexus file
+  ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
+  nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+  writeLines(nexus,output_name_template) # output the edited nexus file
+  
+  # output a text file with all the parameters
+  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,"_params.csv") # create a name for the output file 
+  row <- c("phylogenetic",ntaxa,nsites,birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id)
+  names <- c("method","n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id")
+  df <- data.frame(matrix(nrow=0,ncol=11))
+  df <- rbind(df,row)
+  names(df) <- names
+  write.csv(df, file = output_name_template)
+}
+
+# Create a function to make phylogenetic alignments (as outlined in simulation scheme)
+# Provide K_vector in decimals (e.g. 1% = 0.01, 50% = 0.5)
+# K is the proportion of the SECOND tree that will be included
+phylo.make1.old <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, death_rate = 0, tree_age, mol_rate = 0.1, mol_rate_sd = 0.1, K_vector = c(),id="testold"){
+  # 1. Simulate a tree
+  # simulate a birth-death tree on a fixed number of extant taxa
+  # n = number of taxa, numbsim = # of trees to simulate, lambda = speciation rate [good default = 0.5 from Duchenne and Lanfear (2015)]
+  # mu = extinction rate (default for this project = 0)
+  tree_sim <- sim.bd.taxa.age(n = ntaxa, numbsim = 1, lambda = birth_rate, mu = death_rate, frac = 1, age = tree_age, mrca = FALSE)[[1]]
+  tree_sim$edge.length <- tree_sim$edge.length * (tree_age / max(branching.times(tree_sim)))
+  # 2. Simulate rate variation
+  # Default for mol_rate and mol_rate_sd = 0.1 as in Duchenne and Lanfear (2015)
+  phylo_sim <- tree_sim
+  phylo_sim$edge.length <- tree_sim$edge.length * rlnorm(length(tree_sim$edge.length), meanlog = log(mol_rate), sdlog = mol_rate_sd)
+  # scale tree to have a total depth of tree age
+  phylo_sim <- rescale(phylo_sim,"depth",tree_age)
+  # Save the tree
+  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".pdf"))
+  plot.phylo(phylo_sim)
+  dev.off()
+  write.tree(phylo_sim, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".treefile"), tree.names = TRUE)
+  # If the J vector is empty, simply simulate DNA along the tree
+  if (length(K_vector)==0){
+    dna_sim <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulating along the tree 
+    output_name <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_K0_",id,".nexus") # for trees with no recombination
+    write.nexus.data(dna_sim,file=output_name,format = "dna",interleaved = TRUE, datablock = FALSE) # output data as a nexus file
+    # open the nexus file and delete the interleave = YES part so IQ-TREE can read it
+    nexus <- readLines(output_name) # open the new nexus file
+    ind <- grep("BEGIN CHARACTERS",nexus)+2  # find which line
+    nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+    writeLines(nexus,output_name) # output the edited nexus file
+  }
+  else {
+    # If there are elements in the J vector, need to create a 2nd alignment to concatenate at those intervals
+    phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
+    # to get SPR distance between the trees: SPR.dist()
+    pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".pdf"))
+    plot.phylo(phylo_sim_2)
+    dev.off()
+    write.tree(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".treefile"), tree.names = TRUE)
+    J_vector <- 1 - K_vector # proportion of first tree that will be included
+    dna_sim_1 <- as.DNAbin(simSeq(phylo_sim,l = nsites)) # simulate along the entire first tree
+    dna_sim_2 <- as.DNAbin(simSeq(phylo_sim_2,l = nsites)) # simulate along the entire second tree
+    output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_")
+    lapply(J_vector,mosaic.alignment,nsites,ntaxa,output_name_template,id,dna_sim_1,dna_sim_2)
+  }
 }
 
 # Want a function that, given a J value and 2 alignments (in DNAbin format), makes a concatenated alignment containing J% of tree 1 and saves it
