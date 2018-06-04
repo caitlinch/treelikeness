@@ -10,10 +10,26 @@ library(phangorn)
 SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate = 0.01, internal_recombination, external_recombination, id = ""){
   # note - site specific mutation rate defaults to 0.01 when not specified in SimBac
   # Good default gap size is 1,000,000 (1000000)
-  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_NA_NA_",id,".fasta")
+  # Create a filename
+  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,".fasta")
+  tree_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_tree_",id,".treefile")
+  clonal_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_clonalGenealogy_",id,".txt")
+  arg_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_ancestralRecombinationGraph_",id,".gv")
+  # Put together the SimBac command
   simbac_command <- paste0(simbac_path," -N ",ntaxa," -B ",nsites," -G ",gap," -T ",mutation_rate," -R ",internal_recombination,
-                           " -r ",external_recombination," -o ",output_file)
+                           " -r ",external_recombination," -o ",output_file," -c ",clonal_file," -l ",tree_file," -d ",arg_file)
+  # Call SimBac
   system(simbac_command)
+  
+  # output a text file with all the parameters
+  output_name_template <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"_params.csv") # create a name for the output file 
+  row <- c("coalescent",ntaxa,nsites,internal_recombination,external_recombination,mutation_rate,"NA","NA","NA","NA","NA","NA","NA",id) # gather up all the variables
+  names <- c("method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
+             "sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
+  df <- data.frame(matrix(nrow=0,ncol=14)) # make an empty dataframe
+  df <- rbind(df,row) # attach the info to the empty df
+  names(df) <- names # rename it so it's pretty and also actually helpful
+  write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
@@ -86,11 +102,28 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   writeLines(nexus,output_name_template) # output the edited nexus file
   
   # output a text file with all the parameters
-  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,"_params.csv") # create a name for the output file 
-  row <- c("phylogenetic",ntaxa,nsites,birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id) # gather up all the variables
-  names <- c("method","n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
-  df <- data.frame(matrix(nrow=0,ncol=11)) # make an empty dataframe
+  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_params.csv") # create a name for the output file 
+  row <- c("phylogenetic",ntaxa,nsites,"NA","NA","NA",birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id) # gather up all the variables
+  names <- c("method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
+             "sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
+  df <- data.frame(matrix(nrow=0,ncol=14)) # make an empty dataframe
   df <- rbind(df,row) # attach the info to the empty df
   names(df) <- names # rename it so it's pretty and also actually helpful
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
+
+# Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
+phylo.run1sim <- function(){
+  
+}
+
+
+
+
+
+
+
+
+
+
+
