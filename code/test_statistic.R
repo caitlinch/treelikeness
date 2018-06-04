@@ -1,5 +1,11 @@
 # R functions to calculate 3 test statistics for quantifying tree likeness
 
+library(TreeSim)
+library(phytools)
+library(seqinr)
+library(ape)
+library(phangorn)
+
 # Function to call IQ-tree and run it
 call.IQTREE <- function(iqtree_path,alignment_path){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it

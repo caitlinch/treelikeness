@@ -1,5 +1,11 @@
 # R functions to calculate the split decomposition for a pairwise distance matrix
 
+library(TreeSim)
+library(phytools)
+library(seqinr)
+library(ape)
+library(phangorn)
+
 # Get all options for n choose 2 from a given set
 choose2 <- function(collection){
   if (length(collection) == 1){
