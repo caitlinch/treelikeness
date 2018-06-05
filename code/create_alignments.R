@@ -37,12 +37,12 @@ SimBac.wrapper <- function(row,program_paths){
   # Extract the path to the SimBac executable from the program_paths vector
   simbac_path <- program_paths[["SimBac"]]
   # Extract values for creating the phylogenetic alignment from the input row
-  ntaxa <- row$n_taxa
-  nsites <- row$n_sites
-  gap <- row$gap
-  mutation_rate <- row$mutation_rate
-  internal_recombination <- row$internal_recombination
-  external_recombination <- row$external_recombination
+  ntaxa <- as.numeric(row$n_taxa)
+  nsites <- as.numeric(row$n_sites)
+  gap <- as.numeric(row$gap)
+  mutation_rate <- as.numeric(row$mutation_rate)
+  internal_recombination <- as.numeric(row$internal_recombination)
+  external_recombination <- as.numeric(row$external_recombination)
   id <- paste0(row$id,"_",row$rep)
   # Create an output folder name using 
   output_folder <- paste0(row$output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
@@ -140,14 +140,14 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
 
 # Function to take a row from a dataframe and separate it into its components, then call the function to make 1 phylogenetic alignment (and its associated tree/parameter files)
 phylo.wrapper <- function(row){
-  # Extract values for creating the phylogenetic alignment from the input row
-  ntaxa <- row$n_taxa
-  nsites <- row$n_sites
-  birth_rate <- row$birth_rate
-  tree_age <- row$tree_age
-  mol_rate <- row$mean_molecular_rate
-  mol_rate_sd <- row$sd_molecular_rate
-  K <- row$proportion_tree2
+  # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
+  ntaxa <- as.numeric(row$n_taxa)
+  nsites <- as.numeric(row$n_sites)
+  birth_rate <- as.numeric(row$birth_rate)
+  tree_age <- as.numeric(row$tree_age)
+  mol_rate <- as.numeric(row$mean_molecular_rate)
+  mol_rate_sd <- as.numeric(row$sd_molecular_rate)
+  K <- as.numeric(row$proportion_tree2)
   id <- paste0(row$id,"_",row$rep)
   # Create an output folder name using 
   output_folder <- paste0(row$output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
