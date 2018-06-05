@@ -157,15 +157,15 @@ SimBac.run1sim <- function(row, program_paths){
   
   # Run my test statistics
   # run pdm ratio (TS1) (modified splittable percentage)
-  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al)
+  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
   # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
-  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al)
+  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
   # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
-  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al)
+  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
   # run split decomposition (TS3) (split decomposition using splitstree)
-  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al,network_algorithm = "split decomposition")
+  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "split decomposition")
   # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
-  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al,network_algorithm = "neighbournet")
+  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "neighbournet")
   # Output pictures of neighbour net and split decomposition networks
   
   # Collect results
@@ -301,11 +301,9 @@ phylo.output.folder <- function(row){
 phylo.run1sim <- function(row, program_paths){
   # Call the function to make the output folder name, alignment name, and results file name
   al_folder <- phylo.output.folder(row)[1]
+  print(al_folder)
   al_file <- phylo.output.folder(row)[2]
   results_file <- phylo.output.folder(row)[3]
-  
-  # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
-  setwd(al_folder)
   
   # Check to see if the output folder exists
   if (dir.exists(al_folder)==TRUE){
@@ -323,10 +321,13 @@ phylo.run1sim <- function(row, program_paths){
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment
   call.IQTREE(program_paths[["IQTree"]],al_file)
 
-  # run PHIPACK and 3seq
+  # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
+  setwd(al_folder)
+  # Get paths to PhiPac, 3SEQ
   phi_path <- program_paths[["Phi"]] # get path to phipack executable
   seq_path <- program_paths[["3seq"]] # get path to 3seq executable
   filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
+  # run PHIPACK and 3seq (depending on the file format, will need to convert to fasta)
   if (filetype == "fasta"){
     # if the alignment is already in fasta format, run PhiPack through R
     phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
@@ -387,15 +388,15 @@ phylo.run1sim <- function(row, program_paths){
   
   # Run my test statistics
   # run pdm ratio (TS1) (modified splittable percentage)
-  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al)
+  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
   # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
-  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al)
+  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
   # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
-  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al)
+  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
   # run split decomposition (TS3) (split decomposition using splitstree)
-  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al,network_algorithm = "split decomposition")
+  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "split decomposition")
   # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
-  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al,network_algorithm = "neighbournet")
+  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "neighbournet")
   # Output pictures of neighbour net and split decomposition networks
   
   # Collect results
