@@ -172,7 +172,7 @@ SimBac.run1sim <- function(row, program_paths){
   df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
   row <- c(al_file,"coalescent",row$n_taxa,row$n_sites,row$internal_recombination,row$external_recombination,row$mutation_rate,
            "NA","NA","NA","NA","NA","NA","NA",paste0(row$id,"_",row$rep),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,
-           seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npdm,npda,sd,nn) # collect all the information
+           seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npds,npdm,sd,nn) # collect all the information
   df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
   df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
                 "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
@@ -402,17 +402,16 @@ phylo.run1sim <- function(row, program_paths){
   
   # Collect results
   # Extract death rate from params csv
-  all_files <- list.files(al_folder)
-  params_csv <- read.csv(grep("params",all_files))
-  print(params_csv)
-  death_rate <- 0
-  # Calculate proportion from tree 1
-  proportion_tree_1 <- 1 - as.numeric(row$proportion_tree2)
+  all_files <- list.files(al_folder) # get a list of all the files
+  ind <- grep("params",all_files) # find which of those files is the parameters file
+  params_csv <- read.csv(all_files[ind]) # open the parameter file
+  death_rate <- params_csv$death_rate # extract death rate
+  proportion_tree_1 <- params_csv$proportion_tree1 # extract proportion of alignment from tree 1
   # Make somewhere to store the results
   df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
   row <- c(al_file,"phylogenetic",row$n_taxa,row$n_sites,"NA","NA","NA",row$birth_rate,death_rate,row$tree_age,row$mean_molecular_rate,row$sd_molecular_rate,proportion_tree_1,
            row$proportion_tree2,paste0(row$id,"_",row$rep),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
-           splittable_percentage,npdm,npda,sd,nn) # collect all the information
+           splittable_percentage,npds,npdm,sd,nn) # collect all the information
   df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
   df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
                 "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
