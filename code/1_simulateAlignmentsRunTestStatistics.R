@@ -41,6 +41,6 @@ baby_simbac_df <- rbind(baby_simbac_df,simbac_row,simbac_row,stringsAsFactors=FA
 simbac_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 names(baby_simbac_df) <- simbac_names
 
-phylo.run1sim(baby_phylo_df[1,], program_paths)
-SimBac.run1sim(baby_simbac_df[1,],program_paths)
+phylo.run1sim(baby_phylo_df[1,], exec_paths)
+SimBac.run1sim(baby_simbac_df[1,],exec_paths)
 
