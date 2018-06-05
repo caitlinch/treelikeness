@@ -75,21 +75,11 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   phylo_sim$edge.length <- tree_sim$edge.length * rlnorm(length(tree_sim$edge.length), meanlog = log(mol_rate), sdlog = mol_rate_sd) # adjust branch lengths - mol rate will control the tree depth in substitutions per site
   # scale tree to have a total depth of tree age
   phylo_sim <- rescale(phylo_sim,"depth",tree_age)
-  # Save the first tree and a picture of the first tree
-  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".pdf"))
-  plot.phylo(phylo_sim)
-  dev.off()
-  write.tree(phylo_sim, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree1_",id,".treefile"), tree.names = TRUE)
   
   # Perform a single SPR move to get a new tree 
   phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
   # to get SPR distance between the trees: SPR.dist()
   # spr_dist <- sprdist
-  # Save the second tree and a picture of the second tree
-  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".pdf"))
-  plot.phylo(phylo_sim_2)
-  dev.off()
-  write.tree(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_tree2_",id,".treefile"), tree.names = TRUE)
   
   # Calculate how many sites of each tree will be needed 
   J <- 1 - K # proportion of first tree that will be included
@@ -119,13 +109,27 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   dna_sim_1 <- simSeq(phylo_sim,l = K_sites) # simulate sites along the first tree
   dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites) # simulate sites along the second tree
   dna_sim <- c(dna_sim_1,dna_sim_2) # concatenate the two alignments
-  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_",tree_age,"_",K,"_",id,".nexus") # create a name for the output file
+  
+  # Output all the files
+  # Make an output name for the nexus file
+  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,".nexus") # create a name for the output file
   write.phyDat(dna_sim,file = output_name_template, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
   # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
   nexus <- readLines(output_name_template) # open the new nexus file
   ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
   nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
   writeLines(nexus,output_name_template) # output the edited nexus file
+  
+  # Save the first tree and a picture of the first tree
+  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree1.pdf"))
+  plot.phylo(phylo_sim)
+  dev.off()
+  write.tree(phylo_sim, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree1.treefile"), tree.names = TRUE)
+  # Save the second tree and a picture of the second tree
+  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree2.pdf"))
+  plot.phylo(phylo_sim_2)
+  dev.off()
+  write.tree(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree2.treefile"), tree.names = TRUE)
   
   # output a text file with all the parameters
   output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_params.csv") # create a name for the output file 
@@ -139,7 +143,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
 }
 
 # Function to take a row from a dataframe and separate it into its components, then call the function to make 1 phylogenetic alignment (and its associated tree/parameter files)
-phylo.wrapper <- function(row){
+phylo.wrapper <- function(row, alignment_folder){
   # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
   ntaxa <- as.numeric(row$n_taxa)
   nsites <- as.numeric(row$n_sites)
@@ -149,18 +153,141 @@ phylo.wrapper <- function(row){
   mol_rate_sd <- as.numeric(row$sd_molecular_rate)
   K <- as.numeric(row$proportion_tree2)
   id <- paste0(row$id,"_",row$rep)
-  # Create an output folder name using 
-  output_folder <- paste0(row$output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
   # Call to phylo.make1 function to create one (1) simulation and store all information about that simulation in the folder from above
-  phylo.make1(output_folder, ntaxa, nsites, birth_rate, tree_age, mol_rate, mol_rate_sd, K, id)
+  phylo.make1(alignment_folder, ntaxa, nsites, birth_rate, tree_age, mol_rate, mol_rate_sd, K, id)
   # return the output folder so that you can open it and run the test statistics
-  return(output_folder)
+}
+
+phylo.output.folder <- function(row){
+    # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
+    ntaxa <- as.numeric(row$n_taxa)
+    nsites <- as.numeric(row$n_sites)
+    birth_rate <- as.numeric(row$birth_rate)
+    tree_age <- as.numeric(row$tree_age)
+    mol_rate <- as.numeric(row$mean_molecular_rate)
+    mol_rate_sd <- as.numeric(row$sd_molecular_rate)
+    K <- as.numeric(row$proportion_tree2)
+    id <- paste0(row$id,"_",row$rep)
+    # Create an output folder name using the variables
+    output_folder <- paste0(row$output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
+    nexus_file <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,".nexus")
+    output_file <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_testStatistics.csv")
+    return(c(output_folder,nexus_file,output_file))
 }
 
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
 phylo.run1sim <- function(row, program_paths){
-  # Call the wrapper function to create the alignment: output folder is returned so you know where to look to find the files
-  sim_folder <- phylo.wrapper(row)
+  # Call the function to make the output folder name, alignment name, and results file name
+  al_folder <- phylo.output.folder(row)[1]
+  al_file <- phylo.output.folder(row)[2]
+  results_file <- phylo.output.folder(row)[3]
+  
+  # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
+  setwd(al_folder)
+  
+  # Check to see if the output folder exists
+  if (dir.exists(al_folder)==TRUE){
+    # If the folder exists, check to see if the alignment file exists
+    if (file.exists(al_file)==FALSE){
+      # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
+      phylo.wrapper(row, al_folder)
+    }
+  } else if (dir.exists(al_folder)==FALSE){
+    # if the folder doesn't exist, create it
+    dir.create(al_folder)
+    # Once the folder has been created, run the wrapper to make the alignment
+    phylo.wrapper(row, al_folder)
+  }
+  # The alignment now definitely exists. Now you can run IQ-tree on the alignment
+  call.IQTREE(program_paths[["IQTree"]],al_file)
+
+  # run PHIPACK and 3seq
+  phi_path <- program_paths[["Phi"]] # get path to phipack executable
+  seq_path <- program_paths[["3seq"]] # get path to 3seq executable
+  filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
+  if (filetype == "fasta"){
+    # if the alignment is already in fasta format, run PhiPack through R
+    phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
+    system(phi_command) #call phipack
+    
+    seq_command <- paste0(seq_path," -f ", al_file)
+    system(seq_command) #call 3SEQ
+  } else if (filetype == "nexus"){
+    # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
+    data = read.nexus.data(al_file) # read in nexus format alignment
+    fasta.name <- paste0(al_file,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
+    write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
+    phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
+    system(phi_command) # run PHI test on the new fasta alignment
+    
+    seq_command <- paste0(seq_path," -f ", fasta.name)
+    system(seq_command) #call 3SEQ
+  }
+  # Extract significance from Phi Pack output
+  phi_file <- paste0(al_folder,"Phi.log")
+  phi_file <- readLines(phi_file)
+  ind      <- grep("p-Value",phi_file)
+  phi_sig <- as.numeric(strsplit(phi_file[ind+3],":")[[1]][2])
+  ind      <- grep("PHI Values",phi_file)
+  phi_mean <- as.numeric(strsplit(phi_file[ind+4],"      ","")[[1]][2])
+  phi_var <- as.numeric(strsplit(phi_file[ind+5],"      ","")[[1]][2])
+  phi_obs <- as.numeric(strsplit(phi_file[ind+6],"      ","")[[1]][2])
+  
+  # Extract results output from 3Seq output
+  seq_file <- paste0(al_folder,"3s.log")
+  seq_log <- readLines(seq_file) # open file
+  ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
+  num_trips <- seq_log[ind]
+  num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
+  num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
+  ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
+  num_dis <- seq_log[ind]
+  num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
+  num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
+  # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
+  ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
+  seq_sig <- seq_log[ind]
+  seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
+  seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
+  
+  # Extract quartet mapping (proportion of preserved quartets - the number of quartets in the  )
+  iq_log_path <- paste0(al_file,".iqtree")
+  iq_log <- readLines(iq_log_path)
+  ind <- grep("Number of fully resolved  quartets",iq_log)
+  resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of partly resolved quartets",iq_log)
+  partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of unresolved",iq_log)
+  unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of quartets",iq_log)
+  total_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  prop_resolved <- resolved_q/total_q
+  
+  # Run my test statistics
+  # run pdm ratio (TS1) (modified splittable percentage)
+  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al)
+  # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
+  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al)
+  # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
+  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al)
+  # run split decomposition (TS3) (split decomposition using splitstree)
+  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al,network_algorithm = "split decomposition")
+  # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
+  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al,network_algorithm = "neighbournet")
+  # Output pictures of neighbour net and split decomposition networks
+  
+  # Collect results
+  # Make somewhere to store the results
+  df <- data.frame(matrix(nrow=0,ncol=18)) # create an empty dataframe of the correct size
+  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
+           splittable_percentage,npdm,npda,sd,nn) # collect all the information
+  df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
+  df_names <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value",
+    "num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets", "splittable_percentage",
+    "pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+  names(df) <- df_names # add names to the df so you know what's what
+  write.csv(df,file = results_file)
+
 }
 
 
