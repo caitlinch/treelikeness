@@ -79,13 +79,13 @@ SimBac.run1sim <- function(row, program_paths){
     # If the folder exists, check to see if the alignment file exists
     if (file.exists(al_file)==FALSE){
       # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
-      phylo.wrapper(row, al_folder)
+      SimBac.wrapper(row, al_folder)
     }
   } else if (dir.exists(al_folder)==FALSE){
     # if the folder doesn't exist, create it
     dir.create(al_folder)
     # Once the folder has been created, run the wrapper to make the alignment
-    phylo.wrapper(row, al_folder)
+    SimBac.wrapper(row, al_folder)
   }
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment
   call.IQTREE(program_paths[["IQTree"]],al_file)
