@@ -169,13 +169,15 @@ SimBac.run1sim <- function(row, program_paths){
   
   # Collect results
   # Make somewhere to store the results
-  df <- data.frame(matrix(nrow=0,ncol=18)) # create an empty dataframe of the correct size
-  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
-           splittable_percentage,npdm,npda,sd,nn) # collect all the information
+  df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
+  row <- c(al_file,"coalescent",row$n_taxa,row$n_sites,row$internal_recombination,row$external_recombination,row$mutation_rate,
+           "NA","NA","NA","NA","NA","NA","NA",paste0(row$id,"_",row$rep),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,
+           seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npdm,npda,sd,nn) # collect all the information
   df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
-  df_names <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value",
-                "num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets", "splittable_percentage",
-                "pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+  df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
+                "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
+                "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
+                "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
   names(df) <- df_names # add names to the df so you know what's what
   write.csv(df,file = results_file)
 }
@@ -399,14 +401,23 @@ phylo.run1sim <- function(row, program_paths){
   # Output pictures of neighbour net and split decomposition networks
   
   # Collect results
+  # Extract death rate from params csv
+  all_files <- list.files(al_folder)
+  params_csv <- read.csv(grep("params",all_files))
+  print(params_csv)
+  death_rate <- 0
+  # Calculate proportion from tree 1
+  proportion_tree_1 <- 1 - as.numeric(row$proportion_tree2)
   # Make somewhere to store the results
-  df <- data.frame(matrix(nrow=0,ncol=18)) # create an empty dataframe of the correct size
-  row <- c(al,phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
+  df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
+  row <- c(al_file,"phylogenetic",row$n_taxa,row$n_sites,"NA","NA","NA",row$birth_rate,death_rate,row$tree_age,row$mean_molecular_rate,row$sd_molecular_rate,proportion_tree_1,
+           row$proportion_tree2,paste0(row$id,"_",row$rep),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
            splittable_percentage,npdm,npda,sd,nn) # collect all the information
   df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
-  df_names <- c("alignment", "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value",
-    "num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets", "splittable_percentage",
-    "pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+  df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
+                "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
+                "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
+                "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
   names(df) <- df_names # add names to the df so you know what's what
   write.csv(df,file = results_file)
 
