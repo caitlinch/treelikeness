@@ -1,0 +1,419 @@
+IQ-TREE multicore version 1.6.2 for Mac OS X 64-bit built Mar  1 2018
+Developed by Bui Quang Minh, Nguyen Lam Tung, Olga Chernomor,
+Heiko Schmidt, Dominik Schrempf, Michael Woodhams.
+
+Host:    rsb-35-188.anu.edu.au (AVX2, FMA3, 16 GB RAM)
+Command: /Users/caitlincherryh/Documents/Executables/iqtree -s /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus -nt AUTO -lmap ALL -redo
+Seed:    554981 (Using SPRNG - Scalable Parallel Random Number Generator)
+Time:    Tue Jun  5 12:04:11 2018
+Kernel:  AVX+FMA - auto-detect threads (4 CPU cores detected)
+
+Reading alignment file /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus ... Nexus format detected
+Alignment has 20 sequences with 1000 columns, 1000 distinct patterns
+990 parsimony-informative, 10 singleton sites, 0 constant sites
+     Gap/Ambiguity  Composition  p-value
+   1  t18    0.00%    passed     41.80%
+   2  t12    0.00%    passed     17.86%
+   3  t5     0.00%    passed     43.28%
+   4  t8     0.00%    passed     85.46%
+   5  t1     0.00%    passed     86.50%
+   6  t11    0.00%    passed     53.72%
+   7  t17    0.00%    passed     74.77%
+   8  t15    0.00%    passed     73.65%
+   9  t20    0.00%    passed     96.16%
+  10  t16    0.00%    passed     29.03%
+  11  t3     0.00%    passed     92.85%
+  12  t6     0.00%    passed     50.38%
+  13  t7     0.00%    passed      8.42%
+  14  t4     0.00%    failed      3.57%
+  15  t2     0.00%    passed     99.18%
+  16  t13    0.00%    passed     58.90%
+  17  t19    0.00%    passed     48.50%
+  18  t14    0.00%    passed     22.86%
+  19  t10    0.00%    passed     87.34%
+  20  t9     0.00%    passed     87.94%
+****  TOTAL    0.00%  1 sequences failed composition chi2 test (p-value<5%; df=3)
+
+
+Create initial parsimony tree by phylogenetic likelihood library (PLL)... 0.002 seconds
+NOTE: ModelFinder requires 6 MB RAM!
+ModelFinder will test 484 DNA models (sample size: 1000) ...
+ No. Model         -LnL         df  AIC          AICc         BIC
+Measuring multi-threading efficiency up to 4 CPU cores
+Increase to 10 rounds for branch lengths
+409 trees examined
+Threads: 1 / Time: 4.005 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -24864
+Threads: 2 / Time: 3.369 sec / Speedup: 1.189 / Efficiency: 59% / LogL: -24864
+Threads: 3 / Time: 2.749 sec / Speedup: 1.457 / Efficiency: 49% / LogL: -24864
+BEST NUMBER OF THREADS: 2
+
+  1  JC            23076.356    37  46226.712    46229.635    46408.299
+Ascertainment bias correction: 4 unobservable constant patterns
+  2  JC+ASC        23076.232    37  46226.465    46229.388    46408.051
+  3  JC+G4         23074.984    38  46225.968    46229.052    46412.463
+Ascertainment bias correction: 4 unobservable constant patterns
+  4  JC+ASC+G4     23074.802    38  46225.604    46228.688    46412.099
+  5  JC+R2         23073.965    39  46225.929    46229.179    46417.332
+  6  JC+R3         23073.942    41  46229.885    46233.480    46431.103
+Ascertainment bias correction: 4 unobservable constant patterns
+ 14  JC+ASC+R2     23073.625    39  46225.250    46228.500    46416.653
+Ascertainment bias correction: 4 unobservable constant patterns
+ 15  JC+ASC+R3     23073.620    41  46229.241    46232.836    46430.459
+ 23  F81+F         23073.676    40  46227.352    46230.772    46423.662
+Ascertainment bias correction: 4 unobservable constant patterns
+ 24  F81+F+ASC     23073.558    40  46227.117    46230.537    46423.427
+ 25  F81+F+G4      23072.251    41  46226.502    46230.097    46427.720
+Ascertainment bias correction: 4 unobservable constant patterns
+ 26  F81+F+ASC+G4  23072.068    41  46226.137    46229.732    46427.355
+ 27  F81+F+R2      23071.202    42  46226.404    46230.179    46432.530
+ 28  F81+F+R3      23071.194    44  46230.388    46234.534    46446.329
+Ascertainment bias correction: 4 unobservable constant patterns
+ 36  F81+F+ASC+R2  23070.874    42  46225.747    46229.522    46431.873
+Ascertainment bias correction: 4 unobservable constant patterns
+ 37  F81+F+ASC+R3  23070.871    44  46229.742    46233.889    46445.684
+ 45  K2P           23076.083    38  46228.166    46231.250    46414.660
+Ascertainment bias correction: 4 unobservable constant patterns
+ 46  K2P+ASC       23075.966    38  46227.931    46231.016    46414.426
+ 47  K2P+G4        23074.722    39  46227.444    46230.694    46418.846
+Ascertainment bias correction: 4 unobservable constant patterns
+ 48  K2P+ASC+G4    23074.541    39  46227.082    46230.332    46418.485
+ 49  K2P+R2        23073.655    40  46227.310    46230.730    46423.620
+ 50  K2P+R3        23073.651    42  46231.301    46235.075    46437.427
+Ascertainment bias correction: 4 unobservable constant patterns
+ 58  K2P+ASC+R2    23073.324    40  46226.649    46230.069    46422.959
+Ascertainment bias correction: 4 unobservable constant patterns
+ 59  K2P+ASC+R3    23073.322    42  46230.643    46234.417    46436.769
+ 67  HKY+F         23073.410    41  46228.821    46232.416    46430.039
+Ascertainment bias correction: 4 unobservable constant patterns
+ 68  HKY+F+ASC     23073.293    41  46228.586    46232.181    46429.804
+ 69  HKY+F+G4      23071.991    42  46227.982    46231.756    46434.107
+Ascertainment bias correction: 4 unobservable constant patterns
+ 70  HKY+F+ASC+G4  23071.808    42  46227.617    46231.391    46433.742
+ 71  HKY+F+R2      23070.912    43  46227.823    46231.782    46438.857
+ 72  HKY+F+R3      23070.905    45  46231.811    46236.150    46452.660
+Ascertainment bias correction: 4 unobservable constant patterns
+ 80  HKY+F+ASC+R2  23070.583    43  46227.166    46231.124    46438.200
+Ascertainment bias correction: 4 unobservable constant patterns
+ 81  HKY+F+ASC+R3  23070.574    45  46231.149    46235.488    46451.998
+ 89  TNe           23073.849    39  46225.697    46228.947    46417.100
+Ascertainment bias correction: 4 unobservable constant patterns
+ 90  TNe+ASC       23073.730    39  46225.459    46228.709    46416.862
+ 91  TNe+G4        23072.418    40  46224.837    46228.257    46421.147
+Ascertainment bias correction: 4 unobservable constant patterns
+ 92  TNe+ASC+G4    23072.234    40  46224.467    46227.888    46420.777
+ 93  TNe+R2        23071.235    41  46224.469    46228.064    46425.687
+ 94  TNe+R3        23071.224    43  46228.449    46232.407    46439.482
+Ascertainment bias correction: 4 unobservable constant patterns
+102  TNe+ASC+R2    23070.887    41  46223.773    46227.368    46424.991
+Ascertainment bias correction: 4 unobservable constant patterns
+103  TNe+ASC+R3    23070.877    43  46227.753    46231.711    46438.787
+111  TN+F          23072.087    42  46228.175    46231.949    46434.300
+Ascertainment bias correction: 4 unobservable constant patterns
+112  TN+F+ASC      23071.970    42  46227.940    46231.714    46434.065
+113  TN+F+G4       23070.643    43  46227.285    46231.243    46438.319
+Ascertainment bias correction: 4 unobservable constant patterns
+114  TN+F+ASC+G4   23070.459    43  46226.919    46230.877    46437.952
+115  TN+F+R2       23069.482    44  46226.964    46231.110    46442.905
+116  TN+F+R3       23069.475    46  46230.949    46235.486    46456.706
+Ascertainment bias correction: 4 unobservable constant patterns
+124  TN+F+ASC+R2   23069.134    44  46226.269    46230.415    46442.210
+Ascertainment bias correction: 4 unobservable constant patterns
+125  TN+F+ASC+R3   23069.131    46  46230.262    46234.799    46456.019
+133  K3P           23076.082    39  46230.164    46233.414    46421.567
+Ascertainment bias correction: 4 unobservable constant patterns
+134  K3P+ASC       23075.965    39  46229.930    46233.180    46421.332
+135  K3P+G4        23074.721    40  46229.443    46232.863    46425.753
+Ascertainment bias correction: 4 unobservable constant patterns
+136  K3P+ASC+G4    23074.541    40  46229.081    46232.502    46425.392
+137  K3P+R2        23073.616    41  46229.231    46232.826    46430.449
+138  K3P+R3        23073.608    43  46233.216    46237.175    46444.250
+Ascertainment bias correction: 4 unobservable constant patterns
+146  K3P+ASC+R2    23073.270    41  46228.540    46232.135    46429.758
+Ascertainment bias correction: 4 unobservable constant patterns
+147  K3P+ASC+R3    23073.261    43  46232.522    46236.480    46443.555
+155  K3Pu+F        23073.410    42  46230.819    46234.593    46436.945
+Ascertainment bias correction: 4 unobservable constant patterns
+156  K3Pu+F+ASC    23073.292    42  46230.584    46234.359    46436.710
+157  K3Pu+F+G4     23071.990    43  46229.981    46233.939    46441.014
+Ascertainment bias correction: 4 unobservable constant patterns
+158  K3Pu+F+ASC+G4 23071.808    43  46229.616    46233.574    46440.649
+159  K3Pu+F+R2     23070.878    44  46229.757    46233.903    46445.698
+160  K3Pu+F+R3     23070.872    46  46233.743    46238.281    46459.500
+Ascertainment bias correction: 4 unobservable constant patterns
+168  K3Pu+F+ASC+R2 23070.536    44  46229.072    46233.218    46445.013
+Ascertainment bias correction: 4 unobservable constant patterns
+169  K3Pu+F+ASC+R3 23070.529    46  46233.058    46237.596    46458.815
+177  TPM2+F        23072.760    42  46229.521    46233.295    46435.646
+Ascertainment bias correction: 4 unobservable constant patterns
+178  TPM2+F+ASC    23072.643    42  46229.286    46233.060    46435.411
+179  TPM2+F+G4     23071.364    43  46228.729    46232.687    46439.762
+Ascertainment bias correction: 4 unobservable constant patterns
+180  TPM2+F+ASC+G4 23071.182    43  46228.364    46232.322    46439.398
+181  TPM2+F+R2     23070.274    44  46228.548    46232.695    46444.490
+182  TPM2+F+R3     23070.267    46  46232.533    46237.071    46458.290
+Ascertainment bias correction: 4 unobservable constant patterns
+190  TPM2+F+ASC+R2 23069.930    44  46227.859    46232.006    46443.801
+Ascertainment bias correction: 4 unobservable constant patterns
+191  TPM2+F+ASC+R3 23069.925    46  46231.850    46236.388    46457.607
+199  TPM2u+F       23072.760    42  46229.521    46233.295    46435.646
+Ascertainment bias correction: 4 unobservable constant patterns
+200  TPM2u+F+ASC   23072.643    42  46229.286    46233.060    46435.411
+201  TPM2u+F+G4    23071.364    43  46228.729    46232.687    46439.762
+Ascertainment bias correction: 4 unobservable constant patterns
+202  TPM2u+F+ASC+G4 23071.182    43  46228.364    46232.322    46439.398
+203  TPM2u+F+R2    23070.269    44  46228.538    46232.685    46444.480
+204  TPM2u+F+R3    23070.264    46  46232.528    46237.065    46458.284
+Ascertainment bias correction: 4 unobservable constant patterns
+212  TPM2u+F+ASC+R2 23069.924    44  46227.848    46231.995    46443.789
+Ascertainment bias correction: 4 unobservable constant patterns
+213  TPM2u+F+ASC+R3 23069.920    46  46231.841    46236.378    46457.597
+221  TPM3+F        23072.489    42  46228.977    46232.752    46435.103
+Ascertainment bias correction: 4 unobservable constant patterns
+222  TPM3+F+ASC    23072.371    42  46228.742    46232.517    46434.868
+223  TPM3+F+G4     23071.130    43  46228.260    46232.218    46439.293
+Ascertainment bias correction: 4 unobservable constant patterns
+224  TPM3+F+ASC+G4 23070.949    43  46227.898    46231.856    46438.931
+225  TPM3+F+R2     23070.056    44  46228.113    46232.259    46444.054
+226  TPM3+F+R3     23070.052    46  46232.104    46236.641    46457.860
+Ascertainment bias correction: 4 unobservable constant patterns
+234  TPM3+F+ASC+R2 23069.712    44  46227.424    46231.571    46443.366
+Ascertainment bias correction: 4 unobservable constant patterns
+235  TPM3+F+ASC+R3 23069.710    46  46231.420    46235.957    46457.176
+243  TPM3u+F       23072.489    42  46228.977    46232.752    46435.103
+Ascertainment bias correction: 4 unobservable constant patterns
+244  TPM3u+F+ASC   23072.371    42  46228.742    46232.517    46434.868
+245  TPM3u+F+G4    23071.130    43  46228.260    46232.218    46439.293
+Ascertainment bias correction: 4 unobservable constant patterns
+246  TPM3u+F+ASC+G4 23070.949    43  46227.898    46231.856    46438.931
+247  TPM3u+F+R2    23070.053    44  46228.106    46232.253    46444.047
+248  TPM3u+F+R3    23070.050    46  46232.099    46236.636    46457.856
+Ascertainment bias correction: 4 unobservable constant patterns
+256  TPM3u+F+ASC+R2 23069.708    44  46227.417    46231.564    46443.358
+Ascertainment bias correction: 4 unobservable constant patterns
+257  TPM3u+F+ASC+R3 23069.706    46  46231.413    46235.950    46457.170
+265  TIMe          23073.848    40  46227.696    46231.116    46424.006
+Ascertainment bias correction: 4 unobservable constant patterns
+266  TIMe+ASC      23073.729    40  46227.458    46230.878    46423.768
+267  TIMe+G4       23072.418    41  46226.836    46230.431    46428.054
+Ascertainment bias correction: 4 unobservable constant patterns
+268  TIMe+ASC+G4   23072.233    41  46226.467    46230.062    46427.685
+269  TIMe+R2       23071.167    42  46226.334    46230.108    46432.460
+270  TIMe+R3       23071.165    44  46230.329    46234.476    46446.270
+Ascertainment bias correction: 4 unobservable constant patterns
+278  TIMe+ASC+R2   23070.802    42  46225.604    46229.378    46431.730
+Ascertainment bias correction: 4 unobservable constant patterns
+279  TIMe+ASC+R3   23070.800    44  46229.600    46233.747    46445.541
+287  TIM+F         23072.087    43  46230.173    46234.132    46441.207
+Ascertainment bias correction: 4 unobservable constant patterns
+288  TIM+F+ASC     23071.969    43  46229.938    46233.896    46440.972
+289  TIM+F+G4      23070.642    44  46229.285    46233.431    46445.226
+Ascertainment bias correction: 4 unobservable constant patterns
+290  TIM+F+ASC+G4  23070.459    44  46228.918    46233.065    46444.860
+291  TIM+F+R2      23069.433    45  46228.865    46233.205    46449.714
+292  TIM+F+R3      23069.431    47  46232.862    46237.601    46463.526
+Ascertainment bias correction: 4 unobservable constant patterns
+300  TIM+F+ASC+R2  23069.066    45  46228.132    46232.471    46448.981
+Ascertainment bias correction: 4 unobservable constant patterns
+301  TIM+F+ASC+R3  23069.063    47  46232.125    46236.865    46462.790
+309  TIM2e         23072.971    40  46225.942    46229.362    46422.252
+Ascertainment bias correction: 4 unobservable constant patterns
+310  TIM2e+ASC     23072.851    40  46225.703    46229.123    46422.013
+311  TIM2e+G4      23071.560    41  46225.119    46228.714    46426.337
+Ascertainment bias correction: 4 unobservable constant patterns
+312  TIM2e+ASC+G4  23071.375    41  46224.749    46228.344    46425.967
+313  TIM2e+R2      23070.326    42  46224.652    46228.426    46430.777
+314  TIM2e+R3      23070.320    44  46228.639    46232.786    46444.581
+Ascertainment bias correction: 4 unobservable constant patterns
+322  TIM2e+ASC+R2  23069.946    42  46223.893    46227.667    46430.019
+Ascertainment bias correction: 4 unobservable constant patterns
+323  TIM2e+ASC+R3  23069.937    44  46227.874    46232.021    46443.816
+331  TIM2+F        23071.445    43  46228.889    46232.847    46439.923
+Ascertainment bias correction: 4 unobservable constant patterns
+332  TIM2+F+ASC    23071.326    43  46228.652    46232.611    46439.686
+333  TIM2+F+G4     23070.023    44  46228.046    46232.192    46443.987
+Ascertainment bias correction: 4 unobservable constant patterns
+334  TIM2+F+ASC+G4 23069.840    44  46227.680    46231.826    46443.621
+335  TIM2+F+R2     23068.826    45  46227.652    46231.991    46448.501
+336  TIM2+F+R3     23068.821    47  46231.642    46236.381    46462.306
+Ascertainment bias correction: 4 unobservable constant patterns
+344  TIM2+F+ASC+R2 23068.453    45  46226.907    46231.246    46447.756
+Ascertainment bias correction: 4 unobservable constant patterns
+345  TIM2+F+ASC+R3 23068.447    47  46230.894    46235.633    46461.558
+353  TIM3e         23072.218    40  46224.436    46227.856    46420.746
+Ascertainment bias correction: 4 unobservable constant patterns
+354  TIM3e+ASC     23072.098    40  46224.196    46227.616    46420.506
+355  TIM3e+G4      23070.840    41  46223.681    46227.276    46424.898
+Ascertainment bias correction: 4 unobservable constant patterns
+356  TIM3e+ASC+G4  23070.655    41  46223.310    46226.905    46424.528
+357  TIM3e+R2      23069.636    42  46223.272    46227.047    46429.398
+358  TIM3e+R3      23069.630    44  46227.260    46231.406    46443.201
+Ascertainment bias correction: 4 unobservable constant patterns
+366  TIM3e+ASC+R2  23069.257    42  46222.515    46226.289    46428.641
+Ascertainment bias correction: 4 unobservable constant patterns
+367  TIM3e+ASC+R3  23069.252    44  46226.504    46230.651    46442.445
+375  TIM3+F        23071.159    43  46228.317    46232.276    46439.351
+Ascertainment bias correction: 4 unobservable constant patterns
+376  TIM3+F+ASC    23071.041    43  46228.081    46232.040    46439.115
+377  TIM3+F+G4     23069.776    44  46227.553    46231.700    46443.494
+Ascertainment bias correction: 4 unobservable constant patterns
+378  TIM3+F+ASC+G4 23069.595    44  46227.189    46231.336    46443.131
+379  TIM3+F+R2     23068.606    45  46227.213    46231.552    46448.062
+380  TIM3+F+R3     23068.601    47  46231.202    46235.942    46461.867
+Ascertainment bias correction: 4 unobservable constant patterns
+388  TIM3+F+ASC+R2 23068.233    45  46226.467    46230.806    46447.316
+Ascertainment bias correction: 4 unobservable constant patterns
+389  TIM3+F+ASC+R3 23068.230    47  46230.459    46235.199    46461.124
+397  TVMe          23073.566    41  46229.133    46232.728    46430.351
+Ascertainment bias correction: 4 unobservable constant patterns
+398  TVMe+ASC      23073.447    41  46228.894    46232.489    46430.112
+399  TVMe+G4       23072.274    42  46228.548    46232.322    46434.674
+Ascertainment bias correction: 4 unobservable constant patterns
+400  TVMe+ASC+G4   23072.092    42  46228.185    46231.959    46434.311
+401  TVMe+R2       23071.214    43  46228.427    46232.385    46439.461
+402  TVMe+R3       23071.208    45  46232.415    46236.755    46453.264
+Ascertainment bias correction: 4 unobservable constant patterns
+410  TVMe+ASC+R2   23070.846    43  46227.691    46231.649    46438.725
+Ascertainment bias correction: 4 unobservable constant patterns
+411  TVMe+ASC+R3   23070.843    45  46231.687    46236.026    46452.536
+419  TVM+F         23071.840    44  46231.681    46235.827    46447.622
+Ascertainment bias correction: 4 unobservable constant patterns
+420  TVM+F+ASC     23071.720    44  46231.439    46235.586    46447.381
+421  TVM+F+G4      23070.501    45  46231.003    46235.343    46451.852
+Ascertainment bias correction: 4 unobservable constant patterns
+422  TVM+F+ASC+G4  23070.321    45  46230.641    46234.981    46451.490
+423  TVM+F+R2      23069.435    46  46230.871    46235.408    46456.627
+424  TVM+F+R3      23069.432    48  46234.864    46239.810    46470.436
+Ascertainment bias correction: 4 unobservable constant patterns
+432  TVM+F+ASC+R2  23069.073    46  46230.146    46234.683    46455.902
+Ascertainment bias correction: 4 unobservable constant patterns
+433  TVM+F+ASC+R3  23069.072    48  46234.143    46239.090    46469.715
+441  SYM           23071.338    42  46226.676    46230.450    46432.801
+Ascertainment bias correction: 4 unobservable constant patterns
+442  SYM+ASC       23071.217    42  46226.434    46230.208    46432.559
+443  SYM+G4        23069.979    43  46225.958    46229.916    46436.991
+Ascertainment bias correction: 4 unobservable constant patterns
+444  SYM+ASC+G4    23069.793    43  46225.587    46229.545    46436.620
+445  SYM+R2        23068.786    44  46225.572    46229.719    46441.514
+446  SYM+R3        23068.785    46  46229.569    46234.107    46455.326
+Ascertainment bias correction: 4 unobservable constant patterns
+454  SYM+ASC+R2    23068.407    44  46224.814    46228.960    46440.755
+Ascertainment bias correction: 4 unobservable constant patterns
+455  SYM+ASC+R3    23068.405    46  46228.810    46233.347    46454.567
+463  GTR+F         23070.517    45  46231.035    46235.374    46451.884
+Ascertainment bias correction: 4 unobservable constant patterns
+464  GTR+F+ASC     23070.397    45  46230.795    46235.134    46451.644
+465  GTR+F+G4      23069.156    46  46230.311    46234.849    46456.068
+Ascertainment bias correction: 4 unobservable constant patterns
+466  GTR+F+ASC+G4  23068.974    46  46229.947    46234.485    46455.704
+467  GTR+F+R2      23068.001    47  46230.002    46234.742    46460.667
+468  GTR+F+R3      23067.998    49  46233.996    46239.154    46474.476
+Ascertainment bias correction: 4 unobservable constant patterns
+476  GTR+F+ASC+R2  23067.625    47  46229.250    46233.989    46459.914
+Ascertainment bias correction: 4 unobservable constant patterns
+477  GTR+F+ASC+R3  23067.622    49  46233.244    46238.402    46473.724
+Akaike Information Criterion:           TIM3e+ASC+R2
+Corrected Akaike Information Criterion: TIM3e+ASC+R2
+Bayesian Information Criterion:         JC+ASC
+Best-fit model: JC+ASC chosen according to BIC
+
+All model information printed to /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.model.gz
+CPU time for ModelFinder: 23.937 seconds (0h:0m:23s)
+Wall-clock time for ModelFinder: 12.308 seconds (0h:0m:12s)
+Ascertainment bias correction: 4 unobservable constant patterns
+
+NOTE: 0 MB RAM (0 GB) is required!
+Measuring multi-threading efficiency up to 4 CPU cores
+Increase to 10 rounds for branch lengths
+419 trees examined
+Threads: 1 / Time: 4.001 sec / Speedup: 1.000 / Efficiency: 100% / LogL: -24897
+Threads: 2 / Time: 3.392 sec / Speedup: 1.180 / Efficiency: 59% / LogL: -24897
+Threads: 3 / Time: 2.541 sec / Speedup: 1.574 / Efficiency: 52% / LogL: -24897
+Threads: 4 / Time: 2.589 sec / Speedup: 1.545 / Efficiency: 39% / LogL: -24897
+BEST NUMBER OF THREADS: 3
+
+Estimate model parameters (epsilon = 0.100)
+1. Initial log-likelihood: -23076.232
+Optimal log-likelihood: -23076.232
+Rate parameters:  A-C: 1.00000  A-G: 1.00000  A-T: 1.00000  C-G: 1.00000  C-T: 1.00000  G-T: 1.00000
+Base frequencies:  A: 0.250  C: 0.250  G: 0.250  T: 0.250
+Parameters optimization took 1 rounds (0.001 sec)
+
+Performing likelihood mapping with all quartets...
+Computing 4845 quartet likelihoods (one dot represents 100 quartets).
+
+..... ........... .......... ................ .........   :::   444888444555
+
+
+
+
+
+
+
+
+
+
+
+likelihood mapping plot (SVG) written to /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.lmap.svg
+likelihood mapping plot (EPS) written to /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.lmap.eps
+Likelihood mapping needed 3.538 seconds
+
+Computing ML distances based on estimated model parameters... 0.005 sec
+Computing BIONJ tree...
+0.007 seconds
+Log-likelihood of BIONJ tree: -23086.994
+--------------------------------------------------------------------
+|             INITIALIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Generating 98 parsimony trees... 0.199 second
+Computing log-likelihood of 98 initial trees ... 0.188 seconds
+Current best score: -23076.232
+
+Do NNI search on 20 best initial trees
+Estimate model parameters (epsilon = 0.100)
+BETTER TREE FOUND at iteration 1: -23069.322
+Iteration 10 / LogL: -23070.640 / Time: 0h:0m:28s
+Iteration 20 / LogL: -23069.846 / Time: 0h:0m:28s
+Finish initializing candidate tree set (4)
+Current best tree score: -23069.322 / CPU time: 0.609
+Number of iterations: 20
+--------------------------------------------------------------------
+|               OPTIMIZING CANDIDATE TREE SET                      |
+--------------------------------------------------------------------
+Iteration 30 / LogL: -23082.660 / Time: 0h:0m:29s (0h:0m:41s left)
+Iteration 40 / LogL: -23082.522 / Time: 0h:0m:29s (0h:0m:26s left)
+Iteration 50 / LogL: -23083.086 / Time: 0h:0m:29s (0h:0m:17s left)
+Iteration 60 / LogL: -23069.772 / Time: 0h:0m:29s (0h:0m:12s left)
+Iteration 70 / LogL: -23069.595 / Time: 0h:0m:29s (0h:0m:7s left)
+Iteration 80 / LogL: -23069.537 / Time: 0h:0m:29s (0h:0m:4s left)
+Iteration 90 / LogL: -23069.646 / Time: 0h:0m:30s (0h:0m:2s left)
+Iteration 100 / LogL: -23073.403 / Time: 0h:0m:30s (0h:0m:0s left)
+TREE SEARCH COMPLETED AFTER 102 ITERATIONS / Time: 0h:0m:30s
+
+--------------------------------------------------------------------
+|                    FINALIZING TREE SEARCH                        |
+--------------------------------------------------------------------
+Performs final model parameters optimization
+Estimate model parameters (epsilon = 0.010)
+1. Initial log-likelihood: -23069.322
+Optimal log-likelihood: -23069.322
+Rate parameters:  A-C: 1.00000  A-G: 1.00000  A-T: 1.00000  C-G: 1.00000  C-T: 1.00000  G-T: 1.00000
+Base frequencies:  A: 0.250  C: 0.250  G: 0.250  T: 0.250
+Parameters optimization took 1 rounds (0.001 sec)
+BEST SCORE FOUND : -23069.322
+Total tree length: 9.756
+
+Total number of iterations: 102
+CPU time used for tree search: 5.539 sec (0h:0m:5s)
+Wall-clock time used for tree search: 1.921 sec (0h:0m:1s)
+Total CPU time used: 68.560 sec (0h:1m:8s)
+Total wall-clock time used: 30.309 sec (0h:0m:30s)
+
+Analysis results written to: 
+  IQ-TREE report:                /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.iqtree
+  Maximum-likelihood tree:       /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.treefile
+  Likelihood distances:          /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.mldist
+  Likelihood mapping plot (SVG): /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.lmap.svg
+  Likelihood mapping plot (EPS): /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.lmap.eps
+  Screen log file:               /Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1/Phylo_20_1000_NA_NA_NA_1_0.1_0.5_testBaby_1.nexus.log
+
+Date and Time: Tue Jun  5 12:04:41 2018
