@@ -32,6 +32,32 @@ SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
+# Function to take a row from a dataframe and separate it into its components, then call the function to make 1 SimBac alignment (and its associated tree/parameter files)
+SimBac.wrapper <- function(row,program_paths){
+  # Extract the path to the SimBac executable from the program_paths vector
+  simbac_path <- program_paths[["SimBac"]]
+  # Extract values for creating the phylogenetic alignment from the input row
+  ntaxa <- row$n_taxa
+  nsites <- row$n_sites
+  gap <- row$gap
+  mutation_rate <- row$mutation_rate
+  internal_recombination <- row$internal_recombination
+  external_recombination <- row$external_recombination
+  id <- paste0(row$id,"_",row$rep)
+  # Create an output folder name using 
+  output_folder <- paste0(row$output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
+  # Call to phylo.make1 function to create one (1) simulation and store all information about that simulation in the folder from above
+  SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, internal_recombination, external_recombination, id)
+  # return the output folder so that you can open it and run the test statistics
+  return(output_folder)
+}
+
+# Function to run one entire simulation using a coalescent framework : create the alignment, run test statistics, and save
+SimBac.run1sim <- function(row, program_paths){
+  # Call the wrapper function to create the alignment: output folder is returned so you know where to look to find the files
+  sim_folder <- SimBac.wrapper(row)
+}
+
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
 # K is the proportion of the SECOND tree that will be included (provide a single value)
 phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, K = 0,id){
@@ -112,6 +138,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
+# Function to take a row from a dataframe and separate it into its components, then call the function to make 1 phylogenetic alignment (and its associated tree/parameter files)
 phylo.wrapper <- function(row){
   # Extract values for creating the phylogenetic alignment from the input row
   ntaxa <- row$n_taxa
@@ -132,6 +159,7 @@ phylo.wrapper <- function(row){
 
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
 phylo.run1sim <- function(row, program_paths){
+  # Call the wrapper function to create the alignment: output folder is returned so you know where to look to find the files
   sim_folder <- phylo.wrapper(row)
 }
 
