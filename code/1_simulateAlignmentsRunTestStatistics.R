@@ -1,5 +1,25 @@
 # R code to create dataframes with a row for each simulation to run, simulate those alignments and output a csv with results of all test statistics
 
+# Open packages
+library(seqinr)
+library(ape)
+library(TreeSim)
+library(phytools)
+library(phangorn)
+library(base)
+library(tictoc)
+library(ggplot2)
+library(reshape2)
+
+# Set working directory
+maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
+setwd(maindir)
+
+# Source files for functions
+source(paste0(maindir,"code/split_decomposition.R"))
+source(paste0(maindir,"code/test_statistic.R"))
+source(paste0(maindir,"code/create_alignments.R"))
+
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
 exec_folder <- "/Users/caitlincherryh/Documents/Executables/"
@@ -20,3 +40,7 @@ simbac_row <- c("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_d
 baby_simbac_df <- rbind(baby_simbac_df,simbac_row,simbac_row,stringsAsFactors=FALSE)
 simbac_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 names(baby_simbac_df) <- simbac_names
+
+phylo.run1sim(baby_phylo_df[1,], program_paths)
+SimBac.run1sim(baby_simbac_df[1,],program_paths)
+
