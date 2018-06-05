@@ -112,9 +112,27 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
+phylo.wrapper <- function(row){
+  # Extract values for creating the phylogenetic alignment from the input row
+  ntaxa <- row$n_taxa
+  nsites <- row$n_sites
+  birth_rate <- row$birth_rate
+  tree_age <- row$tree_age
+  mol_rate <- row$mean_molecular_rate
+  mol_rate_sd <- row$sd_molecular_rate
+  K <- row$proportion_tree2
+  id <- paste0(row$id,"_",row$rep)
+  # Create an output folder name using 
+  output_folder <- paste0(row$output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
+  # Call to phylo.make1 function to create one (1) simulation and store all information about that simulation in the folder from above
+  phylo.make1(output_folder, ntaxa, nsites, birth_rate, tree_age, mol_rate, mol_rate_sd, K, id)
+  # return the output folder so that you can open it and run the test statistics
+  return(output_folder)
+}
+
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
-phylo.run1sim <- function(){
-  
+phylo.run1sim <- function(row, program_paths){
+  sim_folder <- phylo.wrapper(row)
 }
 
 
