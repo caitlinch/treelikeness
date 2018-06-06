@@ -191,14 +191,13 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   # simulate a birth-death tree on a fixed number of extant taxa
   # n = number of taxa, numbsim = # of trees to simulate, lambda = speciation rate [good default = 0.5 from Duchenne and Lanfear (2015)]
   # mu = extinction rate (default for this project = 0)
-  tree_sim <- sim.bd.taxa.age(n = ntaxa, numbsim = 1, lambda = birth_rate, mu = death_rate, frac = 1, age = tree_age, mrca = FALSE)[[1]]
+  tree_sim <- sim.bd.taxa.age(n = ntaxa, numbsim = 1, lambda = birth_rate, mu = death_rate, frac = 1, age = tree_age, mrca = FALSE)[[1]] #simulate chronogram
   tree_sim$edge.length <- tree_sim$edge.length * (tree_age / max(branching.times(tree_sim))) # adjust branches to exactly equal tree age (adjusts for rounding errors)
   # 2. Simulate rate variation
   # Default for mol_rate and mol_rate_sd = 0.1 as in Duchenne and Lanfear (2015)
   phylo_sim <- tree_sim
+  # simulate phylogram
   phylo_sim$edge.length <- tree_sim$edge.length * rlnorm(length(tree_sim$edge.length), meanlog = log(mol_rate), sdlog = mol_rate_sd) # adjust branch lengths - mol rate will control the tree depth in substitutions per site
-  # scale tree to have a total depth of tree age
-  phylo_sim <- rescale(phylo_sim,"depth",tree_age)
   
   # Perform a single SPR move to get a new tree 
   phylo_sim_2 <- rSPR(phylo_sim, moves=1) # perform a single SPR move at random
