@@ -7,9 +7,9 @@ library(TreeSim)
 library(phytools)
 library(phangorn)
 library(base)
-library(tictoc)
 library(ggplot2)
 library(reshape2)
+# library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
 
 # Set working directory
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
@@ -35,12 +35,19 @@ phylo_row <- c("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_da
 baby_phylo_df <- rbind(baby_phylo_df,phylo_row,phylo_row,stringsAsFactors=FALSE)
 phylo_names <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
 names(baby_phylo_df) <- phylo_names
+baby_phylo_df[2,2]<- 180
 baby_simbac_df <- data.frame(matrix(nrow=0,ncol=9))
 simbac_row <- c("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20,1000,1000000,0.1,0,0.1,"testBaby",1)
 baby_simbac_df <- rbind(baby_simbac_df,simbac_row,simbac_row,stringsAsFactors=FALSE)
 simbac_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 names(baby_simbac_df) <- simbac_names
 
+# to run one complete simulation (20 taxa, 1300 sites) takes 33.883 seconds
 phylo.run1sim(baby_phylo_df[1,], exec_paths)
+tic("180 taxa")
+phylo.run1sim(baby_phylo_df[2,], exec_paths)
+toc()
 SimBac.run1sim(baby_simbac_df[1,],exec_paths)
+
+
 
