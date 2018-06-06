@@ -11,10 +11,10 @@ SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
   # note - site specific mutation rate defaults to 0.01 when not specified in SimBac
   # Good default gap size is 1,000,000 (1000000)
   # Create a filename
-  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,".fasta")
-  tree_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_tree_",id,".treefile")
-  clonal_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_clonalGenealogy_",id,".txt")
-  arg_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_ancestralRecombinationGraph_",id,".gv")
+  output_file <- paste0(output_folder,"alignment.fasta")
+  tree_file <- paste0(output_folder,"tree.treefile")
+  clonal_file <- paste0(output_folder,"clonalGenealogy.txt")
+  arg_file <- paste0(output_folder,"ancestralRecombinationGraph.gv")
   # Put together the SimBac command
   simbac_command <- paste0(simbac_path," -N ",ntaxa," -B ",nsites," -G ",gap," -T ",mutation_rate," -R ",internal_recombination,
                            " -r ",external_recombination," -o ",output_file," -c ",clonal_file," -l ",tree_file," -d ",arg_file)
@@ -22,7 +22,7 @@ SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
   system(simbac_command)
   
   # output a text file with all the parameters
-  output_name_template <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"_params.csv") # create a name for the output file 
+  output_name_template <- paste0(output_folder,"params.csv") # create a name for the output file 
   row <- c("coalescent",ntaxa,nsites,internal_recombination,external_recombination,mutation_rate,"NA","NA","NA","NA","NA","NA","NA",id) # gather up all the variables
   names <- c("method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
              "sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
@@ -61,8 +61,8 @@ SimBac.output.folder <- function(row){
   id <- paste0(row$id,"_",row$rep)
   # Create an output folder name using the variables
   output_folder <- paste0(row$output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
-  fasta_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,".fasta")
-  output_file <- paste0(output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"_testStatistics.csv")
+  fasta_file <- paste0(output_folder,"alignment.fasta")
+  output_file <- paste0(output_folder,"testStatistics.csv")
   return(c(output_folder,fasta_file,output_file))
 }
 
@@ -236,7 +236,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   
   # Output all the files
   # Make an output name for the nexus file
-  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,".nexus") # create a name for the output file
+  output_name_template <- paste0(output_folder,"alignment.nexus") # create a name for the output file
   write.phyDat(dna_sim,file = output_name_template, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
   # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
   nexus <- readLines(output_name_template) # open the new nexus file
@@ -245,18 +245,18 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   writeLines(nexus,output_name_template) # output the edited nexus file
   
   # Save the first tree and a picture of the first tree
-  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree1.pdf"))
+  pdf(file = paste0(output_folder,"tree1.pdf"))
   plot.phylo(phylo_sim)
   dev.off()
-  write.tree(phylo_sim, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree1.treefile"), tree.names = TRUE)
+  write.tree(phylo_sim, file = paste0(output_folder,"tree1.treefile"), tree.names = TRUE)
   # Save the second tree and a picture of the second tree
-  pdf(file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree2.pdf"))
+  pdf(file = paste0(output_folder,"tree2.pdf"))
   plot.phylo(phylo_sim_2)
   dev.off()
-  write.tree(phylo_sim_2, file = paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_tree2.treefile"), tree.names = TRUE)
+  write.tree(phylo_sim_2, file = paste0(output_folder,"tree2.treefile"), tree.names = TRUE)
   
   # output a text file with all the parameters
-  output_name_template <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_params.csv") # create a name for the output file 
+  output_name_template <- paste0(output_folder,"params.csv") # create a name for the output file 
   row <- c("phylogenetic",ntaxa,nsites,"NA","NA","NA",birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id) # gather up all the variables
   names <- c("method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
              "sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
@@ -293,8 +293,8 @@ phylo.output.folder <- function(row){
     id <- paste0(row$id,"_",row$rep)
     # Create an output folder name using the variables
     output_folder <- paste0(row$output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
-    nexus_file <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,".nexus")
-    output_file <- paste0(output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"_testStatistics.csv")
+    nexus_file <- paste0(output_folder,"alignment.nexus")
+    output_file <- paste0(output_folder,"testStatistics.csv")
     return(c(output_folder,nexus_file,output_file))
 }
 
