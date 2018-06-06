@@ -229,6 +229,8 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   }
   
   # simulate the DNA along the trees, using the J and K proportions.
+  # Note that here you're not including a mutation rate parameter (so it uses the default rate = 1)
+  # default base frequencies (all equal frequencies) and rate matrix Q (single-rate model) are used, therefore default model is Jukes Cantor 69
   dna_sim_1 <- simSeq(phylo_sim,l = K_sites) # simulate sites along the first tree
   dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites) # simulate sites along the second tree
   dna_sim <- c(dna_sim_1,dna_sim_2) # concatenate the two alignments
