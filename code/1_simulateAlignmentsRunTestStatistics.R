@@ -9,7 +9,7 @@ library(phangorn)
 library(base)
 library(ggplot2)
 library(reshape2)
-# library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
+library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
 
 # Set working directory
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
@@ -44,10 +44,10 @@ names(baby_simbac_df) <- simbac_names
 
 # to run one complete simulation (20 taxa, 1300 sites) takes 33.883 seconds
 phylo.run1sim(baby_phylo_df[1,], exec_paths)
+SimBac.run1sim(baby_simbac_df[1,],exec_paths)
 tic("180 taxa")
 phylo.run1sim(baby_phylo_df[2,], exec_paths)
 toc()
-SimBac.run1sim(baby_simbac_df[1,],exec_paths)
 
 
 
