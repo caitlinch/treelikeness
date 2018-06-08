@@ -42,7 +42,7 @@ baby_simbac_df <- rbind(baby_simbac_df,simbac_row,simbac_row,stringsAsFactors=FA
 simbac_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 names(baby_simbac_df) <- simbac_names
 
-# to run one complete simulation (20 taxa, 1300 sites) takes 33.883 seconds
+# Time to run simulations: 20 taxa, 1300 sites, all quartets = 33.883 seconds. 180 taxa, 1300 sites, all quartets = 36161.139 seconds (10 hours!). 
 phylo.run1sim(baby_phylo_df[1,], exec_paths)
 SimBac.run1sim(baby_simbac_df[1,],exec_paths)
 tic("180 taxa")

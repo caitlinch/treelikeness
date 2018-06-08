@@ -11,7 +11,21 @@ call.IQTREE <- function(iqtree_path,alignment_path){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
   if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
     # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
+    # Extract the number of taxa from the alignment path
+    # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
+    ntaxa = 
     system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -lmap ALL -redo")) # call IQ-tree!
+  }
+}
+
+call.IQTREE.quartet <- function(iqtree_path,alignment_path,ntaxa){
+  # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
+  if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
+    # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
+    # Extract the number of taxa from the alignment path
+    # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
+    nquartet <- 25*as.numeric(ntaxa)
+      system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -lmap ",nquartet," -redo")) # call IQ-tree!
   }
 }
 

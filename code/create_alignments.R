@@ -88,7 +88,7 @@ SimBac.run1sim <- function(row, program_paths){
     SimBac.wrapper(row, program_paths)
   }
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-  call.IQTREE(program_paths[["IQTree"]],al_file)
+  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row$n_taxa)
   
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
   setwd(al_folder)
@@ -321,7 +321,7 @@ phylo.run1sim <- function(row, program_paths){
     phylo.wrapper(row, al_folder)
   }
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-  call.IQTREE(program_paths[["IQTree"]],al_file)
+  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row$n_taxa)
 
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
   setwd(al_folder)
