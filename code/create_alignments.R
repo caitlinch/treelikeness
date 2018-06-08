@@ -141,7 +141,7 @@ SimBac.run1sim <- function(row, program_paths){
   seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
   seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
   
-  # Extract quartet mapping (proportion of preserved quartets - the number of quartets in the  )
+  # Extract quartet mapping
   iq_log_path <- paste0(al_file,".iqtree")
   iq_log <- readLines(iq_log_path)
   ind <- grep("Number of fully resolved  quartets",iq_log)
@@ -150,8 +150,7 @@ SimBac.run1sim <- function(row, program_paths){
   partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
   ind <- grep("Number of unresolved",iq_log)
   unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  ind <- grep("Number of quartets",iq_log)
-  total_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  total_q <- (resolved_q+partly_resolved_q+unresolved_q)
   prop_resolved <- resolved_q/total_q
   
   # Run my test statistics
@@ -303,7 +302,6 @@ phylo.output.folder <- function(row){
 phylo.run1sim <- function(row, program_paths){
   # Call the function to make the output folder name, alignment name, and results file name
   al_folder <- phylo.output.folder(row)[1]
-  print(al_folder)
   al_file <- phylo.output.folder(row)[2]
   results_file <- phylo.output.folder(row)[3]
   
@@ -375,7 +373,7 @@ phylo.run1sim <- function(row, program_paths){
   seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
   seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
   
-  # Extract quartet mapping (proportion of preserved quartets - the number of quartets in the  )
+  # Extract quartet mapping
   iq_log_path <- paste0(al_file,".iqtree")
   iq_log <- readLines(iq_log_path)
   ind <- grep("Number of fully resolved  quartets",iq_log)
@@ -384,8 +382,7 @@ phylo.run1sim <- function(row, program_paths){
   partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
   ind <- grep("Number of unresolved",iq_log)
   unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  ind <- grep("Number of quartets",iq_log)
-  total_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  total_q <- (resolved_q+partly_resolved_q+unresolved_q)
   prop_resolved <- resolved_q/total_q
   
   # Run my test statistics
@@ -419,6 +416,7 @@ phylo.run1sim <- function(row, program_paths){
                 "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
                 "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
   names(df) <- df_names # add names to the df so you know what's what
+  print(df)
   write.csv(df,file = results_file)
 
 }
