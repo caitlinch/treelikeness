@@ -37,30 +37,30 @@ SimBac.wrapper <- function(row,program_paths){
   # Extract the path to the SimBac executable from the program_paths vector
   simbac_path <- program_paths[["SimBac"]]
   # Extract values for creating the phylogenetic alignment from the input row
-  ntaxa <- as.numeric(row$n_taxa)
-  nsites <- as.numeric(row$n_sites)
-  gap <- as.numeric(row$gap)
-  mutation_rate <- as.numeric(row$mutation_rate)
-  internal_recombination <- as.numeric(row$internal_recombination)
-  external_recombination <- as.numeric(row$external_recombination)
-  id <- paste0(row$id,"_",row$rep)
+  ntaxa <- as.numeric(row[["n_taxa"]])
+  nsites <- as.numeric(row[["n_sites"]])
+  gap <- as.numeric(row[["gap"]])
+  mutation_rate <- as.numeric(row[["mutation_rate"]])
+  internal_recombination <- as.numeric(row[["internal_recombination"]])
+  external_recombination <- as.numeric(row[["external_recombination"]])
+  id <- paste0(row[["id"]],"_",row[["rep"]])
   # Create an output folder name using 
-  output_folder <- paste0(row$output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
+  output_folder <- paste0(row[["output_folder"]],"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
   # Call to SimBac.make1 function to create one (1) simulation and store all information about that simulation in the folder from above
   SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, internal_recombination, external_recombination, id)
 }
 
 SimBac.output.folder <- function(row){
   # Extract values for creating the SimBac alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
-  ntaxa <- as.numeric(row$n_taxa)
-  nsites <- as.numeric(row$n_sites)
-  gap <- as.numeric(row$gap)
-  mutation_rate <- as.numeric(row$mutation_rate)
-  internal_recombination <- as.numeric(row$internal_recombination)
-  external_recombination <- as.numeric(row$external_recombination)
-  id <- paste0(row$id,"_",row$rep)
+  ntaxa <- as.numeric(row[["n_taxa"]])
+  nsites <- as.numeric(row[["n_sites"]])
+  gap <- as.numeric(row[["gap"]])
+  mutation_rate <- as.numeric(row[["mutation_rate"]])
+  internal_recombination <- as.numeric(row[["internal_recombination"]])
+  external_recombination <- as.numeric(row[["external_recombination"]])
+  id <- paste0(row[["id"]],"_",row[["rep"]])
   # Create an output folder name using the variables
-  output_folder <- paste0(row$output_folder,"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
+  output_folder <- paste0(row[["output_folder"]],"SimBac_",ntaxa,"_",nsites,"_",internal_recombination,"_",external_recombination,"_",mutation_rate,"_NA_NA_NA_",id,"/")
   fasta_file <- paste0(output_folder,"alignment.fasta")
   output_file <- paste0(output_folder,"testStatistics.csv")
   return(c(output_folder,fasta_file,output_file))
@@ -88,7 +88,7 @@ SimBac.run1sim <- function(row, program_paths){
     SimBac.wrapper(row, program_paths)
   }
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row$n_taxa)
+  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
   
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
   setwd(al_folder)
@@ -169,10 +169,10 @@ SimBac.run1sim <- function(row, program_paths){
   # Collect results
   # Make somewhere to store the results
   df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
-  row <- c(al_file,"coalescent",row$n_taxa,row$n_sites,row$internal_recombination,row$external_recombination,row$mutation_rate,
-           "NA","NA","NA","NA","NA","NA","NA",paste0(row$id,"_",row$rep),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,
+  op_row <- c(al_file,"coalescent",row[["n_taxa"]],row[["n_sites"]],row[["internal_recombination"]],row[["external_recombination"]],row[["mutation_rate"]],
+           "NA","NA","NA","NA","NA","NA","NA",paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,
            seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npds,npdm,sd,nn) # collect all the information
-  df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
+  df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
                 "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
                 "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
@@ -227,12 +227,18 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
     }
   }
   
-  # simulate the DNA along the trees, using the J and K proportions.
-  # Note that here you're not including a mutation rate parameter (so it uses the default rate = 1)
-  # default base frequencies (all equal frequencies) and rate matrix Q (single-rate model) are used, therefore default model is Jukes Cantor 69
-  dna_sim_1 <- simSeq(phylo_sim,l = K_sites) # simulate sites along the first tree
-  dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites) # simulate sites along the second tree
-  dna_sim <- c(dna_sim_1,dna_sim_2) # concatenate the two alignments
+  # Simulate the DNA alignment
+  if ((K_sites > 0) && (J_sites > 0)){
+    # if sites are present from both trees, create an alignment for each tree and concatenate the alignments together
+    dna_sim_1 <- simSeq(phylo_sim,l = K_sites) # simulate sites along the first tree
+    dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites) # simulate sites along the second tree
+    dna_sim <- c(dna_sim_1,dna_sim_2) # concatenate the two alignments
+  } else if ((K_sites > 0) && (J_sites == 0)){
+    dna_sim <- simSeq(phylo_sim,l = K_sites) # if no sites on tree2, simulate sites only along the first tree
+  } else if ((K_sites == 0) && (J_sites > 0)) {
+    dna_sim <- simSeq(phylo_sim_2,l = J_sites) # if no sites on tree1, simulate sites only along the second tree
+  }
+
   
   # Output all the files
   # Make an output name for the nexus file
@@ -269,30 +275,30 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
 # Function to take a row from a dataframe and separate it into its components, then call the function to make 1 phylogenetic alignment (and its associated tree/parameter files)
 phylo.wrapper <- function(row, alignment_folder){
   # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
-  ntaxa <- as.numeric(row$n_taxa)
-  nsites <- as.numeric(row$n_sites)
-  birth_rate <- as.numeric(row$birth_rate)
-  tree_age <- as.numeric(row$tree_age)
-  mol_rate <- as.numeric(row$mean_molecular_rate)
-  mol_rate_sd <- as.numeric(row$sd_molecular_rate)
-  K <- as.numeric(row$proportion_tree2)
-  id <- paste0(row$id,"_",row$rep)
+  ntaxa <- as.numeric(row[["n_taxa"]])
+  nsites <- as.numeric(row[["n_sites"]])
+  birth_rate <- as.numeric(row[["birth_rate"]])
+  tree_age <- as.numeric(row[["tree_age"]])
+  mol_rate <- as.numeric(row[["mean_molecular_rate"]])
+  mol_rate_sd <- as.numeric(row[["sd_molecular_rate"]])
+  K <- as.numeric(row[["proportion_tree2"]])
+  id <- paste0(row[["id"]],"_",row[["rep"]])
   # Call to phylo.make1 function to create one (1) simulation and store all information about that simulation in the folder from above
   phylo.make1(alignment_folder, ntaxa, nsites, birth_rate, tree_age, mol_rate, mol_rate_sd, K, id)
 }
 
 phylo.output.folder <- function(row){
     # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
-    ntaxa <- as.numeric(row$n_taxa)
-    nsites <- as.numeric(row$n_sites)
-    birth_rate <- as.numeric(row$birth_rate)
-    tree_age <- as.numeric(row$tree_age)
-    mol_rate <- as.numeric(row$mean_molecular_rate)
-    mol_rate_sd <- as.numeric(row$sd_molecular_rate)
-    K <- as.numeric(row$proportion_tree2)
-    id <- paste0(row$id,"_",row$rep)
+    ntaxa <- as.numeric(row[["n_taxa"]])
+    nsites <- as.numeric(row[["n_sites"]])
+    birth_rate <- as.numeric(row[["birth_rate"]])
+    tree_age <- as.numeric(row[["tree_age"]])
+    mol_rate <- as.numeric(row[["mean_molecular_rate"]])
+    mol_rate_sd <- as.numeric(row[["sd_molecular_rate"]])
+    K <- as.numeric(row[["proportion_tree2"]])
+    id <- paste0(row[["id"]],"_",row[["rep"]])
     # Create an output folder name using the variables
-    output_folder <- paste0(row$output_folder,"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
+    output_folder <- paste0(row[["output_folder"]],"Phylo_",ntaxa,"_",nsites,"_NA_NA_NA_",tree_age,"_",mol_rate,"_",K,"_",id,"/")
     nexus_file <- paste0(output_folder,"alignment.nexus")
     output_file <- paste0(output_folder,"testStatistics.csv")
     return(c(output_folder,nexus_file,output_file))
@@ -319,7 +325,7 @@ phylo.run1sim <- function(row, program_paths){
     phylo.wrapper(row, al_folder)
   }
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row$n_taxa)
+  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
 
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
   setwd(al_folder)
@@ -407,10 +413,10 @@ phylo.run1sim <- function(row, program_paths){
   proportion_tree_1 <- params_csv$proportion_tree1 # extract proportion of alignment from tree 1
   # Make somewhere to store the results
   df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
-  row <- c(al_file,"phylogenetic",row$n_taxa,row$n_sites,"NA","NA","NA",row$birth_rate,death_rate,row$tree_age,row$mean_molecular_rate,row$sd_molecular_rate,proportion_tree_1,
-           row$proportion_tree2,paste0(row$id,"_",row$rep),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
+  op_row <- c(al_file,"phylogenetic",row[["n_taxa"]],row[["n_sites"]],"NA","NA","NA",row[["birth_rate"]],death_rate,row[["tree_age"]],row[["mean_molecular_rate"]],row[["sd_molecular_rate"]],proportion_tree_1,
+           row[["proportion_tree2"]],paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
            splittable_percentage,npds,npdm,sd,nn) # collect all the information
-  df <- rbind(df,row,stringsAsFactors = FALSE) # place row in dataframe
+  df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
                 "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
                 "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
