@@ -23,9 +23,9 @@ maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for wo
 setwd(maindir)
 
 # Source files for functions
-source(paste0(maindir,"code/split_decomposition.R"))
-source(paste0(maindir,"code/test_statistic.R"))
-source(paste0(maindir,"code/create_alignments.R"))
+source(paste0(maindir,"code/func_split_decomposition.R"))
+source(paste0(maindir,"code/func_test_statistic.R"))
+source(paste0(maindir,"code/func_create_alignments.R"))
 
 ## If running 3seq remotely, need to specify the ptable before the first run so that 3seq knows where to look
 #system("./3seq -f mtDNA.aln -ptable PvalueTable500 -id myFirstRun") # this command associates the Ptable with 3seq - needs a sample alignment to run correctly.

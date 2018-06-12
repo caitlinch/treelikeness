@@ -13,9 +13,9 @@ maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for wo
 setwd(maindir)
 
 # Source files for functions
-source(paste0(maindir,"code/split_decomposition.R"))
-source(paste0(maindir,"code/parametric_bootstrap.R"))
-source(paste0(maindir,"code/test_statistic.R"))
+source(paste0(maindir,"code/func_split_decomposition.R"))
+source(paste0(maindir,"code/func_parametric_bootstrap.R"))
+source(paste0(maindir,"code/func_test_statistic.R"))
 
 ##### Code from first drafts of functions ####
 ## Test code for split decomposition functions
