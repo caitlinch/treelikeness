@@ -6,6 +6,14 @@ library(seqinr)
 library(ape)
 library(phangorn)
 
+# Function to facilitate lapply
+SimBac.rowWrapper <- function(i,dataframe,program_paths){
+  ip_row <- dataframe[i,]
+  SimBac.run1sim(row = ip_row,program_paths = exec_paths)
+}
+
+
+
 # Create a function to make SimBac alignments
 SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate = 0.01, internal_recombination, external_recombination, id = ""){
   # note - site specific mutation rate defaults to 0.01 when not specified in SimBac
@@ -32,6 +40,8 @@ SimBac.make1 <- function(simbac_path, output_folder, ntaxa, nsites, gap, mutatio
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
+
+
 # Function to take a row from a dataframe and separate it into its components, then call the function to make 1 SimBac alignment (and its associated tree/parameter files)
 SimBac.wrapper <- function(row,program_paths){
   # Extract the path to the SimBac executable from the program_paths vector
@@ -50,6 +60,8 @@ SimBac.wrapper <- function(row,program_paths){
   SimBac.make1(simbac_path, output_folder, ntaxa, nsites, gap, mutation_rate, internal_recombination, external_recombination, id)
 }
 
+
+
 SimBac.output.folder <- function(row){
   # Extract values for creating the SimBac alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
   ntaxa <- as.numeric(row[["n_taxa"]])
@@ -65,6 +77,8 @@ SimBac.output.folder <- function(row){
   output_file <- paste0(output_folder,"testStatistics.csv")
   return(c(output_folder,fasta_file,output_file))
 }
+
+
 
 # Function to run one entire simulation using a coalescent framework : create the alignment, run test statistics, and save
 SimBac.run1sim <- function(row, program_paths){
@@ -181,6 +195,16 @@ SimBac.run1sim <- function(row, program_paths){
   write.csv(df,file = results_file)
 }
 
+
+
+# Function to facilitate lapply
+phylo.rowWrapper <- function(i,dataframe,program_paths){
+  ip_row <- dataframe[i,]
+  phylo.run1sim(row = ip_row,program_paths = exec_paths)
+}
+
+
+
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
 # K is the proportion of the SECOND tree that will be included (provide a single value)
 phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, K = 0,id){
@@ -226,7 +250,6 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
       J_sites <- J_sites - subtract
     }
   }
-  
   # Simulate the DNA alignment
   if ((K_sites > 0) && (J_sites > 0)){
     # if sites are present from both trees, create an alignment for each tree and concatenate the alignments together
@@ -238,8 +261,6 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   } else if ((K_sites == 0) && (J_sites > 0)) {
     dna_sim <- simSeq(phylo_sim_2,l = J_sites) # if no sites on tree1, simulate sites only along the second tree
   }
-
-  
   # Output all the files
   # Make an output name for the nexus file
   output_name_template <- paste0(output_folder,"alignment.nexus") # create a name for the output file
@@ -272,6 +293,8 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
 
+
+
 # Function to take a row from a dataframe and separate it into its components, then call the function to make 1 phylogenetic alignment (and its associated tree/parameter files)
 phylo.wrapper <- function(row, alignment_folder){
   # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
@@ -287,6 +310,9 @@ phylo.wrapper <- function(row, alignment_folder){
   phylo.make1(alignment_folder, ntaxa, nsites, birth_rate, tree_age, mol_rate, mol_rate_sd, K, id)
 }
 
+
+
+# Name output folders and files
 phylo.output.folder <- function(row){
     # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
     ntaxa <- as.numeric(row[["n_taxa"]])
@@ -303,6 +329,8 @@ phylo.output.folder <- function(row){
     output_file <- paste0(output_folder,"testStatistics.csv")
     return(c(output_folder,nexus_file,output_file))
 }
+
+
 
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
 phylo.run1sim <- function(row, program_paths){
@@ -422,7 +450,6 @@ phylo.run1sim <- function(row, program_paths){
                 "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
                 "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
   names(df) <- df_names # add names to the df so you know what's what
-  print(df)
   write.csv(df,file = results_file)
 
 }
