@@ -1,6 +1,7 @@
 # R code to create dataframes with a row for each simulation to run, simulate those alignments and output a csv with results of all test statistics
 
 # Open packages
+library(parallel)
 library(seqinr)
 library(ape)
 library(TreeSim)
@@ -45,6 +46,7 @@ mutation_rate <- rep(0.01,20)
 id <- rep(c("external"),20)
 rep <- c(rep(1,4), rep(2,4),rep(3,4),rep(4,4),rep(5,4))
 external_df <- data.frame(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
+lapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths)
 
 output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
 n_taxa <- rep(20,20)
@@ -56,6 +58,7 @@ mutation_rate <- rep(0.01,20)
 id <- rep(c("internal"),20)
 rep <- c(rep(1,4), rep(2,4),rep(3,4),rep(4,4),rep(5,4))
 internal_df <- data.frame(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
+lapply(1:nrow(internal_df),SimBac.rowWrapper,dataframe = internal_df, program_paths = exec_paths)
 
 output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
 n_taxa <- rep(20,20)
@@ -67,6 +70,7 @@ mutation_rate <- rep(0.01,20)
 id <- rep(c("mutation"),20)
 rep <- c(rep(1,4), rep(2,4),rep(3,4),rep(4,4),rep(5,4))
 mutation_df <- data.frame(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
+lapply(1:nrow(mutation_df),SimBac.rowWrapper,dataframe = mutation_df, program_paths = exec_paths)
 
 output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",255)
 n_taxa <- rep(20,255)
@@ -79,6 +83,7 @@ proportion_tree2 <- rep(seq(0,0.5,0.01),5)
 id <- rep(c("phylo"),255)
 rep <- c(rep(1,51), rep(2,51),rep(3,51),rep(4,51),rep(5,51))
 phylo_df <- data.frame(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_molecular_rate,sd_molecular_rate,proportion_tree2,id,rep, stringsAsFactors = FALSE)
+lapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths)
 
 output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",204)
 n_taxa <- rep(20,204)
@@ -91,10 +96,16 @@ proportion_tree2 <- rep(seq(0,0.5,0.01),4)
 id <- rep(c("phylo"),204)
 rep <- c(rep(1,51), rep(2,51),rep(3,51),rep(4,51))
 depth_df <- data.frame(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_molecular_rate,sd_molecular_rate,proportion_tree2,id,rep, stringsAsFactors = FALSE)
+lapply(1:nrow(depth_df),phylo.rowWrapper,dataframe = depth_df, program_paths = exec_paths)
 
 # Use the apply functions to run the simulations
 #apply(phylo_df,1,phylo.run1sim,exec_paths)
 #phylo.run1sim(phylo_df[1,],exec_paths)
+# mutation_df[1:nrow(mutation_df),] # to get all df rows
 
+# results = mclapply(1:num_samples, analyse_one_sample, samples = samples, mc.cores = 25)
+
+# # transpose matrix into columns - lapply 
+# lapply(mutation_df,SimBac.run1sim,program_paths = exec_paths)
 
 
