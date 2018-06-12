@@ -43,11 +43,52 @@ baby_simbac_df <- rbind(baby_simbac_df,simbac_row,simbac_row,stringsAsFactors=FA
 simbac_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 names(baby_simbac_df) <- simbac_names
 
-# Time to run simulations: 20 taxa, 1300 sites, all quartets = 33.883 seconds. 180 taxa, 1300 sites, all quartets = 36161.139 seconds (10 hours!). 
-phylo.run1sim(baby_phylo_df[1,], exec_paths)
-SimBac.run1sim(baby_simbac_df[1,],exec_paths)
-#phylo.run1sim(baby_phylo_df[2,], exec_paths)
-#phylo.run1sim(baby_phylo_df[3,], exec_paths)
+output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
+n_taxa <- rep(20,20)
+n_sites <- rep(1300,20)
+gap <- rep(1000000,20)
+internal_recombination <- rep(c(0.00,0.00,0.00,0.00),5)
+external_recombination <- rep(c(0.00,0.01,0.05,0.10),5)
+mutation_rate <- rep(0.01,20)
+id <- rep(c("external"),20)
+rep <- c(rep(1,4), rep(2,4),rep(3,4),rep(4,4),rep(5,4))
+external_df <- data.frame(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep)
+
+output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
+n_taxa <- rep(20,20)
+n_sites <- rep(1300,20)
+gap <- rep(1000000,20)
+internal_recombination <- rep(c(0.00, 0.01, 0.10,0.20),5)
+external_recombination <- rep(c(0.00,0.00,0.00,0.0),5)
+mutation_rate <- rep(0.01,20)
+id <- rep(c("internal"),20)
+rep <- c(rep(1,4), rep(2,4),rep(3,4),rep(4,4),rep(5,4))
+internal_df <- data.frame(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep)
+
+output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
+n_taxa <- rep(20,20)
+n_sites <- rep(1300,20)
+gap <- rep(1000000,20)
+internal_recombination <- rep(c(0.00, 0.01, 0.10,0.20),5)
+external_recombination <- rep(c(0.00,0.00,0.00,0.0),5)
+mutation_rate <- rep(0.01,20)
+id <- rep(c("mutation"),20)
+rep <- c(rep(1,4), rep(2,4),rep(3,4),rep(4,4),rep(5,4))
+mutation_df <- data.frame(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep)
+
+c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
+output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
+n_taxa <- rep(20,255)
+n_sites <- rep(1300,255)
+birth_rate <- rep(0.5,255)
+tree_age <- rep(1,255)
+mean_molecular_rate <- rep(0.1,255)
+sd_molecular_rate <- rep(0.1,255)
+proportion_tree2 <- rep(1:51,5)
+id <- rep(c("phylo"),240)
+rep <- c(rep(1,51), rep(2,51),rep(3,51),rep(4,51),rep(5,51))
+phylo_df <- data.frame(output_folder,n_taxa,n_sites,birth_rate,tree_age,internal_recombination,external_recombination,proportion_tree2,id,rep)
+
 
 
 
