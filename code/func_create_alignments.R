@@ -94,105 +94,113 @@ SimBac.run1sim <- function(row, program_paths){
     if (file.exists(al_file)==FALSE){
       # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
       SimBac.wrapper(row, program_paths)
+      redo <- FALSE # if the alignment doesn't exist, this is not a redo and the alignment needs to be tested
+    } else {
+      redo <- TRUE # if the alignment exists and the directory exists, this alignment must have already been tested with the test statistics
     }
   } else if (dir.exists(al_folder)==FALSE){
     # if the folder doesn't exist, create it
     dir.create(al_folder)
     # Once the folder has been created, run the wrapper to make the alignment
     SimBac.wrapper(row, program_paths)
-  }
-  # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
+    redo <- FALSE  # if the directory and the alignment don't exist, this is not a redo and the alignment needs to be tested
+  } 
   
-  # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
-  setwd(al_folder)
-  # run PHIPACK and 3seq
-  phi_path <- program_paths[["Phi"]] # get path to phipack executable
-  seq_path <- program_paths[["3seq"]] # get path to 3seq executable
-  filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
-  if (filetype == "fasta"){
-    # if the alignment is already in fasta format, run PhiPack through R
-    phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
-    system(phi_command) #call phipack
+  # Only run IQ-Tree and all the tests/test statistics and everything if this is NOT a redo (redo == FALSE)
+  if (redo == FALSE){
+    # The alignment now definitely exists. Now you can run IQ-tree on the alignment
+    call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
     
-    seq_command <- paste0(seq_path," -f ", al_file)
-    system(seq_command) #call 3SEQ
-  } else if (filetype == "nexus"){
-    # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
-    data = read.nexus.data(al_file) # read in nexus format alignment
-    fasta.name <- paste0(al_file,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
-    write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
-    phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
-    system(phi_command) # run PHI test on the new fasta alignment
+    # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
+    setwd(al_folder)
+    # run PHIPACK and 3seq
+    phi_path <- program_paths[["Phi"]] # get path to phipack executable
+    seq_path <- program_paths[["3seq"]] # get path to 3seq executable
+    filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
+    if (filetype == "fasta"){
+      # if the alignment is already in fasta format, run PhiPack through R
+      phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
+      system(phi_command) #call phipack
+      
+      seq_command <- paste0(seq_path," -f ", al_file)
+      system(seq_command) #call 3SEQ
+    } else if (filetype == "nexus"){
+      # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
+      data = read.nexus.data(al_file) # read in nexus format alignment
+      fasta.name <- paste0(al_file,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
+      write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
+      phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
+      system(phi_command) # run PHI test on the new fasta alignment
+      
+      seq_command <- paste0(seq_path," -f ", fasta.name)
+      system(seq_command) #call 3SEQ
+    }
+    # Extract significance from Phi Pack output
+    phi_file <- paste0(al_folder,"Phi.log")
+    phi_file <- readLines(phi_file)
+    ind      <- grep("p-Value",phi_file)
+    phi_sig <- as.numeric(strsplit(phi_file[ind+3],":")[[1]][2])
+    ind      <- grep("PHI Values",phi_file)
+    phi_mean <- as.numeric(strsplit(phi_file[ind+4],"      ","")[[1]][2])
+    phi_var <- as.numeric(strsplit(phi_file[ind+5],"      ","")[[1]][2])
+    phi_obs <- as.numeric(strsplit(phi_file[ind+6],"      ","")[[1]][2])
     
-    seq_command <- paste0(seq_path," -f ", fasta.name)
-    system(seq_command) #call 3SEQ
+    # Extract results output from 3Seq output
+    seq_file <- paste0(al_folder,"3s.log")
+    seq_log <- readLines(seq_file) # open file
+    ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
+    num_trips <- seq_log[ind]
+    num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
+    num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
+    ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
+    num_dis <- seq_log[ind]
+    num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
+    num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
+    # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
+    ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
+    seq_sig <- seq_log[ind]
+    seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
+    seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
+    
+    # Extract quartet mapping
+    iq_log_path <- paste0(al_file,".iqtree")
+    iq_log <- readLines(iq_log_path)
+    ind <- grep("Number of fully resolved  quartets",iq_log)
+    resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+    ind <- grep("Number of partly resolved quartets",iq_log)
+    partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+    ind <- grep("Number of unresolved",iq_log)
+    unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+    total_q <- (resolved_q+partly_resolved_q+unresolved_q)
+    prop_resolved <- resolved_q/total_q
+    
+    # Run my test statistics
+    # run pdm ratio (TS1) (modified splittable percentage)
+    splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
+    # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
+    npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
+    # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
+    npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
+    # run split decomposition (TS3) (split decomposition using splitstree)
+    sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "split decomposition")
+    # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
+    nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "neighbournet")
+    # Output pictures of neighbour net and split decomposition networks
+    
+    # Collect results
+    # Make somewhere to store the results
+    df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
+    op_row <- c(al_file,"coalescent",row[["n_taxa"]],row[["n_sites"]],row[["internal_recombination"]],row[["external_recombination"]],row[["mutation_rate"]],
+                "NA","NA","NA","NA","NA","NA","NA",paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,
+                seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npds,npdm,sd,nn) # collect all the information
+    df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
+    df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
+                  "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
+                  "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
+                  "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+    names(df) <- df_names # add names to the df so you know what's what
+    write.csv(df,file = results_file)
   }
-  # Extract significance from Phi Pack output
-  phi_file <- paste0(al_folder,"Phi.log")
-  phi_file <- readLines(phi_file)
-  ind      <- grep("p-Value",phi_file)
-  phi_sig <- as.numeric(strsplit(phi_file[ind+3],":")[[1]][2])
-  ind      <- grep("PHI Values",phi_file)
-  phi_mean <- as.numeric(strsplit(phi_file[ind+4],"      ","")[[1]][2])
-  phi_var <- as.numeric(strsplit(phi_file[ind+5],"      ","")[[1]][2])
-  phi_obs <- as.numeric(strsplit(phi_file[ind+6],"      ","")[[1]][2])
-  
-  # Extract results output from 3Seq output
-  seq_file <- paste0(al_folder,"3s.log")
-  seq_log <- readLines(seq_file) # open file
-  ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
-  num_trips <- seq_log[ind]
-  num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
-  num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
-  ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
-  num_dis <- seq_log[ind]
-  num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
-  num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
-  # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
-  ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
-  seq_sig <- seq_log[ind]
-  seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
-  seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
-  
-  # Extract quartet mapping
-  iq_log_path <- paste0(al_file,".iqtree")
-  iq_log <- readLines(iq_log_path)
-  ind <- grep("Number of fully resolved  quartets",iq_log)
-  resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  ind <- grep("Number of partly resolved quartets",iq_log)
-  partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  ind <- grep("Number of unresolved",iq_log)
-  unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  total_q <- (resolved_q+partly_resolved_q+unresolved_q)
-  prop_resolved <- resolved_q/total_q
-  
-  # Run my test statistics
-  # run pdm ratio (TS1) (modified splittable percentage)
-  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
-  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
-  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run split decomposition (TS3) (split decomposition using splitstree)
-  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "split decomposition")
-  # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
-  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "neighbournet")
-  # Output pictures of neighbour net and split decomposition networks
-  
-  # Collect results
-  # Make somewhere to store the results
-  df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
-  op_row <- c(al_file,"coalescent",row[["n_taxa"]],row[["n_sites"]],row[["internal_recombination"]],row[["external_recombination"]],row[["mutation_rate"]],
-           "NA","NA","NA","NA","NA","NA","NA",paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,
-           seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npds,npdm,sd,nn) # collect all the information
-  df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
-  df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
-                "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
-                "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
-                "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
-  names(df) <- df_names # add names to the df so you know what's what
-  write.csv(df,file = results_file)
 }
 
 
@@ -345,113 +353,120 @@ phylo.run1sim <- function(row, program_paths){
     if (file.exists(al_file)==FALSE){
       # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
       phylo.wrapper(row, al_folder)
+      redo <- FALSE # if the directory exists and the alignment doesn't, this is not a redo and all test statistics/tests need to be run
+    } else {
+      redo <- TRUE # if the alignment exists, this is a rerun of the same alignment. Don't rerun the test statistics.
     }
   } else if (dir.exists(al_folder)==FALSE){
     # if the folder doesn't exist, create it
     dir.create(al_folder)
     # Once the folder has been created, run the wrapper to make the alignment
     phylo.wrapper(row, al_folder)
+    redo <- FALSE # if the directory and the alignment don't exist, this is not a redo and all test statistics/tests need to be run
   }
-  # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-  call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
-
-  # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
-  setwd(al_folder)
-  # Get paths to PhiPac, 3SEQ
-  phi_path <- program_paths[["Phi"]] # get path to phipack executable
-  seq_path <- program_paths[["3seq"]] # get path to 3seq executable
-  filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
-  # run PHIPACK and 3seq (depending on the file format, will need to convert to fasta)
-  if (filetype == "fasta"){
-    # if the alignment is already in fasta format, run PhiPack through R
-    phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
-    system(phi_command) #call phipack
+  
+  # If the test statistics and tests haven't been run (redo == FALSE), run them all
+  if (redo == FALSE){
+    # The alignment now definitely exists. Now you can run IQ-tree on the alignment
+    call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
     
-    seq_command <- paste0(seq_path," -f ", al_file)
-    system(seq_command) #call 3SEQ
-  } else if (filetype == "nexus"){
-    # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
-    data = read.nexus.data(al_file) # read in nexus format alignment
-    fasta.name <- paste0(al_file,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
-    write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
-    phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
-    system(phi_command) # run PHI test on the new fasta alignment
+    # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
+    setwd(al_folder)
+    # Get paths to PhiPac, 3SEQ
+    phi_path <- program_paths[["Phi"]] # get path to phipack executable
+    seq_path <- program_paths[["3seq"]] # get path to 3seq executable
+    filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
+    # run PHIPACK and 3seq (depending on the file format, will need to convert to fasta)
+    if (filetype == "fasta"){
+      # if the alignment is already in fasta format, run PhiPack through R
+      phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
+      system(phi_command) #call phipack
+      
+      seq_command <- paste0(seq_path," -f ", al_file)
+      system(seq_command) #call 3SEQ
+    } else if (filetype == "nexus"){
+      # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
+      data = read.nexus.data(al_file) # read in nexus format alignment
+      fasta.name <- paste0(al_file,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
+      write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
+      phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
+      system(phi_command) # run PHI test on the new fasta alignment
+      
+      seq_command <- paste0(seq_path," -f ", fasta.name)
+      system(seq_command) #call 3SEQ
+    }
+    # Extract significance from Phi Pack output
+    phi_file <- paste0(al_folder,"Phi.log")
+    phi_file <- readLines(phi_file)
+    ind      <- grep("p-Value",phi_file)
+    phi_sig <- as.numeric(strsplit(phi_file[ind+3],":")[[1]][2])
+    ind      <- grep("PHI Values",phi_file)
+    phi_mean <- as.numeric(strsplit(phi_file[ind+4],"      ","")[[1]][2])
+    phi_var <- as.numeric(strsplit(phi_file[ind+5],"      ","")[[1]][2])
+    phi_obs <- as.numeric(strsplit(phi_file[ind+6],"      ","")[[1]][2])
     
-    seq_command <- paste0(seq_path," -f ", fasta.name)
-    system(seq_command) #call 3SEQ
+    # Extract results output from 3Seq output
+    seq_file <- paste0(al_folder,"3s.log")
+    seq_log <- readLines(seq_file) # open file
+    ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
+    num_trips <- seq_log[ind]
+    num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
+    num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
+    ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
+    num_dis <- seq_log[ind]
+    num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
+    num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
+    # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
+    ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
+    seq_sig <- seq_log[ind]
+    seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
+    seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
+    
+    # Extract quartet mapping
+    iq_log_path <- paste0(al_file,".iqtree")
+    iq_log <- readLines(iq_log_path)
+    ind <- grep("Number of fully resolved  quartets",iq_log)
+    resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+    ind <- grep("Number of partly resolved quartets",iq_log)
+    partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+    ind <- grep("Number of unresolved",iq_log)
+    unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+    total_q <- (resolved_q+partly_resolved_q+unresolved_q)
+    prop_resolved <- resolved_q/total_q
+    
+    # Run my test statistics
+    # run pdm ratio (TS1) (modified splittable percentage)
+    splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
+    # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
+    npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
+    # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
+    npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
+    # run split decomposition (TS3) (split decomposition using splitstree)
+    sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "split decomposition")
+    # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
+    nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "neighbournet")
+    # Output pictures of neighbour net and split decomposition networks
+    
+    # Collect results
+    # Extract death rate from params csv
+    all_files <- list.files(al_folder) # get a list of all the files
+    ind <- grep("params",all_files) # find which of those files is the parameters file
+    params_csv <- read.csv(all_files[ind]) # open the parameter file
+    death_rate <- params_csv$death_rate # extract death rate
+    proportion_tree_1 <- params_csv$proportion_tree1 # extract proportion of alignment from tree 1
+    # Make somewhere to store the results
+    df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
+    op_row <- c(al_file,"phylogenetic",row[["n_taxa"]],row[["n_sites"]],"NA","NA","NA",row[["birth_rate"]],death_rate,row[["tree_age"]],row[["mean_molecular_rate"]],row[["sd_molecular_rate"]],proportion_tree_1,
+                row[["proportion_tree2"]],paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
+                splittable_percentage,npds,npdm,sd,nn) # collect all the information
+    df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
+    df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
+                  "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
+                  "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
+                  "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+    names(df) <- df_names # add names to the df so you know what's what
+    write.csv(df,file = results_file)
   }
-  # Extract significance from Phi Pack output
-  phi_file <- paste0(al_folder,"Phi.log")
-  phi_file <- readLines(phi_file)
-  ind      <- grep("p-Value",phi_file)
-  phi_sig <- as.numeric(strsplit(phi_file[ind+3],":")[[1]][2])
-  ind      <- grep("PHI Values",phi_file)
-  phi_mean <- as.numeric(strsplit(phi_file[ind+4],"      ","")[[1]][2])
-  phi_var <- as.numeric(strsplit(phi_file[ind+5],"      ","")[[1]][2])
-  phi_obs <- as.numeric(strsplit(phi_file[ind+6],"      ","")[[1]][2])
-  
-  # Extract results output from 3Seq output
-  seq_file <- paste0(al_folder,"3s.log")
-  seq_log <- readLines(seq_file) # open file
-  ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
-  num_trips <- seq_log[ind]
-  num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
-  num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
-  ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
-  num_dis <- seq_log[ind]
-  num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
-  num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
-  # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
-  ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
-  seq_sig <- seq_log[ind]
-  seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
-  seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
-  
-  # Extract quartet mapping
-  iq_log_path <- paste0(al_file,".iqtree")
-  iq_log <- readLines(iq_log_path)
-  ind <- grep("Number of fully resolved  quartets",iq_log)
-  resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  ind <- grep("Number of partly resolved quartets",iq_log)
-  partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  ind <- grep("Number of unresolved",iq_log)
-  unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
-  total_q <- (resolved_q+partly_resolved_q+unresolved_q)
-  prop_resolved <- resolved_q/total_q
-  
-  # Run my test statistics
-  # run pdm ratio (TS1) (modified splittable percentage)
-  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
-  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
-  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run split decomposition (TS3) (split decomposition using splitstree)
-  sd <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "split decomposition")
-  # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
-  nn <- SplitsTree.decomposition.statistic(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file,network_algorithm = "neighbournet")
-  # Output pictures of neighbour net and split decomposition networks
-  
-  # Collect results
-  # Extract death rate from params csv
-  all_files <- list.files(al_folder) # get a list of all the files
-  ind <- grep("params",all_files) # find which of those files is the parameters file
-  params_csv <- read.csv(all_files[ind]) # open the parameter file
-  death_rate <- params_csv$death_rate # extract death rate
-  proportion_tree_1 <- params_csv$proportion_tree1 # extract proportion of alignment from tree 1
-  # Make somewhere to store the results
-  df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
-  op_row <- c(al_file,"phylogenetic",row[["n_taxa"]],row[["n_sites"]],"NA","NA","NA",row[["birth_rate"]],death_rate,row[["tree_age"]],row[["mean_molecular_rate"]],row[["sd_molecular_rate"]],proportion_tree_1,
-           row[["proportion_tree2"]],paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
-           splittable_percentage,npds,npdm,sd,nn) # collect all the information
-  df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
-  df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
-                "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
-                "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
-                "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
-  names(df) <- df_names # add names to the df so you know what's what
-  write.csv(df,file = results_file)
-
 }
 
 
