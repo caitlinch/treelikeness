@@ -98,14 +98,5 @@ rep <- c(rep(1,51), rep(2,51),rep(3,51),rep(4,51))
 depth_df <- data.frame(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_molecular_rate,sd_molecular_rate,proportion_tree2,id,rep, stringsAsFactors = FALSE)
 lapply(1:nrow(depth_df),phylo.rowWrapper,dataframe = depth_df, program_paths = exec_paths)
 
-# Use the apply functions to run the simulations
-#apply(phylo_df,1,phylo.run1sim,exec_paths)
-#phylo.run1sim(phylo_df[1,],exec_paths)
-# mutation_df[1:nrow(mutation_df),] # to get all df rows
-
-# results = mclapply(1:num_samples, analyse_one_sample, samples = samples, mc.cores = 25)
-
-# # transpose matrix into columns - lapply 
-# lapply(mutation_df,SimBac.run1sim,program_paths = exec_paths)
 
 
