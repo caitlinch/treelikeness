@@ -35,6 +35,9 @@ names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 phylo_df_names <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
 simbac_df_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 
+# lapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths) # lapply for SimBac
+# lapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths) # lapply for phylo
+
 # Build some test dataframes
 output_folder <- rep("/Users/caitlincherryh/Documents/Repositories/treelikeness/raw_data/testAlignments2/",20)
 n_taxa <- rep(20,20)
