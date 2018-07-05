@@ -115,5 +115,3 @@ rep <- rep(1,1)
 check_df <- data.frame(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_molecular_rate,sd_molecular_rate,proportion_tree2,id,rep, stringsAsFactors = FALSE)
 lapply(1:nrow(check_df),phylo.rowWrapper,dataframe = check_df, program_paths = exec_paths)
 
-
-
