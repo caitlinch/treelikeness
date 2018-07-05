@@ -84,7 +84,7 @@ tree_age <- rep(1,255)
 mean_molecular_rate <- rep(0.1,255)
 sd_molecular_rate <- rep(0.1,255)
 proportion_tree2 <- rep(seq(0,0.5,0.01),5)
-id <- rep(c("phylo"),255)
+id <- rep(c("pattern"),255) # can't use phylo as an ID as the word is included in title of all sims made using the phylogenetic approach
 rep <- c(rep(1,51), rep(2,51),rep(3,51),rep(4,51),rep(5,51))
 phylo_df <- data.frame(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_molecular_rate,sd_molecular_rate,proportion_tree2,id,rep, stringsAsFactors = FALSE)
 lapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths)
