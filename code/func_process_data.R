@@ -22,7 +22,7 @@ collate.csv <- function(directory,id){
 }
 
 # Extract the relevant columns for analysing the SimBac simulations
-simplify.Simbac <- function(df){
+simplify.SimBac <- function(df){
   cols <- c(1:5,14:30) 
   df <- df[cols]
   return(df)
