@@ -141,6 +141,7 @@ plot_title <- paste0(output_folder, "internalRecombination_allTests.png")
 ggsave(filename = plot_title, plot = in_plot, dev = "png")
 
 # Plot each statistic on its own plot
+
 in_plot1<- ggplot(internal_pruned_df, aes(x = internal_recombination, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) + 
   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Pairwise Homoplasy Index (PHI)") +
   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#999999", lty = 1) + theme_light()
@@ -202,6 +203,7 @@ plot_title <- paste0(output_folder, "phylo_allTests_mean.png")
 ggsave(filename = plot_title, plot = phy_plot, dev = "png")
 
 # Plot each statistic on its own plot
+
 phy_plot1<- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) + 
   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Pairwise Homoplasy Index (PHI)") +
   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#999999", lty = 1) + theme_light()
