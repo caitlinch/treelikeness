@@ -124,12 +124,14 @@ normalised.pdm.diff.mean <- function(iqpath,path){
   # Find the absolute difference between the tree pdm and the alignment pdm
   # gives the relative proportion that each element takes up
   diff_pdm <- abs(tree_pdm - alignment_pdm)
-  # average the difference matrix to get the test statistic - want the mean of the NON-ZERO values
-  vals <- unlist(diff_pdm)[diff_pdm>0] # turn the matrix into a vector, and then only take the values in the vector that are greater than 0
-  # This means all values that represent a pairwise distance have been extracted (duplicates removed so A-B exists but not B-A, and A-A [the diagonal] removed (as that distance is always 0))
-  ts <- mean(vals) # take the mean of all the non-zero values
+  # average the difference matrix to get the test statistic
+  # want the mean of the values in the upper triangle
+  # extract all the values in the upper triangle of the diff_pdm matrix
+  vals <- diff_pdm[upper.tri(diff_pdm)]
+  # take the mean of all the values in the upper triangle to get the mean absolute difference pairwise distance
+  ts <- mean(vals) 
   
-  # return the test statistic
+  # return the test statistic (the mean calculated just above)
   return(ts)
 }
 
