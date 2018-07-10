@@ -1,6 +1,7 @@
 # Functions to process and plot test statistics resulting from simulations
 
 # Function to collect all test statistic csv folders given an id to look for and a directory to look in
+# must have a unique id - will collect all results from any folders with id in their names
 collate.csv <- function(directory,id){
   # Collect all the folders within the directory
   folder_paths <- list.files(directory)
