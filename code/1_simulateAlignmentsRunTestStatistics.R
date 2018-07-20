@@ -12,34 +12,44 @@ library(ggplot2)
 library(reshape2)
 # library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
 
-run_location <- "nci"
+# Remember to have downloaded and tested the following programs: SplitsTree4, SimBac, IQ-Tree, PhiPack and 3Seq. 
+# 3Seq must have been associated with a P-value table for it to run properly
+# If it's not working on soma, you (Caitlin) might have forgotten about the LD_LIBRARY_PATH again: run these two lines of code
+# LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib
+# export LD_LIBRARY_PATH
+
+# run_location <- "nci"
 # run_location <- "mac"
+run_location <- "soma"
 
 if (run_location == "mac"){
-  op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/1_mainrun/"
-  maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
-  exec_folder <- "/Users/caitlincherryh/Documents/Executables/"
-  
-  # Create a vector with all of the executable file paths
-  # To access a path: exec_paths[["name"]]
-  exec_paths <- c("3seq","iqtree","Phi","SimBac","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
-  exec_paths <- paste0(exec_folder,exec_paths)
-  names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
-  
-  network_functions <- "code/func_split_decomposition.R"
+  	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/1_mainrun/"
+  	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
+  	exec_folder <- "/Users/caitlincherryh/Documents/Executables/"
+  	# Create a vector with all of the executable file paths
+  	# To access a path: exec_paths[["name"]]
+  	exec_paths <- c("3seq","iqtree","Phi","SimBac","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
+  	exec_paths <- paste0(exec_folder,exec_paths)
+  	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+  	network_functions <- "code/func_split_decomposition.R"
 } else if (run_location == "nci") {
-  op_folder <- "/short/xf1/cac599/sims_output/"
-  maindir <- "/home/599/cac599/treelikeness/"
-  
-  exec_folder <- "/home/599/cac599/treelikeness/executables/"
-  # Create a vector with all of the executable file paths
-  # To access a path: exec_paths[["name"]]
-  exec_paths <- c("3seq","iqtree","Phi","SimBac")
-  exec_paths <- paste0(exec_folder,exec_paths)
-  exec_paths <- c(exec_paths,"/home/599/cac599/splitstree4/SplitsTree")
-  names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
-  
-  network_functions <- "code/func_split_decomposition_nci.R"
+  	op_folder <- "/short/xf1/cac599/sims_output/"
+  	maindir <- "/home/599/cac599/treelikeness/"
+  	exec_folder <- "/home/599/cac599/treelikeness/executables/"
+  	# Create a vector with all of the executable file paths
+  	# To access a path: exec_paths[["name"]]
+  	exec_paths <- c("3seq","iqtree","Phi","SimBac")
+  	exec_paths <- paste0(exec_folder,exec_paths)
+  	exec_paths <- c(exec_paths,"/home/599/cac599/splitstree4/SplitsTree")
+  	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+  	network_functions <- "code/func_split_decomposition_nci.R"
+} else if (run_location=="soma"){
+	op_folder <- "/data/caitlin/treelikeness/output/"
+	maindir <- "/data/caitlin/treelikeness/"
+	exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
+	                "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
+	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+	network_functions <- "code/func_split_decomposition.R"
 }
 
 # Set working directory
@@ -50,9 +60,6 @@ source(paste0(maindir,network_functions))
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
-
-## If running 3seq remotely, need to specify the ptable before the first run so that 3seq knows where to look
-system(exec_paths[["3seq"]],"-f mtDNA.aln -ptable PvalueTable500 -id myFirstRun") # this command associates the Ptable with 3seq - needs a sample alignment to run correctly.
 
 # Columns required for the rows of parameters to run the simulations
 phylo_df_names <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
@@ -93,7 +100,7 @@ internal_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombinati
 names(internal_df) <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 # run simulations
 #lapply(1:nrow(internal_df),SimBac.rowWrapper,dataframe = internal_df, program_paths = exec_paths)
-
+  
 # Create phylogenetic sims dataframe
 output_folder <- c(op_folder)
 n_taxa <- c(5, 10, 20, 40, 80, 160)
@@ -109,6 +116,14 @@ phylo_df <- expand.grid(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_mo
 names(phylo_df) <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
 # Run the simulations
 #lapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths)
+
+# Save the parameter dataframes
+op_name <- paste0(op_folder,"input_parameters_external.csv")
+write.csv(external_df,file=op_name)
+op_name <- paste0(op_folder,"input_parameters_internal.csv")
+write.csv(internal_df,file=op_name)
+op_name <- paste0(op_folder,"input_parameters_2trees.csv")
+write.csv(phylo_df,file=op_name)
 
 
 
