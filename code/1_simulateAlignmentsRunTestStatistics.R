@@ -15,7 +15,7 @@ library(reshape2)
 # Remember to have downloaded and tested the following programs: SplitsTree4, SimBac, IQ-Tree, PhiPack and 3Seq. 
 # 3Seq must have been associated with a P-value table for it to run properly
 # If it's not working on soma, you (Caitlin) might have forgotten about the LD_LIBRARY_PATH again: run these two lines of code
-# LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib
+# LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib:usr/lib/x86_64-linux-gnu
 # export LD_LIBRARY_PATH
 
 # run_location <- "nci"
