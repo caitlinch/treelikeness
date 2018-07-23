@@ -14,7 +14,7 @@ call.IQTREE <- function(iqtree_path,alignment_path){
     # Extract the number of taxa from the alignment path
     # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
     ntaxa = 
-    system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -lmap ALL -redo")) # call IQ-tree!
+    system(paste0(iqtree_path," -s ",alignment_path," -nt 1 -lmap ALL -redo")) # call IQ-tree!
   }
 }
 
@@ -25,7 +25,7 @@ call.IQTREE.quartet <- function(iqtree_path,alignment_path,nsequences){
     # Extract the number of taxa from the alignment path
     # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
     nquartet <- 25*as.numeric(nsequences)
-    system(paste0(iqtree_path," -s ",alignment_path," -nt AUTO -lmap ",nquartet," -redo")) # call IQ-tree!
+    system(paste0(iqtree_path," -s ",alignment_path," -nt 1 -lmap ",nquartet," -redo")) # call IQ-tree!
   }
 }
 
