@@ -246,9 +246,9 @@ call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm){
   output_path <- splits.filename(alignment_path) # create an output path
   if (network_algorithm == "split decomposition"){
     # Create the splitstree command
-    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; EXPORTGRAPHICS format=SVG file=",paste0(plot_path,"_splitDecomposition.svg")," REPLACE=yes; EXPORTGRAPHICS format=PNG file=",paste0(plot_path,"_splitDecomposition.png")," REPLACE=yes; QUIT'")
+    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=SVG file=",paste0(plot_path,"_splitDecomposition.svg")," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=PNG file=",paste0(plot_path,"_splitDecomposition.png")," REPLACE=yes; QUIT'")
   } else if (network_algorithm == "neighbournet"){
-    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=NeighbourNet; SAVE FILE=", output_path," REPLACE=yes; EXPORTGRAPHICS format=SVG file=",paste0(plot_path,"_NeighbourNet.svg")," REPLACE=yes; EXPORTGRAPHICS format=png file=",paste0(plot_path,"_NeighbourNet.png")," REPLACE=yes; QUIT'")
+    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=NeighbourNet; SAVE FILE=", output_path," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=SVG file=",paste0(plot_path,"_NeighbourNet.svg")," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=png file=",paste0(plot_path,"_NeighbourNet.png")," REPLACE=yes; QUIT'")
   }
   # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
   system(splitstree_command) # Call the splitstree command using the system 
