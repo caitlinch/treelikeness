@@ -39,7 +39,7 @@ library(gridExtra)
 # file_name <- paste0(output_folder, "0_prelimMk2_collated_internal.csv")
 # write.csv(internal_df, file = file_name, row.names = FALSE)
 
- phylo_df <- collate.csv(raw_data_folder, "pattern")
+ phylo_df <- collate.csv(raw_data_folder, "2trees")
  phylo_df <- simplify.phylo(phylo_df)
  file_name <- paste0(output_folder, "collated_output_2trees.csv")
  write.csv(phylo_df, file = file_name, row.names = FALSE)
