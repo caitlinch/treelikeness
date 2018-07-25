@@ -21,7 +21,7 @@ library(reshape2)
 # run_location <- "nci"
 # run_location <- "mac"
 run_location <- "soma"
-run_id <- soma1
+run_id <- "soma1"
 
 if (run_location == "mac"){
   	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/1_mainrun/"

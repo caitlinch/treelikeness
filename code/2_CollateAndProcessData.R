@@ -3,7 +3,7 @@
 # Specify which file paths to use
 # run_location = "mac"
 run_location = "soma"
-run_id <- soma1
+run_id <- "soma1"
 
 if (run_location == "mac"){
   # Set file paths etc
@@ -67,8 +67,10 @@ phylo_pruned_df <- phylo_df[ , c("proportion_tree2","PHI_observed","proportion_r
 # Save the edited dataframes
 file_name <- paste0(output_folder, "external_pruned_collated_output_",run_id,".csv")
 write.csv(external_pruned_df, file = file_name, row.names = FALSE)
+
 file_name <- paste0(output_folder, "internal_pruned_collated_output_",run_id,".csv")
 write.csv(internal_pruned_df, file = file_name, row.names = FALSE)
+
 file_name <- paste0(output_folder, "2trees_pruned_collated_output_",run_id,".csv")
 write.csv(phylo_pruned_df, file = file_name, row.names = FALSE)
 
