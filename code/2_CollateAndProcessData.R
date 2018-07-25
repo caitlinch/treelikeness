@@ -72,6 +72,19 @@ write.csv(internal_pruned_df, file = file_name, row.names = FALSE)
 file_name <- paste0(output_folder, "2trees_pruned_collated_output_",run_id,".csv")
 write.csv(phylo_pruned_df, file = file_name, row.names = FALSE)
 
+# get the simulations that didn't work properly
+missing_external_df <- collate.missing.params(raw_data_folder,"external")
+file_name <- paste0(output_folder, "external_missingSims",run_id,".csv")
+write.csv(missing_external_df, file = file_name, row.names = FALSE)
+
+missing_internal_df <- collate.missing.params(raw_data_folder,"internal")
+file_name <- paste0(output_folder, "internal_missingSims",run_id,".csv")
+write.csv(missing_internal_df, file = file_name, row.names = FALSE)
+
+missing_phylo_df <- collate.missing.params(raw_data_folder,"2trees")
+file_name <- paste0(output_folder, "2trees_missingSims",run_id,".csv")
+write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
+
 # 
 # # Reshape the data into long format
 # plot_ex_df <- melt(external_pruned_df, id = c("external_recombination"))

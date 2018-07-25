@@ -73,12 +73,12 @@ simbac_df_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombin
 # For external recombination
 # Create dataframe
 output_folder <- c(op_folder)
-n_taxa <- c(10, 20, 40, 80, 160) # removed 5
+n_taxa <- c(5, 10, 20, 40, 80, 160) # removed 5
 n_sites <- c(1300)
 gap <- c(1000000)
 internal_recombination <- c(0)
-external_recombination <- c(0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1) #removed 0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001
-mutation_rate <- c(0.001, 0.005, 0.01, 0.05) # removed 0.0001, 0.0005
+external_recombination <- c(0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1) #removed 0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001
+mutation_rate <- c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05) # removed 0.0001, 0.0005
 id <- c("external")
 rep <- c(1:10)
 external_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
@@ -90,12 +90,12 @@ mclapply(1:2,SimBac.rowWrapper,dataframe = external_df, program_paths = exec_pat
 # For internal recombination
 # Create dataframe
 output_folder <- c(op_folder)
-n_taxa <- c(10, 20, 40, 80, 160) #removed 5
+n_taxa <- c(5, 10, 20, 40, 80, 160) #removed 5
 n_sites <- c(1300)
 gap <- c(1000000)
 internal_recombination <- c(0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5)
 external_recombination <- c(0)
-mutation_rate <- c(0.001, 0.005, 0.01, 0.05) # removed 0.0001, 0.0005
+mutation_rate <- c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05) # removed 0.0001, 0.0005
 id <- c("internal")
 rep <- c(1:10)
 internal_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
