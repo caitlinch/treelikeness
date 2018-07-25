@@ -21,6 +21,7 @@ library(reshape2)
 # run_location <- "nci"
 # run_location <- "mac"
 run_location <- "soma"
+run_id <- soma1
 
 if (run_location == "mac"){
   	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/1_mainrun/"
@@ -84,7 +85,7 @@ external_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombinati
 names(external_df) <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 # run simulations
 #mclapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
-#mclapply(1:2,SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
+mclapply(1:2,SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
 
 # For internal recombination
 # Create dataframe
@@ -100,7 +101,7 @@ rep <- c(1:10)
 internal_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
 names(internal_df) <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 # run simulations
-#mclapply(1:nrow(internal_df),SimBac.rowWrapper,dataframe = internal_df, program_paths = exec_paths, mc.cores = 35)
+mclapply(1:nrow(internal_df),SimBac.rowWrapper,dataframe = internal_df, program_paths = exec_paths, mc.cores = 35)
   
 # Create phylogenetic sims dataframe
 output_folder <- c(op_folder)
@@ -119,11 +120,11 @@ names(phylo_df) <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age",
 mclapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths, mc.cores = 35)
 
 # Save the parameter dataframes
-op_name <- paste0(results_folder,"input_parameters_external.csv")
+op_name <- paste0(results_folder,"external_input_parameters_",run_id,".csv")
 write.csv(external_df,file=op_name)
-op_name <- paste0(results_folder,"input_parameters_internal.csv")
+op_name <- paste0(results_folder,"internal_input_parameters_",run_id,".csv")
 write.csv(internal_df,file=op_name)
-op_name <- paste0(results_folder,"input_parameters_2trees.csv")
+op_name <- paste0(results_folder,"2trees_input_parameters_",run_id,".csv")
 write.csv(phylo_df,file=op_name)
 
 

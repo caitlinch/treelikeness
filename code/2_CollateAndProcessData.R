@@ -3,6 +3,7 @@
 # Specify which file paths to use
 # run_location = "mac"
 run_location = "soma"
+run_id <- soma1
 
 if (run_location == "mac"){
   # Set file paths etc
@@ -29,29 +30,28 @@ library(reshape2)
 library(gridExtra)
 
 # Collate data for the three preliminary sets of simulations and output each collated dataframe as a csv file
-# external_df <- collate.csv(raw_data_folder, "external")
-# external_df <- simplify.SimBac(external_df)
-# file_name <- paste0(output_folder, "1_soma1_collated_external.csv")
-# write.csv(external_df, file = file_name, row.names = FALSE)
+external_df <- collate.csv(raw_data_folder, "external", output_folder, run_id)
+external_df <- simplify.SimBac(external_df)
+file_name <- paste0(output_folder, "external_collated_output_",run_id,".csv")
+write.csv(external_df, file = file_name, row.names = FALSE)
 
-# internal_df <- collate.csv(raw_data_folder, "internal")
-# internal_df <- simplify.SimBac(internal_df)
-# file_name <- paste0(output_folder, "0_prelimMk2_collated_internal.csv")
-# write.csv(internal_df, file = file_name, row.names = FALSE)
+internal_df <- collate.csv(raw_data_folder, "internal", output_folder, run_id)
+internal_df <- simplify.SimBac(internal_df)
+file_name <- paste0(output_folder, "internal_collated_output_",run_id,".csv")
+write.csv(internal_df, file = file_name, row.names = FALSE)
 
- phylo_df <- collate.csv(raw_data_folder, "2trees")
- phylo_df <- simplify.phylo(phylo_df)
- file_name <- paste0(output_folder, "collated_output_2trees.csv")
- write.csv(phylo_df, file = file_name, row.names = FALSE)
+phylo_df <- collate.csv(raw_data_folder, "2trees", output_folder, run_id)
+phylo_df <- simplify.phylo(phylo_df)
+file_name <- paste0(output_folder, "2trees_collated_output_",run_id,".csv")
+write.csv(phylo_df, file = file_name, row.names = FALSE)
 
 # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
 # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
+external_df["num_3seq_triplets"] <- 6 * choose(external_df$n_taxa, 3)
+external_df["proportion_recombinant_triplets"] <- external_df$X3SEQ_num_recombinant_triplets / external_df$num_3seq_triplets
 
- # external_df["num_3seq_triplets"] <- 6 * choose(external_df$n_taxa, 3)
-# external_df["proportion_recombinant_triplets"] <- external_df$X3SEQ_num_recombinant_triplets / external_df$num_3seq_triplets
-# 
-# internal_df["num_3seq_triplets"] <- 6 * choose(internal_df$n_taxa, 3)
-# internal_df["proportion_recombinant_triplets"] <- internal_df$X3SEQ_num_recombinant_triplets / internal_df$num_3seq_triplets
+internal_df["num_3seq_triplets"] <- 6 * choose(internal_df$n_taxa, 3)
+internal_df["proportion_recombinant_triplets"] <- internal_df$X3SEQ_num_recombinant_triplets / internal_df$num_3seq_triplets
  
  phylo_df["num_3seq_triplets"] <- 6 * choose(phylo_df$n_taxa, 3)
  phylo_df["proportion_recombinant_triplets"] <- phylo_df$X3SEQ_num_recombinant_triplets / phylo_df$num_3seq_triplets
@@ -60,12 +60,16 @@ library(gridExtra)
 # Get only the relevant columns to plot
 # PHI (pairwise homoplasy [convergence] index) - gives p-value of observing the sequences under the null hypothesis of no recombination calculated using the PHI statistic.
 # Extract the observed PHI column and the other columns you want (including the new "proportion_recombinant_triplets" column)
-# external_pruned_df <- external_df[ , c("external_recombination","PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")]
-# internal_pruned_df <- internal_df[ , c("internal_recombination","PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")]
+external_pruned_df <- external_df[ , c("external_recombination","PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")]
+internal_pruned_df <- internal_df[ , c("internal_recombination","PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")]
 phylo_pruned_df <- phylo_df[ , c("proportion_tree2","PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")]
 
 # Save the edited dataframes
-file_name <- paste0(output_folder, "pruned_collated_output_2trees.csv")
+file_name <- paste0(output_folder, "external_pruned_collated_output_",run_id,".csv")
+write.csv(external_pruned_df, file = file_name, row.names = FALSE)
+file_name <- paste0(output_folder, "internal_pruned_collated_output_",run_id,".csv")
+write.csv(internal_pruned_df, file = file_name, row.names = FALSE)
+file_name <- paste0(output_folder, "2trees_pruned_collated_output_",run_id,".csv")
 write.csv(phylo_pruned_df, file = file_name, row.names = FALSE)
 
 # 
