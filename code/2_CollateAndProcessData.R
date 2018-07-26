@@ -45,6 +45,8 @@ phylo_df <- simplify.phylo(phylo_df)
 file_name <- paste0(output_folder, "2trees_collated_output_",run_id,".csv")
 write.csv(phylo_df, file = file_name, row.names = FALSE)
 
+
+
 # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
 # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
 external_df["num_3seq_triplets"] <- 6 * choose(external_df$n_taxa, 3)
@@ -76,15 +78,15 @@ write.csv(phylo_pruned_df, file = file_name, row.names = FALSE)
 
 # get the simulations that didn't work properly
 missing_external_df <- collate.missing.params(raw_data_folder,"external")
-file_name <- paste0(output_folder, "external_missingSims",run_id,".csv")
+file_name <- paste0(output_folder, "external_missingSims_params",run_id,".csv")
 write.csv(missing_external_df, file = file_name, row.names = FALSE)
 
 missing_internal_df <- collate.missing.params(raw_data_folder,"internal")
-file_name <- paste0(output_folder, "internal_missingSims",run_id,".csv")
+file_name <- paste0(output_folder, "internal_missingSims_params",run_id,".csv")
 write.csv(missing_internal_df, file = file_name, row.names = FALSE)
 
 missing_phylo_df <- collate.missing.params(raw_data_folder,"2trees")
-file_name <- paste0(output_folder, "2trees_missingSims",run_id,".csv")
+file_name <- paste0(output_folder, "2trees_missingSims_params",run_id,".csv")
 write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 
 # 

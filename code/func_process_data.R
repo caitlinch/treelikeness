@@ -23,7 +23,7 @@ collate.csv <- function(directory,id,output_path,run_id){
   
   # now save the paths that don't have an output
   csv_paths_missing <- csv_paths[file.exists(csv_paths)==FALSE]
-  write.csv(output_df,file=paste0(output_path,id,"_missing_simulations_",run_id,".csv"))
+  write.csv(csv_paths_missing,file=paste0(output_path,id,"_missingSimulations_filePath_",run_id,".csv"))
   
   return(output_df)
 }
