@@ -84,8 +84,8 @@ rep <- c(1:10)
 external_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
 names(external_df) <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
 # run simulations
-#mclapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
-mclapply(1:2,SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
+mclapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
+#mclapply(1:2,SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
 
 # For internal recombination
 # Create dataframe
