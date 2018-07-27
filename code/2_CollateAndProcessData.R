@@ -97,20 +97,20 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # 
 # # Plot the data
 # # Plot of all stats on the same set of axes
-# ex_plot <- ggplot(plot_ex_df, aes(x = external_recombination, y = value, col = variable, shape = variable)) + geom_point(size = 2) + 
-#             labs(x = "External recombination (%)", y = "Statistic value", title = "All Test Statistics") + 
+# ex_plot <- ggplot(plot_ex_df, aes(x = external_recombination, y = value, col = variable, shape = variable)) + geom_point(size = 2) +
+#             labs(x = "External recombination (%)", y = "Statistic value", title = "All Test Statistics") +
 #             stat_summary(fun.y = mean, geom="line", lwd=1, aes(col = variable)) +
 #             scale_colour_manual(name  = "Statistic", values = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
-#                                 labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                            "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                            "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#             scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1), 
-#                                labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                           "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                           "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#             scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2), 
-#                                   labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                   "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
+#                                 labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                            "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                            "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#             scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1),
+#                                labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                           "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                           "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#             scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2),
+#                                   labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                   "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
 #                                   "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + theme_light()
 # plot_title <- paste0(output_folder, "externalRecombination_allTests.pdf")
 # ggsave(filename = plot_title, plot = ex_plot, dev = "pdf")
@@ -118,35 +118,35 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # ggsave(filename = plot_title, plot = ex_plot, dev = "png")
 # 
 # # Plot each statistic on its own plot
-# ex_plot1<- ggplot(external_pruned_df, aes(x = external_recombination, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) + 
+# ex_plot1<- ggplot(external_pruned_df, aes(x = external_recombination, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) +
 #       labs(x = "External recombination (%)", y = "Statistic value", title = "Pairwise Homoplasy Index (PHI)") +
 #       stat_summary(fun.y = mean, geom="line", lwd=1, col = "#999999", lty = 1) + theme_light()
 # 
-# ex_plot2 <- ggplot(external_pruned_df, aes(x = external_recombination, y =proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) + 
+# ex_plot2 <- ggplot(external_pruned_df, aes(x = external_recombination, y =proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "Proportion Recombinant Triplets") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#E69F00", lty = 1) + theme_light()
 # 
-# ex_plot3 <- ggplot(external_pruned_df, aes(x = external_recombination, y =prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) + 
+# ex_plot3 <- ggplot(external_pruned_df, aes(x = external_recombination, y =prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "Proportion of Resolved Quartets") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#56B4E9", lty = 1) + theme_light()
 # 
-# ex_plot4 <- ggplot(external_pruned_df, aes(x = external_recombination, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) + 
+# ex_plot4 <- ggplot(external_pruned_df, aes(x = external_recombination, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "TS1 - Splittable Percentage") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#009E73", lty = 1) + theme_light()
 # 
-# ex_plot5 <- ggplot(external_pruned_df, aes(x = external_recombination, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) + 
+# ex_plot5 <- ggplot(external_pruned_df, aes(x = external_recombination, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "TS2a - Difference") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#F0E442", lty = 1) + theme_light()
 # 
-# ex_plot6 <- ggplot(external_pruned_df, aes(x = external_recombination, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) + 
+# ex_plot6 <- ggplot(external_pruned_df, aes(x = external_recombination, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "TS2b - Normalised Difference Mean") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#0072B2", lty = 1) + theme_light()
 # 
-# ex_plot7 <- ggplot(external_pruned_df, aes(x = external_recombination, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) + 
+# ex_plot7 <- ggplot(external_pruned_df, aes(x = external_recombination, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "TS3a - Split Decomposition") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#D55E00", lty = 1) + theme_light()
 # 
-# ex_plot8 <- ggplot(external_pruned_df, aes(x = external_recombination, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) + 
+# ex_plot8 <- ggplot(external_pruned_df, aes(x = external_recombination, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) +
 #   labs(x = "External recombination (%)", y = "Statistic value", title = "TS3b - NeighbourNet") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#CC79A7", lty = 1) + theme_light()
 # 
@@ -159,20 +159,20 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # 
 # 
 # # Repeat this for the internal recombination plots
-# in_plot <- ggplot(plot_in_df, aes(x = internal_recombination, y = value, col = variable, shape = variable)) + geom_point(size = 2) + 
-#   labs(x = "Internal recombination (%)", y = "Statistic value", title = "All Test Statistics") + 
+# in_plot <- ggplot(plot_in_df, aes(x = internal_recombination, y = value, col = variable, shape = variable)) + geom_point(size = 2) +
+#   labs(x = "Internal recombination (%)", y = "Statistic value", title = "All Test Statistics") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, aes(col = variable)) +
 #   scale_colour_manual(name  = "Statistic", values = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
-#                       labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                  "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                  "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#   scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1), 
-#                      labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                 "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                 "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#   scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2), 
-#                         labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                    "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
+#                       labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                  "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                  "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#   scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1),
+#                      labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                 "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                 "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#   scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2),
+#                         labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                    "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
 #                                    "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + theme_light()
 # plot_title <- paste0(output_folder, "internalRecombination_allTests.pdf")
 # ggsave(filename = plot_title, plot = in_plot, dev = "pdf")
@@ -181,35 +181,35 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # 
 # # Plot each statistic on its own plot
 # 
-# in_plot1<- ggplot(internal_pruned_df, aes(x = internal_recombination, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) + 
+# in_plot1<- ggplot(internal_pruned_df, aes(x = internal_recombination, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Pairwise Homoplasy Index (PHI)") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#999999", lty = 1) + theme_light()
 # 
-# in_plot2 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) + 
+# in_plot2 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Proportion Recombinant Triplets") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#E69F00", lty = 1) + theme_light()
 # 
-# in_plot3 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) + 
+# in_plot3 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "Proportion of Resolved Quartets") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#56B4E9", lty = 1) + theme_light()
 # 
-# in_plot4 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) + 
+# in_plot4 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "TS1 - Splittable Percentage") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#009E73", lty = 1) + theme_light()
 # 
-# in_plot5 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) + 
+# in_plot5 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "TS2a - Difference") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#F0E442", lty = 1) + theme_light()
 # 
-# in_plot6 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) + 
+# in_plot6 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "TS2b - Normalised Difference Mean") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#0072B2", lty = 1) + theme_light()
 # 
-# in_plot7 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) + 
+# in_plot7 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "TS3a - Split Decomposition") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#D55E00", lty = 1) + theme_light()
 # 
-# in_plot8 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) + 
+# in_plot8 <- ggplot(internal_pruned_df, aes(x = internal_recombination, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) +
 #   labs(x = "Internal recombination (%)", y = "Statistic value", title = "TS3b - NeighbourNet") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#CC79A7", lty = 1) + theme_light()
 # 
@@ -221,20 +221,20 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # ggsave(filename = plot_title, plot = combined_plot, dev = "png", width = 32.44, height = 14.88, units = "in")
 # 
 # # Repeat for the phylo plots
-# phy_plot <- ggplot(plot_phy_df, aes(x = proportion_tree2, y = value, col = variable, shape = variable)) + geom_point(size = 2) + 
-#   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "All Test Statistics") + 
+# phy_plot <- ggplot(plot_phy_df, aes(x = proportion_tree2, y = value, col = variable, shape = variable)) + geom_point(size = 2) +
+#   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "All Test Statistics") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, aes(col = variable)) +
 #   scale_colour_manual(name  = "Statistic", values = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
-#                       labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                  "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                  "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#   scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1), 
-#                      labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                 "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                 "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#   scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2), 
-#                         labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                    "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
+#                       labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                  "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                  "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#   scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1),
+#                      labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                 "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                 "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#   scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2),
+#                         labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                    "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
 #                                    "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + theme_light()
 # plot_title <- paste0(output_folder, "phylo_allTests_mean.pdf")
 # ggsave(filename = plot_title, plot = phy_plot, dev = "pdf")
@@ -243,35 +243,35 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # 
 # # Plot each statistic on its own plot
 # 
-# phy_plot1<- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) + 
+# phy_plot1<- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Pairwise Homoplasy Index (PHI)") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#999999", lty = 1) + theme_light()
 # 
-# phy_plot2 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) + 
+# phy_plot2 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Proportion Recombinant Triplets") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#E69F00", lty = 1) + theme_light()
 # 
-# phy_plot3 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) + 
+# phy_plot3 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Proportion of Resolved Quartets") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#56B4E9", lty = 1) + theme_light()
 # 
-# phy_plot4 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) + 
+# phy_plot4 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS1 - Splittable Percentage") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#009E73", lty = 1) + theme_light()
 # 
-# phy_plot5 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) + 
+# phy_plot5 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS2a - Difference") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#F0E442", lty = 1) + theme_light()
 # 
-# phy_plot6 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) + 
+# phy_plot6 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS2b - Normalised Difference Mean") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#0072B2", lty = 1) + theme_light()
 # 
-# phy_plot7 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) + 
+# phy_plot7 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS3a - Split Decomposition") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#D55E00", lty = 1) + theme_light()
 # 
-# phy_plot8 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) + 
+# phy_plot8 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS3b - NeighbourNet") +
 #   stat_summary(fun.y = mean, geom="line", lwd=1, col = "#CC79A7", lty = 1) + theme_light()
 # 
@@ -283,20 +283,20 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # ggsave(filename = plot_title, plot = combined_plot, dev = "png", width = 32.44, height = 14.88, units = "in")
 # 
 # # Repeat for the phylo plots but with a linear model
-# phy_plot <- ggplot(plot_phy_df, aes(x = proportion_tree2, y = value, col = variable, shape = variable)) + geom_point(size = 2) + 
-#   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "All Test Statistics") + 
+# phy_plot <- ggplot(plot_phy_df, aes(x = proportion_tree2, y = value, col = variable, shape = variable)) + geom_point(size = 2) +
+#   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "All Test Statistics") +
 #   geom_smooth(method = "lm", aes(col = variable)) +
 #   scale_colour_manual(name  = "Statistic", values = c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7"),
-#                       labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                  "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                  "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#   scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1), 
-#                      labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                 "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
-#                                 "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + 
-#   scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2), 
-#                         labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets", 
-#                                    "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean", 
+#                       labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                  "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                  "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#   scale_shape_manual(name  = "Statistic", values = c(16, 17, 18, 15, 12, 8, 4, 1),
+#                      labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                 "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
+#                                 "TS3a - Split Decomposition", "TS3b - NeighbourNet")) +
+#   scale_linetype_manual(name  = "Statistic", values = c(1, 2, 3, 4, 5, 6, 1, 2),
+#                         labels = c("PHI", "Proportion Recombinant Triplets", "Proportion Resolved Quartets",
+#                                    "TS1 - Splittable Percentage", "TS2a - Difference", "TS2b - Normalised Difference Mean",
 #                                    "TS3a - Split Decomposition", "TS3b - NeighbourNet")) + theme_light()
 # plot_title <- paste0(output_folder, "phylo_allTests_lm.pdf")
 # ggsave(filename = plot_title, plot = phy_plot, dev = "pdf")
@@ -304,35 +304,35 @@ write.csv(missing_phylo_df, file = file_name, row.names = FALSE)
 # ggsave(filename = plot_title, plot = phy_plot, dev = "png")
 # 
 # # Plot each statistic on its own plot
-# phy_plot1<- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) + 
+# phy_plot1<- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = PHI_observed)) + geom_point(size = 2, color = "#999999", shape = 16) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Pairwise Homoplasy Index (PHI)") +
 #   geom_smooth(method = "lm", aes(col = "#999999")) + theme_light()
 # 
-# phy_plot2 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) + 
+# phy_plot2 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =proportion_recombinant_triplets)) + geom_point(size = 2, color = "#E69F00", shape = 17) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Proportion Recombinant Triplets") +
 #   geom_smooth(method = "lm", aes(col = "#E69F00")) + theme_light()
 # 
-# phy_plot3 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) + 
+# phy_plot3 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y =prop_resolved_quartets)) + geom_point(size = 2, color = "#56B4E9", shape = 18) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "Proportion of Resolved Quartets") +
 #   geom_smooth(method = "lm", aes(col = "#56B4E9")) + theme_light()
 # 
-# phy_plot4 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) + 
+# phy_plot4 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = splittable_percentage)) + geom_point(size = 2, color = "#009E73", shape = 15) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS1 - Splittable Percentage") +
 #   geom_smooth(method = "lm", aes(col = "#009E73")) + theme_light()
 # 
-# phy_plot5 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) + 
+# phy_plot5 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_difference)) + geom_point(size = 2, color = "#F0E442", shape = 12) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS2a - Difference") +
 #   geom_smooth(method = "lm", aes(col = "#F0E442")) + theme_light()
 # 
-# phy_plot6 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) + 
+# phy_plot6 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = pdm_average)) + geom_point(size = 2, color = "#0072B2", shape = 8) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS2b - Normalised Difference Mean") +
 #   geom_smooth(method = "lm", aes(col = "#0072B2")) + theme_light()
 # 
-# phy_plot7 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) + 
+# phy_plot7 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = split_decomposition)) + geom_point(size = 2, color = "#D55E00", shape = 4) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS3a - Split Decomposition") +
 #   geom_smooth(method = "lm", aes(col = "#D55E00")) + theme_light()
 # 
-# phy_plot8 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) + 
+# phy_plot8 <- ggplot(phylo_pruned_df, aes(x = proportion_tree2, y = neighbour_net)) + geom_point(size = 2, color = "#CC79A7", shape = 1) +
 #   labs(x = "Proportion Tree 2 (%)", y = "Statistic value", title = "TS3b - NeighbourNet") +
 #   geom_smooth(method = "lm", aes(col = "#CC79A7")) + theme_light()
 # 
