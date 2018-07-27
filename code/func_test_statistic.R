@@ -33,6 +33,28 @@ iqtree.pdm <- function(iqpath,path){
   # Now the tree has been created, open it up
   tree <- read.tree(paste0(path,".treefile")) # read in the tree created in IQ-tree
   pdm <- cophenetic.phylo(tree) # get pairwise distance matrix for the taxa - note that this mirrors across the diagonal! (doesn't have half filled with 0's)
+  # After using cophenetic.phylo on the tree from IQ-Tree, need to rearrange the matrix
+  # So that when doing the subtractions, the pairwise distances will be coming from the same location (eg AB and AB, not BF and EH)
+  # matrix is not in a helpful order (orders based on taxa position in tree, but I want numerical)
+  # to sort cophenetic.phylo (matrix from the tree)
+  first_taxa_name <- rownames(pdm)[1] # get the name of the first taxa
+  first_char <- strsplit(first_taxa_name,"")[[1]][1] # get the first character from the name of the first taxa
+  if (first_char == "t"){
+    # for phylo sims - sort cols and rows
+    rn <- row.names(pdm) # get rownames
+    rn <- substring(rn,2) #remove t from rownames
+    rownames(pdm) <- sprintf("%03s",rn) # pad out rownames and reattach  (so will order numerically)
+    cn <- colnames(pdm) # get colnames
+    cn <- substring(cn,2)# remove t from colnames
+    colnames(pdm) <- sprintf("%03s",cn) # pad out colnames and reattach (so will order numerically)
+    pdm <- pdm[order(rownames(pdm)),order(colnames(pdm))] # order by number
+  } else {
+    # for SimBac sims - sort cols and rows
+    rownames(pdm) <- sprintf("%03s",rownames(pdm)) # pad out rownames and reattach (so will order numerically)
+    colnames(pdm) <- sprintf("%03s",colnames(pdm)) # pad out colnames and reattach (so will order numerically)
+    pdm <- pdm[order(rownames(pdm)),order(colnames(pdm))] # order by number
+  }
+  # Then do upper triangle removal
   pdm[upper.tri(pdm)] <- 0 # Get upper triangle and replace upper triangle coordinates (TRUE) with 0
   return(pdm)
 }
@@ -42,7 +64,28 @@ mldist.pdm <- function(path){
   # Open the maximum likelihood distances file output from creating the tree in IQ-tree
   filename <- paste0(path,".mldist")
   pdm <- read.table(filename,header=FALSE,skip=1) # read in mldist file
-  pdm <- pdm[2:ncol(pdm)] # remove first column (taxa names)
+  # After opening the mldist matrix, need to sort it so that the taxa are in the right order
+  # So that when doing the subtractions, the pairwise distances will be coming from the same location (eg AB and AB, not BF and EH)
+  # Place taxa in same order for both tree and alignment matrix
+  # the first column will be the order of the taxa
+  taxa <- as.character(pdm[,1])
+  first_taxa_name <- taxa[1] # get the name of the first taxa
+  first_char <- strsplit(first_taxa_name,"")[[1]][1] # get the first character from the name of the first taxa
+  if (first_char == "t"){
+    # Phylo sim - sort based on taxa naming conventions from the alignment
+    pdm <- pdm[,2:ncol(pdm)] # remove col with names
+    n <- substring(taxa,2) # remove the "t" character from the taxa name
+    colnames(pdm) <- sprintf("%03s",n) # change the row names to the taxa labels, pad out colnames and reattach (so will order numerically)
+    rownames(pdm) <- sprintf("%03s",n) # change the row names to the taxa labels, pad out rownames and reattach (so will order numerically)
+    pdm <- pdm[order(rownames(pdm)),order(colnames(pdm))] # order by number
+  } else {
+    # otherwise is SimBac sim - sort based on taxa naming conventions from the alignment
+    pdm <- pdm[,2:ncol(pdm)] # remove col with names
+    colnames(pdm) <- sprintf("%03s",taxa) # change the row names to the taxa labels, pad out colnames and reattach (so will order numerically)
+    rownames(pdm) <- sprintf("%03s",taxa) # change the row names to the taxa labels, pad out rownames and reattach (so will order numerically)
+    pdm <- pdm[order(rownames(pdm)),order(colnames(pdm))] # order by number
+  }
+  # Then do upper triangle removal
   pdm[upper.tri(pdm)] <- 0 # replace upper triangle coordinates (TRUE) with 0
   return(pdm)
 }  
