@@ -112,6 +112,69 @@ open.tree <- function(path){
   return(tree)
 }
 
+# Get numerators and denominators for the test statistics you invented
+get.TS.fractions <- function(path, iqpath, splitstree_path){
+  # in case you forget: numerator goes on the top, denominator goes on the bottom
+  # Get numbers from TS1
+  tree_pdm <- iqtree.pdm(iqpath,path)
+  ts1_num <- sum(tree_pdm)
+  alignment_pdm <- mldist.pdm(path)
+  ts1_denom <- sum(alignment_pdm)
+  
+  # Get fraction from TS4
+  call.IQTREE(iqpath,path) # path = path to alignment
+  # Calculate the split decomposition
+  call.SplitsTree(splitstree_path,path,"split decomposition")
+  # Retrieve the file name for the splits output file
+  splits.filepath <- splits.filename(path)
+  # Extract the splits 
+  splits <- read.nexus.splits(splits.filepath) # Open the splits from SplitsTree
+  ## Open the tree estimated by IQ-TREE
+  tree <- open.tree(path)
+  
+  # Test each split to see whether it's in the tree
+  # Make sure to feed in each line using [x] into the apply function, not [[x]] or the attributes (taxa names, weights) won't be passed to the test.monophyly function
+  tree_ii_sum <- 0 # create a vector to store split weights
+  for (i in 1:length(splits)){
+    # Iterate through each of the rows in the splits dataframe
+    test_ii <- test.monophyly(splits[i],tree) # test for monophyly
+    tree_ii_sum <- tree_ii_sum + test_ii # add weight to running sum (or 0 if split not in tree)
+  }
+  # Get the sum of all split weights
+  all_ii_sum <- sum.all.ii(splits)
+  # get the fraction details
+  ts4_num <- tree_ii_sum
+  ts4_denom <- all_ii_sum
+  
+  call.IQTREE(iqpath,path) # path = path to alignment
+  # Calculate the split decomposition
+  call.SplitsTree(splitstree_path,path,"neighbournet")
+  # Retrieve the file name for the splits output file
+  splits.filepath <- splits.filename(path)
+  # Extract the splits 
+  splits <- read.nexus.splits(splits.filepath) # Open the splits from SplitsTree
+  ## Open the tree estimated by IQ-TREE
+  tree <- open.tree(path)
+  
+  # Test each split to see whether it's in the tree
+  # Make sure to feed in each line using [x] into the apply function, not [[x]] or the attributes (taxa names, weights) won't be passed to the test.monophyly function
+  tree_ii_sum <- 0 # create a vector to store split weights
+  for (i in 1:length(splits)){
+    # Iterate through each of the rows in the splits dataframe
+    test_ii <- test.monophyly(splits[i],tree) # test for monophyly
+    tree_ii_sum <- tree_ii_sum + test_ii # add weight to running sum (or 0 if split not in tree)
+  }
+  # Get the sum of all split weights
+  all_ii_sum <- sum.all.ii(splits)
+  # Divide the sum of split weights in the tree by the sum of all split weights
+  ts5_num <- tree_ii_sum
+  ts5_denom <- all_ii_sum
+  
+  # Collect all variables
+  fracs <- c(ts1_num,ts1_denom,ts4_num,ts4_denom,ts5_num,ts5_denom)
+  return(fracs)
+}
+
 # Test statistic 1: based on dividing sum of values in tree pairwise distance matrix by sum of values in alignment matrix
 pdm.ratio <- function(iqpath,path){
   tree_pdm <- iqtree.pdm(iqpath,path)
