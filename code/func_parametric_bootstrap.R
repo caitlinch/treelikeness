@@ -2,10 +2,12 @@
 
 # Given the relevant information, run one parametric bootstrap
 do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
-  params <- get.simulation.parameters(folder_path)
-  ntaxa <- 
-  nsites <-
-  model <- 
+  # extract the name of the .iqtree file that contains the parameters for the simulation
+  dotiqtree_path <- paste0(folder_path, list.files(folder_path)[grep("iqtree", list.files(folder_path))])
+  params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
+  # ntaxa <- 
+  # nsites <-
+  # model <- 
   
   # Start the parametric bootstrap process
   # 1. Simulate a tree
@@ -89,10 +91,20 @@ get.simulation.parameters <- function(dotiqtree_file){
     rate6 <- as.numeric(strsplit(iq_file[[grep("G-T",iq_file)]],":")[[1]][2]) # G-T rate
     
     # Extract the state frequencies
-    sf1 <- as.numeric(strsplit(iq_file[[grep("pi\\(A\\)",iq_file)]],"=")[[1]][2]) # pi(A) - A freq. Remember to double backslash to escape before brackets
-    sf2 <- as.numeric(strsplit(iq_file[[grep("pi\\(C\\)",iq_file)]],"=")[[1]][2]) # pi(C) - C freq
-    sf3 <- as.numeric(strsplit(iq_file[[grep("pi\\(G\\)",iq_file)]],"=")[[1]][2]) # pi(G) - G freq
-    sf4 <- as.numeric(strsplit(iq_file[[grep("pi\\(T\\)",iq_file)]],"=")[[1]][2]) # pi(T) - T freq
+    state_freq_line <- iq_file[[grep("State frequencies",iq_file)]]
+    if (state_freq_line == "State frequencies: (equal frequencies)"){
+      # If the state frequencies are all equal, assign them all to 0.25 (1/4)
+      sf1 <- 0.25 # pi(A) - A freq.
+      sf2 <- 0.25 # pi(C) - C freq.
+      sf3 <- 0.25 # pi(G) - G freq.
+      sf4 <- 0.25 # pi(T) - T freq.
+    } else {
+      # If the state frequencies are not all equal, extract what they are
+      sf1 <- as.numeric(strsplit(iq_file[[grep("pi\\(A\\)",iq_file)]],"=")[[1]][2]) # pi(A) - A freq. Remember to double backslash to escape before brackets
+      sf2 <- as.numeric(strsplit(iq_file[[grep("pi\\(C\\)",iq_file)]],"=")[[1]][2]) # pi(C) - C freq.
+      sf3 <- as.numeric(strsplit(iq_file[[grep("pi\\(G\\)",iq_file)]],"=")[[1]][2]) # pi(G) - G freq.
+      sf4 <- as.numeric(strsplit(iq_file[[grep("pi\\(T\\)",iq_file)]],"=")[[1]][2]) # pi(T) - T freq.
+    }
     
     # Extract model of rate heterogeneity
     mrh1      <- strsplit(iq_file[[grep("Model of rate heterogeneity:",iq_file)]],":")[[1]][2] # Extract model of rate heterogeneity 
@@ -122,12 +134,14 @@ get.simulation.parameters <- function(dotiqtree_file){
     # For each row in the iqtree file rate matrix
     for (i in Q_start:Q_end){
       # Split the row
-      row <- strsplit(iq_file[[i]],"   ")
+      row <- strsplit(iq_file[[i]],"   ")[[1]]
+      row <- row[row!=""] # remove any empty strings from the vector
+      row <- row[row!=" "] # remove any 1 space strings from the vector
       # Add the resulting values to the relevant columns
-      c2 <- c(c2,as.numeric(row[[1]][2])) # convert to numeric so can use the numbers more easily later
-      c3 <- c(c3,as.numeric(row[[1]][3]))
-      c4 <- c(c4,as.numeric(row[[1]][4]))
-      c5 <- c(c5,as.numeric(row[[1]][5]))
+      c2 <- c(c2,as.numeric(row[2])) # convert to numeric so can use the numbers more easily later
+      c3 <- c(c3,as.numeric(row[3]))
+      c4 <- c(c4,as.numeric(row[4]))
+      c5 <- c(c5,as.numeric(row[5]))
     }
     # Create a dataframe of the rate matrix Q
     q_df <- data.frame(c1,c2,c3,c4,c5)
@@ -139,6 +153,13 @@ get.simulation.parameters <- function(dotiqtree_file){
     empty   <- which(iq_file=="") # get indexes of all empty lines
     empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
     g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
+    end_line <- iq_file[g_end]
+    # if the end isn't an empty line, subtract one from the end count 
+    # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
+    if (end_line != ""){
+      g_end = g_end - 1
+    }
+    # Start collecting info for the matrix
     g1 <- c() # initialise columns to store data in
     g2 <- c()
     g3 <- c()
