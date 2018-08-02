@@ -215,7 +215,7 @@ phylo.rowWrapper <- function(i,dataframe,program_paths){
 
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
 # K is the proportion of the SECOND tree that will be included (provide a single value)
-phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, K = 0,id){
+phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, K, id){
   # Randomly select a death rate using a uniform distribution from 0 to 99% of the birth rate
   death_rate = runif(1,min = 0, max = (0.99*birth_rate))
   # 1. Simulate a tree
@@ -261,13 +261,16 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   # Simulate the DNA alignment
   if ((K_sites > 0) && (J_sites > 0)){
     # if sites are present from both trees, create an alignment for each tree and concatenate the alignments together
-    dna_sim_1 <- simSeq(phylo_sim,l = K_sites) # simulate sites along the first tree
-    dna_sim_2 <- simSeq(phylo_sim_2,l = J_sites) # simulate sites along the second tree
-    dna_sim <- c(dna_sim_1,dna_sim_2) # concatenate the two alignments
+    dna_sim_1 <- simSeq(phylo_sim,l = J_sites) # simulate sites along the first tree
+    dna_sim_2 <- simSeq(phylo_sim_2,l = K_sites) # simulate sites along the second tree (should be the smaller number - K is proportion of tree 2)
+    dnabin_1 <- as.DNAbin(dna_sim_1) # convert to DNAbin
+    dnabin_2 <- as.DNAbin(dna_sim_2) # convert to DNAbin
+    dna_bin <- cbind(dnabin_1,dnabin_2, check.names = TRUE, fill.with.gaps = TRUE, quiet = FALSE) # concatenate the two alignments
+    dna_sim <- as.phyDat(dna_bin) # convert the alignment to 
   } else if ((K_sites > 0) && (J_sites == 0)){
-    dna_sim <- simSeq(phylo_sim,l = K_sites) # if no sites on tree2, simulate sites only along the first tree
+    dna_sim <- simSeq(phylo_sim_2,l = K_sites) # if no sites on tree1, simulate sites only along the second tree
   } else if ((K_sites == 0) && (J_sites > 0)) {
-    dna_sim <- simSeq(phylo_sim_2,l = J_sites) # if no sites on tree1, simulate sites only along the second tree
+    dna_sim <- simSeq(phylo_sim,l = J_sites) # if no sites on tree2, simulate sites only along the first tree
   }
   # Output all the files
   # Make an output name for the nexus file
