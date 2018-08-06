@@ -148,30 +148,39 @@ get.simulation.parameters <- function(dotiqtree_file){
     #Rename the columns
     names(q_df) <- c("nucleotide","A","C","G","T")
     
-    #Create the matrix for discrete gamma categories
-    g_start <- grep(" Category",iq_file)+1 # get the index for the first line of the gamma categories matrix
-    empty   <- which(iq_file=="") # get indexes of all empty lines
-    empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
-    g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
-    end_line <- iq_file[g_end]
-    # if the end isn't an empty line, subtract one from the end count 
-    # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
-    if (end_line != ""){
-      g_end = g_end - 1
+    # Check if the model for rate heterogeneity is uniform
+    mrh1_check <- gsub(" ","",mrh1)
+    if (mrh1_check=="Uniform"){
+      # If the model for rate heterogeneity is uniform, don't need to create a matrix for discrete gamma rate categories
+      g_df <- "Uniform"
+    } else {
+      # If the model isn't uniform, need to create a matrix to collect and store the gamme category information
+      #Create the matrix for discrete gamma categories
+      g_start <- grep(" Category",iq_file)+1 # get the index for the first line of the gamma categories matrix
+      empty   <- which(iq_file=="") # get indexes of all empty lines
+      empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
+      g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
+      end_line <- iq_file[g_end]
+      # if the end isn't an empty line, subtract one from the end count 
+      # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
+      if (end_line != ""){
+        g_end = g_end - 1
+      }
+      # Start collecting info for the matrix
+      g1 <- c() # initialise columns to store data in
+      g2 <- c()
+      g3 <- c()
+      # Iterate through rows in gamma matrix
+      for (i in g_start:g_end){
+        row <- strsplit(iq_file[[i]],"        ") # split the rows on the long strong of 0's in the middle
+        g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
+        g2 <- c(g2,as.numeric(row[[1]][2]))
+        g3 <- c(g3,as.numeric(row[[1]][3]))
+      }
+      g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
+      names(g_df) <- c("category","relative_rate","proportion") # name the columns
     }
-    # Start collecting info for the matrix
-    g1 <- c() # initialise columns to store data in
-    g2 <- c()
-    g3 <- c()
-    # Iterate through rows in gamma matrix
-    for (i in g_start:g_end){
-      row <- strsplit(iq_file[[i]],"        ") # split the rows on the long strong of 0's in the middle
-      g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
-      g2 <- c(g2,as.numeric(row[[1]][2]))
-      g3 <- c(g3,as.numeric(row[[1]][3]))
-    }
-    g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
-    names(g_df) <- c("category","relative_rate","proportion") # name the columns
+    
     
     # Create a list of the three dataframes
     # This will be the output 
