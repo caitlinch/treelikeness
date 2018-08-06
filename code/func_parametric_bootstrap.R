@@ -1,63 +1,62 @@
 # R functions to run parametric bootstrap
 
-# Given the relevant information, run one parametric bootstrap
-do.1.bootstrap <- function(iq_path,folder_path,parameters,test_statistic) {
+library(phytools)
+library(seqinr)
+library(ape)
+library(phangorn)
+
+# Given a directory and a number of replicates, this function will
+# generate that number of alignments in the directory with the parameters from 
+# the .iqtree file (number of taxa, number of sites, rates
+# and base frequencies)
+# make sure the alignment folder ends with a slash!
+phylo.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path) {
   # extract the name of the .iqtree file that contains the parameters for the simulation
   dotiqtree_path <- paste0(folder_path, list.files(folder_path)[grep("iqtree", list.files(folder_path))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
-  # ntaxa <- 
-  # nsites <-
-  # model <- 
   
-  # Start the parametric bootstrap process
-  # 1. Simulate a tree
-    # simulate a birth-death tree on a fixed number of extant taxa
-        # n = number of taxa, numbsim = # of trees to simulate, lambda = speciation rate
-        # mu = extinction rate, 
-  tree_sim <- sim.bd.taxa(ntaxa, numbsim = 1, lambda = 0.5, mu = 0, frac = 1, complete = FALSE, stochsampling = TRUE)[[1]]
-  
-  # 2. Simulate rate variation
-    # set parameters for creating rate variation in tree
-  mol_rate <- 0.1
-  mrate_sd <- 0.1
-    # make the rate variation in the tree
-  rate_var <- tree_sim
-  rate_var$edge.length <- tree_sim$edge.length * rlnorm(length(tree_sim$edge.length), meanlog = log(mol_rate), sdlog = mrate_sd)
-    # scale tree to have total depth of 0.6 (CHECK THIS VALUE & FIND A BIOLOGICAL REASON FOR IT)
-  rate_var <- rescale(rate_var,"depth",0.6)
+  # fill out the rep numbers (padded with 0s to get to 4 digits)
+  rep_ids <- 1:n_reps
+  rep_ids <- sprintf("%04d", rep_ids)
 
-  # 3. Simulate an alignment 
-  if (nsites > 0){
-    # simulate the sequence alignment based on the tree and number of sites
-    dna_sim <- as.DNAbin(simSeq(rate_var, l = nsites))
-  } else {
-    # if there are no sites, create a dummy matrix 
-    dna_sim <- matrix('n', ncol = 1, nrow = n_taxa)
-    rownames(dna_sim) <- tree_sim$tip.label
-    dna_sim <- as.DNAbin(dna_sim)
-  }
-  # save alignment as a nexus file
-  op_file <- paste0(folder_path,"/alignment.nexus")
-  write.nexus.data(dna_sim, file = op_file)
-  
-  # 4. Calculate tree likeness of that alignment
-  # calculate the test statistic using numbers from the grant proposal  
-  if (test_statistic ==1){
-    ts <- pdm.ratio(iq_path,op_file)
-  } else if (test_statistic == 2){
-    ts <- normalised.pdm.ratio(iq_path,op_file)
-  } else if (test_statistic == 3){
-    print("haven't written the third test statistic yet")
-  } else{
-    break
-  }
 }
 
-# Given a .iqtree file, a number of replicates and an output directory, this function will
-# generate that number of alignments in the output directory with the parameters from 
-# the .iqtree file (number of taxa, number of sites, rates
-# and base frequencies)
-
+# Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
+do.1.bootstrap <- function(rep_number,params,alignment_folder,iq_path,splitstree_path){
+  # Create a new folder name to store this alignment and its outputs in
+  bs_folder <- paste0(alignment_folder,rep_number,"/")
+  
+  if (dir.exists(bs_folder)==TRUE){
+    redo <- TRUE
+  } else if (dir.exists(bs_folder)==FALSE){
+    # if the folder doesn't exist, create it
+    dir.create(bs_folder)
+    redo <- FALSE  # if the directory and the alignment don't exist, this is not a redo and the alignment needs to be tested
+  } 
+  
+  # Only create alignments, run IQ-Tree and all the tests/test statistics and everything if this is NOT a redo (redo == FALSE)
+  if (redo == FALSE){
+    # Create the alignment 
+    # Sample code for generating a parametric DNA sequence if you have a tree
+    # s1 = simSeq(t1, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
+    # s2 = simSeq(t2, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
+    # aln = c(s1, s2)
+    
+    # Extract the parameters you need to enter into simSeq
+    n_bp = 1300 # want a sequence that is 1300 base pairs long
+    # Extract the vector form of the rate matrix 
+    m <- params$Q_rate_matrix[,2:5] # extract the square block with the rates and not the header column
+    Q_vec <- c(m[2,1],m[3,1],m[3,2],m[4,1],m[4,2],m[4,3]) # extract the rates 
+    # Extract the base frequencies in the following order: A, C, G, T
+    base_freqs <- c(as.numeric(params$parameters[[12,2]]), as.numeric(params$parameters[[13,2]]), as.numeric(params$parameters[[14,2]]), as.numeric(params$parameters[[15,2]]))
+    seq_type <- "DNA" # generate DNA sequence
+      
+    # The alignment now definitely exists. Now you can run IQ-tree on the alignment
+    call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
+  }
+  
+  # Calculate the test statistics
+}
 
 
 # Given a .iqtree file, this function will extract the relevant parameters
@@ -118,7 +117,7 @@ get.simulation.parameters <- function(dotiqtree_file){
     # Make a list of the output rows for the output dataframe
     op <- c(op1,"DNA",op2,op3,op4,rate1,rate2,rate3,rate4,rate5,rate6,sf1,sf2,sf3,sf4,mrh1,mrh2)
     # Create the output dataframe
-    op_df <- data.frame(names,op)
+    op_df <- data.frame(names,op, stringsAsFactors = FALSE)
     # Name the columns
     names(op_df) <- c("parameter","value")
     
@@ -144,7 +143,7 @@ get.simulation.parameters <- function(dotiqtree_file){
       c5 <- c(c5,as.numeric(row[5]))
     }
     # Create a dataframe of the rate matrix Q
-    q_df <- data.frame(c1,c2,c3,c4,c5)
+    q_df <- data.frame(c1,c2,c3,c4,c5, stringsAsFactors = FALSE)
     #Rename the columns
     names(q_df) <- c("nucleotide","A","C","G","T")
     
@@ -177,7 +176,7 @@ get.simulation.parameters <- function(dotiqtree_file){
         g2 <- c(g2,as.numeric(row[[1]][2]))
         g3 <- c(g3,as.numeric(row[[1]][3]))
       }
-      g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
+      g_df <- data.frame(g1,g2,g3, stringsAsFactors = FALSE) # create a dataframe of the information
       names(g_df) <- c("category","relative_rate","proportion") # name the columns
     }
     
