@@ -24,5 +24,6 @@ source(paste0(treelikeness_dir,"code/func_split_decomposition.R"))
 source(paste0(treelikeness_dir,"code/func_parametric_bootstrap.R"))
 source(paste0(treelikeness_dir,"code/func_test_statistic.R"))
 
-phylo.bootstrap(test_alignment_folder,n_reps,iq_path,splitstree_path)
+phylo.parametric.bootstrap(test_alignment_folder,n_reps,iq_path,splitstree_path)
+phylo.collate.bootstrap(test_alignment_folder)
 

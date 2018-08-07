@@ -10,7 +10,7 @@ library(phangorn)
 # the .iqtree file (number of taxa, number of sites, rates
 # and base frequencies)
 # make sure the alignment folder ends with a slash!
-phylo.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path) {
+phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path) {
   # extract the name of the .iqtree file that contains the parameters for the simulation
   dotiqtree_path <- paste0(alignment_folder, list.files(alignment_folder)[grep("iqtree", list.files(alignment_folder))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
@@ -121,6 +121,7 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     n_taxa <- as.numeric(params$parameters[3,2]) # extract the number of taxa from the parameters 
     call.IQTREE.quartet(iq_path,bs_al,n_taxa)
   }
+  bs_al <- paste0(bs_folder, "alignment.nexus") # alignment name
   
   ## Calculate the test statistics
   
@@ -337,7 +338,7 @@ get.simulation.parameters <- function(dotiqtree_file){
     
     # Create a list of the dataframes - this will be the output
     params <- list(op_df,g_df)
-    # Name the parameters si tget're easy to access once you've outputted the data
+    # Name the parameters so they're easy to access once you've outputted the data
     names(params) <- c("parameters","gamma_categories")
   }
   
@@ -345,4 +346,67 @@ get.simulation.parameters <- function(dotiqtree_file){
   # make the output dataframe
   return(params)
 }
+
+phylo.collate.bootstrap <- function(alignment_folder){
+  # Open the original alignment results
+  alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"))
+  alignment_df$bootstrap_id <- "alignment"
+  # Collect the PHI and 3Seq P-Values from the alignment df BEFORE pruning it
+  PHI_sig <- alignment_df$PHI_sig[1]
+  seq_sig <- alignment_df$X3SEQ_p_value[1]
+  # Extract only the columns you want
+  cols <- c("method","bootstrap_id","n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id",
+            "prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")
+  alignment_df <- alignment_df[,cols]
+  
+  # Collate bootstrap csvs
+  # Collect all the folders within the directory
+  folder_paths <- list.files(alignment_folder)
+  # Get the positions at which the simulations containing the id are at
+  inds <- grep("bootstrap", folder_paths)
+  bootstrap_paths <- folder_paths[inds] # get everything that has the word "bootstrap" in it
+  bootstrap_csv_paths <- bootstrap_paths[grep("csv",bootstrap_paths)] # get all csv files
+  bootstrap_folders <- setdiff(bootstrap_paths,bootstrap_csv_paths) # remove the csv files from the bootstrap folders list
+  # Get the paths to the csv files
+  csv_paths <- paste0(alignment_folder,bootstrap_folders,"/bootstrap_testStatistics.csv")
+  # Collect all the csv files
+  collate_list <- lapply(csv_paths, read.csv, stringsAsFactors = FALSE)
+  # Turn the list into a dataframe
+  collate_df <- Reduce(rbind, collate_list)
+  collate_df <- collate_df[,cols] # extract only the cols of interest
+  
+  # Attach the two dataframes together
+  p_value_df <- rbind(alignment_df, collate_df)
+  # Output the p-value df
+  bs_collated_csv <- paste0(alignment_folder,"collated_bootstrap_testStatistics.csv")
+  write.csv(p_value_df,file = bs_collated_csv)
+  
+  # Arrange the ranking to find the p-values for each test statistic
+  p_value_df <- p_value_df[order(p_value_df$prop_resolved_quartets),]
+  prop_resolved_quartets_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  p_value_df <- p_value_df[order(p_value_df$splittable_percentage),]
+  splittable_percentage_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  p_value_df <- p_value_df[order(p_value_df$pdm_difference),]
+  pdm_difference_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  p_value_df <- p_value_df[order(p_value_df$pdm_average),]
+  pdm_average_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  p_value_df <- p_value_df[order(p_value_df$split_decomposition),]
+  split_decomposition_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  p_value_df <- p_value_df[order(p_value_df$neighbour_net),]
+  neighbour_net_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  
+  # Create an output dataframe of just P-values
+  op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["birth_rate"]],alignment_df[["death_rate"]],alignment_df[["tree_age"]],
+              alignment_df[["mean_molecular_rate"]],alignment_df[["sd_molecular_rate"]],alignment_df[["proportion_tree1"]],alignment_df[["proportion_tree2"]],
+              alignment_df[["id"]],PHI_sig, seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
+              split_decomposition_sig, neighbour_net_sig)
+  output_df <- data.frame(matrix(nrow=0,ncol=18)) # make somewhere to store the results
+  output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
+  names(output_df) <- c("n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id",
+                        "PHI_p_value","3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","pdm_average_p_value",
+                        "split_decomposition_p_value","neighbour_net_p_value")
+  p_value_csv <- paste0(alignment_folder,"p_value.csv")
+  write.csv(output_df,file = p_value_csv)
+}
+
 
