@@ -59,10 +59,12 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     
     # Generate the DNA sequence
     gamma_categories <- params$gamma_categories
-    if (gamma_categories == "Uniform"){
+    if (class(gamma_categories) == "character"){
+      # This means that gamma_categories = "Uniform"
       # No rate heterogeneity exists - generate the DNA all in one chunk
       dna_sim <- simSeq(tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
-    } else {
+    } else if (class(gamma_categories) == "data.frame") {
+      # If the gamma categories are a dataframe, there's rate heterogeneity happening
       # If there's rate heterogeneity, stick together a bunch of alignments to make one big alignment
       gamma_categories$n_bp <- (gamma_categories$proportion * n_bp)
       
