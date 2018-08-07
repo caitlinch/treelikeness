@@ -15,14 +15,20 @@ phylo.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path) {
   dotiqtree_path <- paste0(folder_path, list.files(folder_path)[grep("iqtree", list.files(folder_path))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
   
+  # Open the ML tree from IQ-Tree
+  # extract the name of the file that contains the ML tree calculated by IQ-Tree for the original alignment (the alignment with recombination)
+  all_tree_paths <- paste0(folder_path, list.files(folder_path)[grep("treefile", list.files(folder_path))]) #get all tree files (will be three - one from IQ-Tree, and one for each tree 1 and tree 2)
+  ML_tree_path <- all_tree_paths[grep("alignment", all_tree_paths)] # get only the treefile for the alignment
+  ML_tree <- read.tree(ML_tree_path)
+  
   # fill out the rep numbers (padded with 0s to get to 4 digits)
   rep_ids <- 1:n_reps
   rep_ids <- sprintf("%04d", rep_ids)
-
+  lapply(rep_ids,do.1.bootstrap,params,alignment_folder,iq_path,splitstree_path)
 }
 
 # Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
-do.1.bootstrap <- function(rep_number,params,alignment_folder,iq_path,splitstree_path){
+do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,splitstree_path){
   # Create a new folder name to store this alignment and its outputs in
   bs_folder <- paste0(alignment_folder,rep_number,"/")
   
@@ -43,19 +49,111 @@ do.1.bootstrap <- function(rep_number,params,alignment_folder,iq_path,splitstree
     # aln = c(s1, s2)
     
     # Extract the parameters you need to enter into simSeq
-    n_bp = 1300 # want a sequence that is 1300 base pairs long
+    n_bp = as.numeric(params$parameters[4,2]) # want a sequence that is 1300 base pairs long
     # Extract the vector form of the rate matrix 
     m <- params$Q_rate_matrix[,2:5] # extract the square block with the rates and not the header column
     Q_vec <- c(m[2,1],m[3,1],m[3,2],m[4,1],m[4,2],m[4,3]) # extract the rates 
     # Extract the base frequencies in the following order: A, C, G, T
     base_freqs <- c(as.numeric(params$parameters[[12,2]]), as.numeric(params$parameters[[13,2]]), as.numeric(params$parameters[[14,2]]), as.numeric(params$parameters[[15,2]]))
     seq_type <- "DNA" # generate DNA sequence
+    
+    # Generate the DNA sequence
+    gamma_categories <- params$gamma_categories
+    if (gamma_categories == "Uniform"){
+      # No rate heterogeneity exists - generate the DNA all in one chunk
+      dna_sim <- simSeq(tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
+    } else {
+      # If there's rate heterogeneity, stick together a bunch of alignments to make one big alignment
+      dna_sim <- c()
+      gamma_categories$n_bp <- (gamma_categories$proportion * n_bp)
       
+      # Make sure that the sum of alignment types will be n_bp (1300 bp)
+      tot <- sum(gamma_categories$n_bp)
+      diff <- n_bp - tot
+      if (diff > 0) {
+        # if there are less bp in the gamma categories than the desired number of base pairs
+        # need to add the diff onto one category
+        # Randomly pick one row to add
+        change_row <- sample(1:nrow(gamma_categories),1)
+        # Add the difference to the randomly chosen row
+        gamma_categories$n_bp[change_row] <- gamma_categories$n_bp[change_row] + diff
+      } else if (diff < 0){
+        # if there are more bp in the gamma categories than the desired number of base pairs
+        # need to subtract the diff from one category
+        # Randomly pick one row to subtract
+        change_row <- sample(1:nrow(gamma_categories),1)
+        # Subtract the difference from the randomly chosen row
+        gamma_categories$n_bp[change_row] <- gamma_categories$n_bp[change_row] - diff
+      }
+    # Now you have the number of bp for each rate, you can create the alignments and stick them together
+    for (i in 1:nrow(gamma_categories)){
+      # Iterate through each row of the gamma categories matrix
+      # Extract the rate for that chunk of the sequence
+      chunk_rate <- gamma_categories$relative_rate[[i]]
+      # Extract the number of base pairs for that chunk of the sequence
+      chunk_length <- gamma_categories$n_bp[[i]]
+      # Simulate the DNA
+      dna_chunk <- simSeq(tree, l = chunk_length, type = seq_type, bf = base_freqs, Q = Q_vec, rate = chunk_rate)
+      # Stick the DNA together with the DNA already created (or the empty object to store DNA in)
+      dna_sim <- c(dna_sim,dna_chunk)
+      }
+    }
+      
+    # Save the DNA alignment
+    bs_al <- paste0(bs_folder, "alignment.nexus")
+    write.phyDat(dna_sim,file = bs_al, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
+    
     # The alignment now definitely exists. Now you can run IQ-tree on the alignment
-    call.IQTREE.quartet(program_paths[["IQTree"]],al_file,row[["n_taxa"]])
+    n_taxa <- as.numeric(params$parameters[3,2]) # extract the number of taxa from the parameters 
+    call.IQTREE.quartet(iq_path,bs_al,n_taxa)
   }
   
-  # Calculate the test statistics
+  ## Calculate the test statistics
+  
+  # Extract quartet mapping from IQ-Tree results
+  iq_log_path <- paste0(bs_al, ".iqtree")
+  iq_log <- readLines(iq_log_path)
+  ind <- grep("Number of fully resolved  quartets",iq_log)
+  resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of partly resolved quartets",iq_log)
+  partly_resolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  ind <- grep("Number of unresolved",iq_log)
+  unresolved_q <- as.numeric(strsplit(strsplit(iq_log[ind],":")[[1]][2],"\\(")[[1]][1])
+  total_q <- (resolved_q+partly_resolved_q+unresolved_q)
+  prop_resolved <- resolved_q/total_q
+  
+  # Run my test statistics
+  # run pdm ratio (TS1) (modified splittable percentage)
+  splittable_percentage <- pdm.ratio(iqpath = iq_path, path = al_file)
+  # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
+  npds <- normalised.pdm.diff.sum(iqpath = iq_path, path = al_file)
+  # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
+  npdm <- normalised.pdm.diff.mean(iqpath = iq_path, path = al_file)
+  # run split decomposition (TS3) (split decomposition using splitstree)
+  sd <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = al_file,network_algorithm = "split decomposition")
+  # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
+  nn <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = al_file,network_algorithm = "neighbournet")
+  
+  # Extract params csv from alignment folder
+  all_files <- list.files(alignment_folder) # get a list of all the files
+  ind <- grep("params",all_files) # find which of those files is the parameters file
+  params_csv <- read.csv(paste0(alignment_folder,all_files[ind])) # open the parameter file
+  params_csv <- params_csv[,2:ncol(params_csv)]
+  # add test statistic results to params_csv
+  params_csv$num_quartets <- total_q
+  params_csv$num_resolved_quartets <- resolved_q
+  params_csv$num_partially_resolved_quartets <- partly_resolved_q
+  params_csv$num_unresolved_quartets <- unresolved_q
+  params_csv$splittable_percentage <- splittable_percentage
+  params_csv$pdm_difference <- npds
+  params_csv$pdm_average <- npdm
+  params_csv$split_decomposition <- sd
+  params_csv$neighbour_net <- nn
+  params_csv$bootstrap_id <- paste0("bootstrap_",rep_number)
+  
+  # Output results as a csv in the bootstrap folder
+  bs_results_csv <- paste0(bs_folder,"bootstrap_testStatistics.csv")
+  write.csv(params_csv,file = bs_results_csv)
 }
 
 
