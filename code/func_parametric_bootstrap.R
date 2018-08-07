@@ -12,25 +12,25 @@ library(phangorn)
 # make sure the alignment folder ends with a slash!
 phylo.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path) {
   # extract the name of the .iqtree file that contains the parameters for the simulation
-  dotiqtree_path <- paste0(folder_path, list.files(folder_path)[grep("iqtree", list.files(folder_path))])
+  dotiqtree_path <- paste0(alignment_folder, list.files(alignment_folder)[grep("iqtree", list.files(alignment_folder))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
   
   # Open the ML tree from IQ-Tree
   # extract the name of the file that contains the ML tree calculated by IQ-Tree for the original alignment (the alignment with recombination)
-  all_tree_paths <- paste0(folder_path, list.files(folder_path)[grep("treefile", list.files(folder_path))]) #get all tree files (will be three - one from IQ-Tree, and one for each tree 1 and tree 2)
+  all_tree_paths <- paste0(alignment_folder, list.files(alignment_folder)[grep("treefile", list.files(alignment_folder))]) #get all tree files (will be three - one from IQ-Tree, and one for each tree 1 and tree 2)
   ML_tree_path <- all_tree_paths[grep("alignment", all_tree_paths)] # get only the treefile for the alignment
   ML_tree <- read.tree(ML_tree_path)
   
   # fill out the rep numbers (padded with 0s to get to 4 digits)
   rep_ids <- 1:n_reps
   rep_ids <- sprintf("%04d", rep_ids)
-  lapply(rep_ids,do.1.bootstrap,params,alignment_folder,iq_path,splitstree_path)
+  lapply(rep_ids,do.1.bootstrap,params,ML_tree,alignment_folder,iq_path,splitstree_path)
 }
 
 # Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
 do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,splitstree_path){
   # Create a new folder name to store this alignment and its outputs in
-  bs_folder <- paste0(alignment_folder,rep_number,"/")
+  bs_folder <- paste0(alignment_folder,"bootstrap_",rep_number,"/")
   
   if (dir.exists(bs_folder)==TRUE){
     redo <- TRUE
@@ -64,7 +64,6 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
       dna_sim <- simSeq(tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
     } else {
       # If there's rate heterogeneity, stick together a bunch of alignments to make one big alignment
-      dna_sim <- c()
       gamma_categories$n_bp <- (gamma_categories$proportion * n_bp)
       
       # Make sure that the sum of alignment types will be n_bp (1300 bp)
@@ -94,9 +93,17 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
       chunk_length <- gamma_categories$n_bp[[i]]
       # Simulate the DNA
       dna_chunk <- simSeq(tree, l = chunk_length, type = seq_type, bf = base_freqs, Q = Q_vec, rate = chunk_rate)
+      dnabin_chunk <- as.DNAbin(dna_chunk)
       # Stick the DNA together with the DNA already created (or the empty object to store DNA in)
-      dna_sim <- c(dna_sim,dna_chunk)
+      if (exists("dna_bin") == FALSE){
+        # If the dna_bin object is empty, this is the first chunk. Make it the dna_bin object
+        dna_bin <- dnabin_chunk
+      } else if (exists("dna_bin") == TRUE){
+        # Otherwise, the dna_bin object exists. Concatenate the dna chunk onto the dna_bin object
+        dna_bin <- cbind(dna_bin,dnabin_chunk, check.names = TRUE, fill.with.gaps = TRUE, quiet = FALSE) # concatenate the two alignments
       }
+    }
+    dna_sim <- as.phyDat(dna_bin) # convert the alignment to  phydat format
     }
       
     # Save the DNA alignment
