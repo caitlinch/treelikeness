@@ -109,6 +109,11 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     # Save the DNA alignment
     bs_al <- paste0(bs_folder, "alignment.nexus")
     write.phyDat(dna_sim,file = bs_al, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
+    # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+    nexus <- readLines(bs_al) # open the new nexus file
+    ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
+    nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+    writeLines(nexus,bs_al) # output the edited nexus file
     
     # The alignment now definitely exists. Now you can run IQ-tree on the alignment
     n_taxa <- as.numeric(params$parameters[3,2]) # extract the number of taxa from the parameters 
@@ -130,16 +135,17 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   prop_resolved <- resolved_q/total_q
   
   # Run my test statistics
+  # Want the path to be the path to the alignment you're testing - here that's the bootstrap alignment (bs_al)
   # run pdm ratio (TS1) (modified splittable percentage)
-  splittable_percentage <- pdm.ratio(iqpath = iq_path, path = al_file)
+  splittable_percentage <- pdm.ratio(iqpath = iq_path, path = bs_al)
   # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
-  npds <- normalised.pdm.diff.sum(iqpath = iq_path, path = al_file)
+  npds <- normalised.pdm.diff.sum(iqpath = iq_path, path = bs_al)
   # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
-  npdm <- normalised.pdm.diff.mean(iqpath = iq_path, path = al_file)
+  npdm <- normalised.pdm.diff.mean(iqpath = iq_path, path = bs_al)
   # run split decomposition (TS3) (split decomposition using splitstree)
-  sd <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = al_file,network_algorithm = "split decomposition")
+  sd <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "split decomposition")
   # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
-  nn <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = al_file,network_algorithm = "neighbournet")
+  nn <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "neighbournet")
   
   # Extract params csv from alignment folder
   all_files <- list.files(alignment_folder) # get a list of all the files
@@ -149,6 +155,7 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   # add test statistic results to params_csv
   params_csv$num_quartets <- total_q
   params_csv$num_resolved_quartets <- resolved_q
+  params_csv$prop_resolved_quartets <- prop_resolved
   params_csv$num_partially_resolved_quartets <- partly_resolved_q
   params_csv$num_unresolved_quartets <- unresolved_q
   params_csv$splittable_percentage <- splittable_percentage
