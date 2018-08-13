@@ -24,7 +24,7 @@ run_location <- "soma"
 run_id <- "soma1"
 
 if (run_location == "mac"){
-  	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/1_mainrun/"
+  	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
   	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
   	exec_folder <- "/Users/caitlincherryh/Documents/Executables/"
   	# Create a vector with all of the executable file paths
@@ -62,6 +62,7 @@ source(paste0(maindir,network_functions))
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
+tree_folder <- paste0(maindir,"trees/")
 
 # Columns required for the rows of parameters to run the simulations
 phylo_df_names <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
@@ -128,4 +129,6 @@ op_name <- paste0(results_folder,"2trees_input_parameters_",run_id,".csv")
 write.csv(phylo_df,file=op_name)
 
 
-
+# test for fixed trees
+row <- c(op_folder,1300,1,0.1,0.1,"16taxa_intermediate_LHS","16taxa_intermediate_RHS_nonreciprocal_divergent_2event",0.5,"test",1)
+names(row) <- c("output_folder","n_sites","tree_age","mean_molecular_rate","sd_molecular_rate","tree1","tree2","proportion_tree2","id","rep")

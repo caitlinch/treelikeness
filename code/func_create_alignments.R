@@ -474,20 +474,19 @@ phylo.run1sim <- function(row, program_paths){
 
 
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
-phylo.fixedtrees.run1sim <- function(row, program_paths){
-  # row needs to include: output folder, n_sites, tree_age, tree1, tree2, proportion_tree2,id,rep, tree_folder
+phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
+  # row needs to include: output folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
   
   # Call the function to make the output folder name, alignment name, and results file name
-  al_folder <- phylo.output.folder(row)[1]
-  al_file <- phylo.output.folder(row)[2]
-  results_file <- phylo.output.folder(row)[3]
+  al_folder <- phylo.fixedtrees.output.folder(row)[1]
+  al_file <- phylo.fixedtrees.output.folder(row)[2]
+  results_file <- phylo.fixedtrees.output.folder(row)[3]
   
   # Check to see if the output folder exists
   if (dir.exists(al_folder)==TRUE){
     # If the folder exists, check to see if the alignment file exists
     if (file.exists(al_file)==FALSE){
       # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
-      phylo.wrapper(row, al_folder)
       redo <- FALSE # if the directory exists and the alignment doesn't, this is not a redo and all test statistics/tests need to be run
     } else {
       redo <- TRUE # if the alignment exists, this is a rerun of the same alignment. Don't rerun the test statistics.
@@ -501,24 +500,24 @@ phylo.fixedtrees.run1sim <- function(row, program_paths){
   # If the test statistics and tests haven't been run (redo == FALSE), run them all
   if (redo == FALSE){
     # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
-    nsites <- as.numeric(row[["n_sites"]])
+    output_folder <- row[["output_folder"]]
+    n_sites <- as.numeric(row[["n_sites"]])
     mol_rate <- as.numeric(row[["mean_molecular_rate"]])
     mol_rate_sd <- as.numeric(row[["sd_molecular_rate"]])
     tree_age <- as.numeric(row[["tree_age"]])
-    tree1 <- as.numeric(row[["tree1"]])
-    tree2 <- as.numeric(row[["tree2"]])
+    tree1_name <- row[["tree1"]]
+    tree2_name <- row[["tree2"]]
     K <- as.numeric(row[["proportion_tree2"]])
     id <- paste0(row[["id"]],"_",row[["rep"]])
     
     # Open the trees and get the number of taxa
-    tree1 <- open.tree(tree1,tree_folder)
-    tree2 <- open.tree(tree2, tree_folder)
-    n_taxa <- length(tree1$tip.label)
+    tree1 <- open.fixed.tree(tree1_name,tree_folder)
+    tree2 <- open.fixed.tree(tree2_name, tree_folder)
     # Create the alignment
-    phylo.fixedtrees.make1(output_folder, n_sites, tree_age, mol_rate, mol_rate_sd, tree1, tree2, K, id)
-    
+    phylo.fixedtrees.make1(al_folder, n_sites, tree_age, mol_rate, mol_rate_sd, tree1, tree1_name, tree2, tree2_name, K, id)
     
     # The alignment now definitely exists. Now you can run IQ-tree on the alignment
+    n_taxa <- length(tree1$tip.label)
     call.IQTREE.quartet(program_paths[["IQTree"]],al_file,n_taxa)
     
     # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
@@ -605,16 +604,17 @@ phylo.fixedtrees.run1sim <- function(row, program_paths){
     params_csv <- read.csv(all_files[ind]) # open the parameter file
     death_rate <- params_csv$death_rate # extract death rate
     proportion_tree_1 <- params_csv$proportion_tree1 # extract proportion of alignment from tree 1
+    n_taxa <- length(tree1$tip.label) #ntaxa = number of labels on the tree
     # Make somewhere to store the results
     df <- data.frame(matrix(nrow=0,ncol=32)) # create an empty dataframe of the correct size
-    op_row <- c(al_file,"phylogenetic",row[["n_taxa"]],row[["n_sites"]],"NA","NA","NA",row[["birth_rate"]],death_rate,row[["tree_age"]],row[["mean_molecular_rate"]],row[["sd_molecular_rate"]],proportion_tree_1,
-                row[["proportion_tree2"]],paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,prop_resolved,partly_resolved_q,unresolved_q,
-                splittable_percentage,npds,npdm,sd,nn) # collect all the information
+    op_row <- c(al_file,"phylogenetic_fixedTrees",n_taxa,row[["n_sites"]],row[["tree_age"]],row[["mean_molecular_rate"]],row[["sd_molecular_rate"]],tree1_name,proportion_tree_1,
+                tree2_name,row[["proportion_tree2"]],paste0(row[["id"]],"_",row[["rep"]]),phi_mean,phi_var,phi_obs,phi_sig,num_trips,num_dis,seq_sig,total_q,resolved_q,
+                prop_resolved,partly_resolved_q,unresolved_q,splittable_percentage,npds,npdm,sd,nn) # collect all the information
     df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
-    df_names <- c("alignment", "method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
-                  "sd_molecular_rate","proportion_tree1","proportion_tree2","id","PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets",
-                  "3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets","num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets",
-                  "num_unresolved_quartets", "splittable_percentage","pdm_difference","pdm_average","split_decomposition", "neighbour_net")
+    df_names <- c("alignment","method","n_taxa","n_sites","tree_age","mean_molecular_rate","sd_molecular_rate","tree1","proportion_tree1","tree2","proportion_tree2","id",
+                  "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets",
+                  "num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets", "splittable_percentage","pdm_difference",
+                  "pdm_average","split_decomposition", "neighbour_net")
     names(df) <- df_names # add names to the df so you know what's what
     write.csv(df,file = results_file)
   }
@@ -623,22 +623,22 @@ phylo.fixedtrees.run1sim <- function(row, program_paths){
 # Name output folders and files
 phylo.fixedtrees.output.folder <- function(row){
   # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
-  nsites <- as.numeric(row[["n_sites"]])
+  n_sites <- as.numeric(row[["n_sites"]])
   tree_age <- as.numeric(row[["tree_age"]])
   mol_rate <- as.numeric(row[["mean_molecular_rate"]])
   mol_rate_sd <- as.numeric(row[["sd_molecular_rate"]])
-  tree1 <- as.numeric(row[["tree1"]])
-  tree2 <- as.numeric(row[["tree2"]])
+  tree1_str <- gsub("_","-",row[["tree1"]])
+  tree2_str <- gsub("_","-",row[["tree2"]])
   K <- as.numeric(row[["proportion_tree2"]])
   id <- paste0(row[["id"]],"_",row[["rep"]])
   # Create an output folder name using the variables
-  output_folder <- paste0(row[["output_folder"]],"Phylo_FixedTrees_",nsites,"_",tree_age,"_",mol_rate,"_",mol_rate_sd,"_",tree1,"_",tree2,"_",K,"_",id,"/")
+  output_folder <- paste0(row[["output_folder"]],"Phylo_FixedTrees_",n_sites,"_",tree_age,"_",mol_rate,"_",mol_rate_sd,"_",tree1_str,"_",tree2_str,"_",K,"_",id,"/")
   nexus_file <- paste0(output_folder,"alignment.nexus")
   output_file <- paste0(output_folder,"testStatistics.csv")
   return(c(output_folder,nexus_file,output_file))
 }
 
-open.tree <- function(tree_name,tree_folder){
+open.fixed.tree <- function(tree_name,tree_folder){
   tree_path <- paste0(tree_folder, tree_name, ".txt")
   phylogenetic_tree <- read.tree(tree_path)
   return(phylogenetic_tree)
@@ -646,7 +646,7 @@ open.tree <- function(tree_name,tree_folder){
 
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
 # K is the proportion of the SECOND tree that will be included (provide a single value)
-phylo.fixedtrees.make1 <- function(output_folder, n_sites, tree_age, mol_rate, mol_rate_sd, tree1, tree2, K, id){
+phylo.fixedtrees.make1 <- function(output_folder, n_sites, tree_age, mol_rate, mol_rate_sd, tree1, tree1_str, tree2, tree2_str, K, id){
   # Scale tree1 and tree2 to have total length of tree_age
   tree1$edge.length <- tree1$edge.length * rlnorm(length(tree1$edge.length), meanlog = log(mol_rate), sdlog = mol_rate_sd) # adjust branch lengths - mol rate will control the tree depth in substitutions per site
   tree2$edge.length <- tree2$edge.length * rlnorm(length(tree2$edge.length), meanlog = log(mol_rate), sdlog = mol_rate_sd) # adjust branch lengths - mol rate will control the tree depth in substitutions per site
@@ -655,20 +655,20 @@ phylo.fixedtrees.make1 <- function(output_folder, n_sites, tree_age, mol_rate, m
 
   # Calculate how many sites of each tree will be needed 
   J <- 1 - K # proportion of first tree that will be included
-  J_sites <- nsites * J # find number of sites to model from first tree
-  K_sites <- nsites * K # find number of sites to model from second tree
-  if ((J_sites+K_sites) < nsites){ 
+  J_sites <- n_sites * J # find number of sites to model from first tree
+  K_sites <- n_sites * K # find number of sites to model from second tree
+  if ((J_sites+K_sites) < n_sites){ 
     # if there are less sites then necessary, randomly add the missing sites to either tree one or tree 2
-    add <- nsites - (J_sites+K_sites)
+    add <- n_sites - (J_sites+K_sites)
     rand <- sample(c("J","K"),1)
     if (rand == "K"){
       K_sites <- K_sites + add
     } else if (rand == "J"){
       J_sites <- J_sites + add
     }
-  } else if ((J_sites+K_sites) > nsites){
+  } else if ((J_sites+K_sites) > n_sites){
     # if there are more sites then necessary, randomly subtract the missing sites from either tree one or tree 2
-    subtract <- (J_sites+K_sites) - nsites
+    subtract <- (J_sites+K_sites) - n_sites
     rand <- sample(c("J","K"),1)
     if (rand == "K"){
       K_sites <- K_sites - subtract
@@ -684,7 +684,7 @@ phylo.fixedtrees.make1 <- function(output_folder, n_sites, tree_age, mol_rate, m
     dnabin_1 <- as.DNAbin(dna_sim_1) # convert to DNAbin
     dnabin_2 <- as.DNAbin(dna_sim_2) # convert to DNAbin
     dna_bin <- cbind(dnabin_1,dnabin_2, check.names = TRUE, fill.with.gaps = TRUE, quiet = FALSE) # concatenate the two alignments
-    dna_sim <- as.phyDat(dna_bin) # convert the alignment to 
+    dna_sim <- as.phyDat(dna_bin) # convert the alignment to phydat 
   } else if ((K_sites > 0) && (J_sites == 0)){
     dna_sim <- simSeq(tree2,l = K_sites) # if no sites on tree1, simulate sites only along the second tree
   } else if ((K_sites == 0) && (J_sites > 0)) {
@@ -711,12 +711,13 @@ phylo.fixedtrees.make1 <- function(output_folder, n_sites, tree_age, mol_rate, m
   dev.off()
   write.tree(tree2, file = paste0(output_folder,"tree2.treefile"), tree.names = TRUE)
   
+  # Make the parameters file
+  n_taxa <- length(tree1$tip.label) # get the number of taxa for the parameters csv
   # output a text file with all the parameters
   output_name_template <- paste0(output_folder,"params.csv") # create a name for the output file 
-  row <- c("phylogenetic",ntaxa,nsites,"NA","NA","NA",birth_rate,death_rate,tree_age,mol_rate,mol_rate_sd,J,K,id) # gather up all the variables
-  names <- c("method","n_taxa","n_sites","internal_recombination","external_recombination","mutation_rate","birth_rate","death_rate","tree_age","mean_molecular_rate",
-             "sd_molecular_rate","proportion_tree1","proportion_tree2","id") # gather up the var names
-  df <- data.frame(matrix(nrow=0,ncol=14)) # make an empty dataframe
+  row <- c("phylogenetic_fixedTrees",n_taxa,n_sites,tree_age,mol_rate,mol_rate_sd,tree1_str,J,tree2_str,K,id) # gather up all the variables
+  names <- c("method","n_taxa","n_sites","tree_age","mean_molecular_rate","sd_molecular_rate","tree1","proportion_tree1","tree2","proportion_tree2","id") # gather up the var names
+  df <- data.frame(matrix(nrow=0,ncol=11)) # make an empty dataframe
   df <- rbind(df,row) # attach the info to the empty df
   names(df) <- names # rename it so it's pretty and also actually helpful
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
