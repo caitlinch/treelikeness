@@ -475,7 +475,7 @@ phylo.run1sim <- function(row, program_paths){
 
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
 phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
-  # row needs to include: output folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
+  # row needs to include: output folder, n_sites, tree_age, tree1, tree2, proportion_tree2, id, rep
   
   # Call the function to make the output folder name, alignment name, and results file name
   al_folder <- phylo.fixedtrees.output.folder(row)[1]
