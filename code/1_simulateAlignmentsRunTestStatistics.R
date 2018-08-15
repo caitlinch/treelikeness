@@ -21,7 +21,6 @@ library(reshape2)
 # run_location <- "nci"
 # run_location <- "mac"
 run_location <- "soma"
-run_id <- "soma1"
 
 if (run_location == "mac"){
   	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
@@ -33,6 +32,7 @@ if (run_location == "mac"){
   	exec_paths <- paste0(exec_folder,exec_paths)
   	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
   	network_functions <- "code/func_split_decomposition.R"
+  	run_id <- "mac2"
 } else if (run_location == "nci") {
   	op_folder <- "/short/xf1/cac599/sims_output/"
   	maindir <- "/home/599/cac599/treelikeness/"
@@ -52,6 +52,7 @@ if (run_location == "mac"){
 	                "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
 	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 	network_functions <- "code/func_split_decomposition.R"
+	run_id <- "soma2"
 }
 
 # Set working directory
@@ -96,8 +97,16 @@ tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced
                   "08taxa_intermediate_RHS_nonreciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_divergent_1event","08taxa_intermediate_RHS_nonreciprocal_ancient_1event",
                   "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_reciprocal_divergent_1event","08taxa_unbalanced_RHS_reciprocal_ancient_1event",
                   "08taxa_unbalanced_RHS_nonreciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_divergent_1event","08taxa_unbalanced_RHS_nonreciprocal_ancient_1event")
-tree_id <- 1:30
-# remember - stringsAsFactors = FALSE
+tree_id <- 1:18
+for (i in tree_id){
+  tree1_temp <- tree1_vector[[i]]
+  tree2_temp <- tree2_vector[[i]]
+  temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
+  names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+  plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
+}
+#phylo.fixedtrees.run1sim(row, program_paths, tree_folder)
+# need to add function call
 
 ## For second set of plots:
 # Make empty dataframe:
@@ -116,12 +125,19 @@ tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
                   "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
                   "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event")
-tree_id <- 1:10
+tree_id <- 1:6
+for (i in tree_id){
+  tree1_temp <- tree1_vector[[i]]
+  tree2_temp <- tree2_vector[[i]]
+  temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
+  names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+  plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
+}
 
 ## For third set of plots:
 # Make empty dataframe:
-plot4_df <- data.frame((matrix(ncol = 8, nrow = 0)))
-names(plot4_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+plot3_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(plot3_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
 # Parameters that are the same for each set of trees:
 output_folder <- op_folder
 n_sites <- 1300
@@ -142,6 +158,13 @@ tree2_vector <- c("32taxa_balanced_RHS_reciprocal_close_1event","32taxa_balanced
                   "32taxa_balanced_RHS_nonreciprocal_close_5event","32taxa_balanced_RHS_nonreciprocal_close_6event",
                   "32taxa_balanced_RHS_nonreciprocal_close_7event","32taxa_balanced_RHS_nonreciprocal_close_8event")
 tree_id <- 1:16
+for (i in tree_id){
+  tree1_temp <- tree1_vector[[i]]
+  tree2_temp <- tree2_vector[[i]]
+  temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
+  names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+  plot3_df <- rbind(plot3_df,temp_df, stringsAsFactors = FALSE)
+}
 
 ## For fourth set of plots:
 # Make empty dataframe:
@@ -161,17 +184,22 @@ tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced
                   "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
                   "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event")
 tree_id <- 1:6
+for (i in tree_id){
+  tree1_temp <- tree1_vector[[i]]
+  tree2_temp <- tree2_vector[[i]]
+  temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
+  names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+  plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
+}
 
 
 # Save the parameter dataframes
-op_name <- paste0(results_folder,"external_input_parameters_",run_id,".csv")
-write.csv(external_df,file=op_name)
-op_name <- paste0(results_folder,"internal_input_parameters_",run_id,".csv")
-write.csv(internal_df,file=op_name)
-op_name <- paste0(results_folder,"2trees_input_parameters_",run_id,".csv")
-write.csv(phylo_df,file=op_name)
+op_name <- paste0(results_folder,"plot1_input_parameters_",run_id,".csv")
+write.csv(plot1_df,file=op_name)
+op_name <- paste0(results_folder,"plot2_input_parameters_",run_id,".csv")
+write.csv(plot2_df,file=op_name)
+op_name <- paste0(results_folder,"plot3_input_parameters_",run_id,".csv")
+write.csv(plot3_df,file=op_name)
+op_name <- paste0(results_folder,"plot4_input_parameters_",run_id,".csv")
+write.csv(plot4_df,file=op_name)
 
-
-# test for fixed trees
-row <- c(op_folder,1300,1,0.1,0.1,"16taxa_intermediate_LHS","16taxa_intermediate_RHS_nonreciprocal_divergent_2event",0.5,"test",1)
-names(row) <- c("output_folder","n_sites","tree_age","mean_molecular_rate","sd_molecular_rate","tree1","tree2","proportion_tree2","id","rep")
