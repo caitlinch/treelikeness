@@ -70,55 +70,98 @@ simbac_df_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombin
 
 # lapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths) # lapply for SimBac
 # lapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths) # lapply for phylo
+# mclapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths, mc.cores = 35) # mclapply for phylo
 
-# For external recombination
-# Create dataframe
-output_folder <- c(op_folder)
-n_taxa <- c(5, 10, 20, 40, 80, 160) # removed 5
-n_sites <- c(1300)
-gap <- c(1000000)
-internal_recombination <- c(0)
-external_recombination <- c(0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1) #removed 0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001
-mutation_rate <- c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05) # removed 0.0001, 0.0005
-id <- c("external")
-rep <- c(1:10)
-external_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
-names(external_df) <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
-# run simulations
-mclapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
-#mclapply(1:2,SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths, mc.cores = 35)
+# Create dataframe for the final set of simulations (fixed trees)
 
-# For internal recombination
-# Create dataframe
-output_folder <- c(op_folder)
-n_taxa <- c(5, 10, 20, 40, 80, 160) #removed 5
-n_sites <- c(1300)
-gap <- c(1000000)
-internal_recombination <- c(0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5)
-external_recombination <- c(0)
-mutation_rate <- c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05) # removed 0.0001, 0.0005
-id <- c("internal")
-rep <- c(1:10)
-internal_df <- expand.grid(output_folder,n_taxa,n_sites,gap,internal_recombination,external_recombination,mutation_rate,id,rep, stringsAsFactors = FALSE)
-names(internal_df) <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
-# run simulations
-mclapply(1:nrow(internal_df),SimBac.rowWrapper,dataframe = internal_df, program_paths = exec_paths, mc.cores = 35)
-  
-# Create phylogenetic sims dataframe
-output_folder <- c(op_folder)
-n_taxa <- c(5, 10, 20, 40, 80, 160)
-n_sites <- c(1300)
-birth_rate <- c(0.5)
-tree_age <- c(1)
-mean_molecular_rate <- c(1, 0.5, 0.1, 0.05)
-sd_molecular_rate <- c(0.1)
-proportion_tree2 <- c(seq(0,0.5,0.01))
-id <- c("2trees") # can't use phylo as an ID as the word is included in title of all sims made using the phylogenetic approach
-rep <- c(1:10)
-phylo_df <- expand.grid(output_folder,n_taxa,n_sites,birth_rate,tree_age,mean_molecular_rate,sd_molecular_rate,proportion_tree2,id,rep, stringsAsFactors = FALSE)
-names(phylo_df) <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
-# Run the simulations
-mclapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths, mc.cores = 35)
+# row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
+
+## For first set of plots:
+# Make empty dataframe:
+plot1_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(plot1_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+# Parameters that are the same for each set of trees:
+output_folder <- op_folder
+n_sites <- 1300
+tree_age <- c(0.05, 0.1, 0.5, 1)
+proportion_tree2 <- 0.5
+id <- "plot1"
+rep <- 1:100
+tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS",
+                  "08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS",
+                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS")
+tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_reciprocal_divergent_1event","08taxa_balanced_RHS_reciprocal_ancient_1event",
+                  "08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_divergent_1event","08taxa_balanced_RHS_nonreciprocal_ancient_1event",
+                  "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_reciprocal_divergent_1event","08taxa_intermediate_RHS_reciprocal_ancient_1event",
+                  "08taxa_intermediate_RHS_nonreciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_divergent_1event","08taxa_intermediate_RHS_nonreciprocal_ancient_1event",
+                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_reciprocal_divergent_1event","08taxa_unbalanced_RHS_reciprocal_ancient_1event",
+                  "08taxa_unbalanced_RHS_nonreciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_divergent_1event","08taxa_unbalanced_RHS_nonreciprocal_ancient_1event")
+tree_id <- 1:30
+# remember - stringsAsFactors = FALSE
+
+## For second set of plots:
+# Make empty dataframe:
+plot2_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(plot2_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+# Parameters that are the same for each set of trees:
+output_folder <- op_folder
+n_sites <- 1300
+tree_age <- c(0.05, 0.1, 0.5, 1)
+proportion_tree2 <- seq(0,0.5,0.01)
+id <- "plot2"
+rep <- 1:10
+tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
+                  "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
+                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS")
+tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
+                  "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
+                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event")
+tree_id <- 1:10
+
+## For third set of plots:
+# Make empty dataframe:
+plot4_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(plot4_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+# Parameters that are the same for each set of trees:
+output_folder <- op_folder
+n_sites <- 1300
+tree_age <- c(0.05, 0.1, 0.5, 1)
+proportion_tree2 <- (0.5)
+id <- "plot4"
+rep <- 1:100
+tree1_vector <- c("32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
+                  "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
+                  "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
+                  "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS")
+tree2_vector <- c("32taxa_balanced_RHS_reciprocal_close_1event","32taxa_balanced_RHS_reciprocal_close_2event",
+                  "32taxa_balanced_RHS_reciprocal_close_3event","32taxa_balanced_RHS_reciprocal_close_4event",
+                  "32taxa_balanced_RHS_reciprocal_close_5event","32taxa_balanced_RHS_reciprocal_close_6event",
+                  "32taxa_balanced_RHS_reciprocal_close_7event","32taxa_balanced_RHS_reciprocal_close_8event",
+                  "32taxa_balanced_RHS_nonreciprocal_close_1event","32taxa_balanced_RHS_nonreciprocal_close_2event",
+                  "32taxa_balanced_RHS_nonreciprocal_close_3event","32taxa_balanced_RHS_nonreciprocal_close_4event",
+                  "32taxa_balanced_RHS_nonreciprocal_close_5event","32taxa_balanced_RHS_nonreciprocal_close_6event",
+                  "32taxa_balanced_RHS_nonreciprocal_close_7event","32taxa_balanced_RHS_nonreciprocal_close_8event")
+tree_id <- 1:16
+
+## For fourth set of plots:
+# Make empty dataframe:
+plot4_df <- data.frame((matrix(ncol = 10, nrow = 0)))
+names(plot4_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+# Parameters that are the same for each set of trees:
+output_folder <- op_folder
+n_sites <- 1300
+tree_age <- c(0.05, 0.1, 0.5, 1)
+proportion_tree2 <- seq(0,0.5,0.1)
+id <- "plot4"
+rep <- 1:100
+tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
+                  "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
+                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS")
+tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
+                  "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
+                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event")
+tree_id <- 1:6
+
 
 # Save the parameter dataframes
 op_name <- paste0(results_folder,"external_input_parameters_",run_id,".csv")

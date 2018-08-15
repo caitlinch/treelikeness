@@ -355,7 +355,7 @@ phylo.collate.bootstrap <- function(alignment_folder){
   PHI_sig <- alignment_df$PHI_sig[1]
   seq_sig <- alignment_df$X3SEQ_p_value[1]
   # Extract only the columns you want
-  cols <- c("method","bootstrap_id","n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id",
+  cols <- c("method","bootstrap_id","n_taxa","n_sites","birth_rate","death_rate","tree_age","proportion_tree1","proportion_tree2","id",
             "prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")
   alignment_df <- alignment_df[,cols]
   
@@ -397,12 +397,12 @@ phylo.collate.bootstrap <- function(alignment_folder){
   
   # Create an output dataframe of just P-values
   op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["birth_rate"]],alignment_df[["death_rate"]],alignment_df[["tree_age"]],
-              alignment_df[["mean_molecular_rate"]],alignment_df[["sd_molecular_rate"]],alignment_df[["proportion_tree1"]],alignment_df[["proportion_tree2"]],
+              alignment_df[["proportion_tree1"]],alignment_df[["proportion_tree2"]],
               alignment_df[["id"]],PHI_sig, seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
               split_decomposition_sig, neighbour_net_sig)
-  output_df <- data.frame(matrix(nrow=0,ncol=18)) # make somewhere to store the results
+  output_df <- data.frame(matrix(nrow=0,ncol=16)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
-  names(output_df) <- c("n_taxa","n_sites","birth_rate","death_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree1","proportion_tree2","id",
+  names(output_df) <- c("n_taxa","n_sites","birth_rate","death_rate","tree_age","proportion_tree1","proportion_tree2","id",
                         "PHI_p_value","3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","pdm_average_p_value",
                         "split_decomposition_p_value","neighbour_net_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
