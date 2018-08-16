@@ -381,19 +381,13 @@ phylo.collate.bootstrap <- function(alignment_folder){
   bs_collated_csv <- paste0(alignment_folder,"collated_bootstrap_testStatistics.csv")
   write.csv(p_value_df,file = bs_collated_csv)
   
-  # Arrange the ranking to find the p-values for each test statistic
-  p_value_df <- p_value_df[order(p_value_df$prop_resolved_quartets),]
-  prop_resolved_quartets_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
-  p_value_df <- p_value_df[order(p_value_df$splittable_percentage),]
-  splittable_percentage_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
-  p_value_df <- p_value_df[order(p_value_df$pdm_difference),]
-  pdm_difference_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
-  p_value_df <- p_value_df[order(p_value_df$pdm_average),]
-  pdm_average_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
-  p_value_df <- p_value_df[order(p_value_df$split_decomposition),]
-  split_decomposition_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
-  p_value_df <- p_value_df[order(p_value_df$neighbour_net),]
-  neighbour_net_sig <- match("alignment",p_value_df$bootstrap_id)/nrow(p_value_df)
+  # Calculate the p-values for each test statistic
+  prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
+  splittable_percentage_sig <- calculate.p_value(p_value_df$splittable_percentage, p_value_df$bootstrap_id)
+  pdm_difference_sig <- calculate.p_value(p_value_df$pdm_difference, p_value_df$bootstrap_id)
+  pdm_average_sig <- calculate.p_value(p_value_df$pdm_average, p_value_df$bootstrap_id)
+  split_decomposition_sig <- calculate.p_value(p_value_df$split_decomposition, p_value_df$bootstrap_id)
+  neighbour_net_sig <- calculate.p_value(p_value_df$neighbour_net, p_value_df$bootstrap_id)
   
   # Create an output dataframe of just P-values
   op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["tree_age"]],alignment_df[["tree1"]],alignment_df[["proportion_tree1"]],alignment_df[["tree2"]],
@@ -405,6 +399,27 @@ phylo.collate.bootstrap <- function(alignment_folder){
                         "splittable_percentage_p_value","pdm_difference_p_value","pdm_average_p_value","split_decomposition_p_value","neighbour_net_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)
+}
+
+# Given two vectors (one of test statistic values, and one of ids), calculates the p-value for that alignment
+calculate.p_value <- function(value_vector,id_vector){
+  p_value_df <- data.frame(value_vector,id_vector, stringsAsFactors = FALSE)
+  names(p_value_df) <- c("value","id")
+  # Order by test statistic value
+  p_value_df <- p_value_df[order(p_value_df$value),]
+  # Find the number of bootstrap replicates and where the actual alignment value is located
+  num_bs <- nrow(p_value_df)-1 # number of bootstrap replicates - need to subtract 1 because this includes the alignment value 
+  alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
+  # For left tail probability: want to find the number of observations less than or equal to the alignment value, then divide by the number of bootstrap observations
+  n_obs_smaller <- alignment_row - 1
+  p_value_left <- n_obs_smaller/num_bs
+  # For right tail probability: want to find the number of observations greater than or equal to the alignment value, then divide by the number of bootstrap observations
+  n_obs_larger <- num_bs - n_obs_smaller
+  p_value_right <- n_obs_larger/num_bs
+  # To find two tailed probability, multiply the lower of those values by 2
+  p_value_2tail <- 2*min(p_value_left,p_value_right) 
+  # return the p-value
+  return(p_value_2tail)
 }
 
 
