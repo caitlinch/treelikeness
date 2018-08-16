@@ -65,17 +65,8 @@ source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
 tree_folder <- paste0(maindir,"trees/")
 
-# Columns required for the rows of parameters to run the simulations
-phylo_df_names <- c("output_folder","n_taxa","n_sites","birth_rate","tree_age","mean_molecular_rate","sd_molecular_rate","proportion_tree2","id","rep")
-simbac_df_names <- c("output_folder","n_taxa","n_sites","gap","internal_recombination","external_recombination","mutation_rate","id","rep")
-
-# lapply(1:nrow(external_df),SimBac.rowWrapper,dataframe = external_df, program_paths = exec_paths) # lapply for SimBac
-# lapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths) # lapply for phylo
-# mclapply(1:nrow(phylo_df),phylo.rowWrapper,dataframe = phylo_df, program_paths = exec_paths, mc.cores = 35) # mclapply for phylo
-
-# Create dataframe for the final set of simulations (fixed trees)
-
-# row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
+### Create dataframe for the final set of simulations (fixed trees)
+### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
 
 ## For first set of plots:
 # Make empty dataframe:
@@ -105,8 +96,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
 }
-#phylo.fixedtrees.run1sim(row, program_paths, tree_folder)
-# need to add function call
+mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 ## For second set of plots:
 # Make empty dataframe:
@@ -133,6 +123,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
 }
+mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 ## For third set of plots:
 # Make empty dataframe:
@@ -165,6 +156,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot3_df <- rbind(plot3_df,temp_df, stringsAsFactors = FALSE)
 }
+mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 ## For fourth set of plots:
 # Make empty dataframe:
@@ -191,6 +183,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
 }
+mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 
 # Save the parameter dataframes

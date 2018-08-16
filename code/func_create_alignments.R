@@ -472,6 +472,12 @@ phylo.run1sim <- function(row, program_paths){
   }
 }
 
+# Wrapper function - feeds relevant row into the phylo.fixedtrees.run1sim function
+phylo.fixedtrees.wrapper <- function(index, dataframe, program_paths, tree_folder){
+  relevant_row <- dataframe[index,]
+  phylo.fixedtrees.run1sim(relevant_row, program_paths, tree_folder)
+}
+
 
 # Function to run one entire simulation using a phylogenetic framework : create the alignment, run test statistics, and save 
 phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
