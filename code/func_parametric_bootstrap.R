@@ -14,6 +14,7 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   # extract the name of the .iqtree file that contains the parameters for the simulation
   dotiqtree_path <- paste0(alignment_folder, list.files(alignment_folder)[grep("iqtree", list.files(alignment_folder))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
+  print(params)
   
   # Open the ML tree from IQ-Tree
   # extract the name of the file that contains the ML tree calculated by IQ-Tree for the original alignment (the alignment with recombination)
@@ -277,7 +278,11 @@ get.simulation.parameters <- function(dotiqtree_file){
       end_line <- iq_file[g_end]
       # if the end isn't an empty line, subtract one from the end count 
       # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
-      if (end_line != ""){
+      # to see if this is what's happening, check whether the line starts with a numeric section (i.e. a category for the gamma rate)
+      check_line <- gsub(" ","",(strsplit(end_line, "        " )[[1]][1]))
+      if (length(check_line) > 3){
+        # If the check_line is longer than 3 characters, it won't be a group for the gamma categories but an instruction
+        # Instructions can be excluded from the gamma matrix (but categories can't)
         g_end = g_end - 1
       }
       # Start collecting info for the matrix
