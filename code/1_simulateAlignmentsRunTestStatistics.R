@@ -18,10 +18,14 @@ library(reshape2)
 # LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib:usr/lib/x86_64-linux-gnu
 # export LD_LIBRARY_PATH
 
-# run_location <- "nci"
 # run_location <- "mac"
-run_location <- "soma"
+# run_location <- "nci"
+# run_location <- "soma"
 
+times <- c()
+time_ids <- c()
+
+tic("initialising")
 if (run_location == "mac"){
   	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
   	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
@@ -65,6 +69,11 @@ source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
 tree_folder <- paste0(maindir,"trees/")
 
+temp_time <- toc()
+times <- c(times, temp_time$msg)
+time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
+tic("plot1")
+
 ### Create dataframe for the final set of simulations (fixed trees)
 ### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
 
@@ -96,7 +105,13 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+#mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+lapply(1:10, phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
+
+temp_time <- toc()
+times <- c(times, temp_time$msg)
+time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
+tic("plot2")
 
 ## For second set of plots:
 # Make empty dataframe:
@@ -123,7 +138,12 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+#mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+
+temp_time <- toc()
+times <- c(times, temp_time$msg)
+time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
+tic("plot3")
 
 ## For third set of plots:
 # Make empty dataframe:
@@ -156,7 +176,12 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot3_df <- rbind(plot3_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+#mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+
+temp_time <- toc()
+times <- c(times, temp_time$msg)
+time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
+tic("plot4")
 
 ## For fourth set of plots:
 # Make empty dataframe:
@@ -186,6 +211,11 @@ for (i in tree_id){
 # mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 
+temp_time <- toc()
+times <- c(times, temp_time$msg)
+time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
+tic("save parameter dataframes")
+
 # Save the parameter dataframes
 op_name <- paste0(results_folder,"plot1_input_parameters_",run_id,".csv")
 write.csv(plot1_df,file=op_name)
@@ -195,4 +225,14 @@ op_name <- paste0(results_folder,"plot3_input_parameters_",run_id,".csv")
 write.csv(plot3_df,file=op_name)
 op_name <- paste0(results_folder,"plot4_input_parameters_",run_id,".csv")
 write.csv(plot4_df,file=op_name)
+
+temp_time <- toc()
+times <- c(times, temp_time$msg)
+time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
+
+# save the times
+time_df <- data.frame(time_ids,times)
+op_name <- paste0(results_folder,"run_times_",run_id,".csv")
+write.csv(time_df,file=op_name)
+
 
