@@ -18,7 +18,7 @@ library(reshape2)
 # LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib:usr/lib/x86_64-linux-gnu
 # export LD_LIBRARY_PATH
 
-# run_location <- "mac"
+run_location <- "mac"
 # run_location <- "nci"
 # run_location <- "soma"
 
@@ -28,6 +28,7 @@ time_ids <- c()
 tic("initialising")
 if (run_location == "mac"){
   	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
+  	results_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
   	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
   	exec_folder <- "/Users/caitlincherryh/Documents/Executables/"
   	# Create a vector with all of the executable file paths
@@ -48,6 +49,7 @@ if (run_location == "mac"){
   	exec_paths <- c(exec_paths,"/home/599/cac599/splitstree4/SplitsTree")
   	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
   	network_functions <- "code/func_split_decomposition_nci.R"
+  	run_id <- "nci2"
 } else if (run_location=="soma"){
 	op_folder <- "/data/caitlin/treelikeness/output/"
 	results_folder <- "/data/caitlin/treelikeness/results/"
@@ -67,6 +69,7 @@ source(paste0(maindir,network_functions))
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
+source(paste0(maindir,"code/func_parametric_bootstrap.R"))
 tree_folder <- paste0(maindir,"trees/")
 
 temp_time <- toc()
@@ -232,7 +235,7 @@ time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
 
 # save the times
 time_df <- data.frame(time_ids,times)
-op_name <- paste0(results_folder,"run_times_",run_id,".csv")
+op_name <- paste0(op_folder,"run_times_",run_id,".csv")
 write.csv(time_df,file=op_name)
 
 
