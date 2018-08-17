@@ -37,7 +37,7 @@ if (run_location == "mac"){
   	exec_paths <- paste0(exec_folder,exec_paths)
   	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
   	network_functions <- "code/func_split_decomposition.R"
-  	run_id <- "mac2"
+  	run_id <- "bootstrapTest"
 } else if (run_location == "nci") {
   	op_folder <- "/short/xf1/cac599/sims_output/"
   	maindir <- "/home/599/cac599/treelikeness/"
@@ -109,7 +109,6 @@ for (i in tree_id){
   plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
 }
 #mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
-lapply(1:10, phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -237,5 +236,8 @@ time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
 time_df <- data.frame(time_ids,times)
 op_name <- paste0(op_folder,"run_times_",run_id,".csv")
 write.csv(time_df,file=op_name)
+
+# test bootstrap
+phylo.parametric.bootstrap("/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/Phylo_FixedTrees_1300_0.1_08taxa-balanced-LHS_08taxa-balanced-RHS-reciprocal-close-1event_0.5_plot1_1/",1000,"/Users/caitlincherryh/Documents/Executables/iqtree","/Users/caitlincherryh/Documents/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub")
 
 

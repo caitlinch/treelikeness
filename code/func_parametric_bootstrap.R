@@ -276,6 +276,7 @@ get.simulation.parameters <- function(dotiqtree_file){
       empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
       g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
       end_line <- iq_file[g_end]
+      print(end_line)
       # if the end isn't an empty line, subtract one from the end count 
       # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
       # to see if this is what's happening, check whether the line starts with a numeric section (i.e. a category for the gamma rate)
