@@ -10,7 +10,7 @@ library(phangorn)
 library(base)
 library(ggplot2)
 library(reshape2)
-# library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
+library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
 
 # Remember to have downloaded and tested the following programs: SplitsTree4, SimBac, IQ-Tree, PhiPack and 3Seq. 
 # 3Seq must have been associated with a P-value table for it to run properly
@@ -18,9 +18,9 @@ library(reshape2)
 # LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib:usr/lib/x86_64-linux-gnu
 # export LD_LIBRARY_PATH
 
-run_location <- "mac"
+# run_location <- "mac"
 # run_location <- "nci"
-# run_location <- "soma"
+run_location <- "soma"
 
 times <- c()
 time_ids <- c()
@@ -58,7 +58,7 @@ if (run_location == "mac"){
 	                "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
 	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 	network_functions <- "code/func_split_decomposition.R"
-	run_id <- "soma2"
+	run_id <- "soma_fullSet"
 }
 
 # Set working directory
@@ -108,7 +108,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
 }
-#mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -140,7 +140,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
 }
-#mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -178,7 +178,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot3_df <- rbind(plot3_df,temp_df, stringsAsFactors = FALSE)
 }
-#mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -211,7 +211,13 @@ for (i in tree_id){
   plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
 }
 # mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
-
+# Collect the folders that contain the alignments for plot4
+# all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get all the directory names in the output folder
+# inds <- grep("plot4",all_folders) # find which indexes the plot4 (bootstrap) folders are at 
+# plot4_folders <- all_folders[inds] # get the bootstrap folders
+# plot4_folders <- paste0(plot4_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
+# mclapply(plot4_folders, phylo.parametric.bootstrap, 1000, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], mc.cores = 35) # run all the bootstraps!
+# mclapply(plot4_folders,phylo.collate.bootstrap, mc.cores = 35) # collate the bootstrap test statistics and calculate the p-values for the test statistics
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -236,8 +242,5 @@ time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
 time_df <- data.frame(time_ids,times)
 op_name <- paste0(op_folder,"run_times_",run_id,".csv")
 write.csv(time_df,file=op_name)
-
-# test bootstrap
-phylo.parametric.bootstrap("/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/Phylo_FixedTrees_1300_0.1_08taxa-balanced-LHS_08taxa-balanced-RHS-reciprocal-close-1event_0.5_plot1_1/",1000,"/Users/caitlincherryh/Documents/Executables/iqtree","/Users/caitlincherryh/Documents/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub")
 
 
