@@ -475,17 +475,16 @@ phylo.collate.bootstrap <- function(alignment_folder){
 calculate.p_value <- function(value_vector,id_vector){
   p_value_df <- data.frame(value_vector,id_vector, stringsAsFactors = FALSE)
   names(p_value_df) <- c("value","id")
-  # Order by test statistic value
-  p_value_df <- p_value_df[order(p_value_df$value),]
   # Find the number of bootstrap replicates and where the actual alignment value is located
-  num_bs <- nrow(p_value_df)-1 # number of bootstrap replicates - need to subtract 1 because this includes the alignment value 
-  alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
+  num_rows <- nrow(p_value_df) # number of bootstrap replicates + alignment value 
   # For left tail probability: want to find the number of observations less than or equal to the alignment value, then divide by the number of bootstrap observations
-  n_obs_smaller <- alignment_row - 1
-  p_value_left <- n_obs_smaller/num_bs
+  p_value_df <- p_value_df[order(p_value_df$value),] # order values from largest to smallest
+  alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
+  p_value_left <- alignment_row/num_rows
   # For right tail probability: want to find the number of observations greater than or equal to the alignment value, then divide by the number of bootstrap observations
-  n_obs_larger <- num_bs - n_obs_smaller
-  p_value_right <- n_obs_larger/num_bs
+  p_value_df <- p_value_df[order(p_value_df$value, decreasing = TRUE),] # order values from smallest to largest
+  alignment_row <- which(p_value_df$id == "alignment")
+  p_value_right <- alignment_row/num_rows
   # To find two tailed probability, multiply the lower of those values by 2
   p_value_2tail <- 2*min(p_value_left,p_value_right) 
   # return the p-value
