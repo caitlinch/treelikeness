@@ -122,7 +122,7 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     
     # The alignment now definitely exists. Now you can run IQ-tree on the alignment
     n_taxa <- as.numeric(params$parameters[3,2]) # extract the number of taxa from the parameters 
-    call.IQTREE.quartet(iq_path,bs_al,n_taxa)
+    call.IQTREE.quartet.bootstrap(iq_path,bs_al,n_taxa)
   }
   bs_al <- paste0(bs_folder, "alignment.nexus") # alignment name
   
