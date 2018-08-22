@@ -216,7 +216,7 @@ for (i in tree_id){
 # inds <- grep("plot4",all_folders) # find which indexes the plot4 (bootstrap) folders are at 
 # plot4_folders <- all_folders[inds] # get the bootstrap folders
 # plot4_folders <- paste0(plot4_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
-# mclapply(plot4_folders, phylo.parametric.bootstrap, 1000, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], mc.cores = 35) # run all the bootstraps!
+# mclapply(plot4_folders, phylo.parametric.bootstrap, 1000, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 35) # run all the bootstraps!
 # mclapply(plot4_folders,phylo.collate.bootstrap, mc.cores = 35) # collate the bootstrap test statistics and calculate the p-values for the test statistics
 
 temp_time <- toc()

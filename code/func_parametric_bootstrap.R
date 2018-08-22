@@ -10,7 +10,7 @@ library(phangorn)
 # the .iqtree file (number of taxa, number of sites, rates
 # and base frequencies)
 # make sure the alignment folder ends with a slash!
-phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path) {
+phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path, phipack_path, threeseq_path) {
   # extract the name of the .iqtree file that contains the parameters for the simulation
   dotiqtree_path <- paste0(alignment_folder, list.files(alignment_folder)[grep("iqtree", list.files(alignment_folder))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
@@ -24,11 +24,11 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   # fill out the rep numbers (padded with 0s to get to 4 digits)
   rep_ids <- 1:n_reps
   rep_ids <- sprintf("%04d", rep_ids)
-  lapply(rep_ids,do.1.bootstrap,params,ML_tree,alignment_folder,iq_path,splitstree_path)
+  lapply(rep_ids,do.1.bootstrap,params,ML_tree,alignment_folder,iq_path,splitstree_path, phipack_path, threeseq_path)
 }
 
 # Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
-do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,splitstree_path){
+do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,splitstree_path, phipack_path, threeseq_path){
   # Create a new folder name to store this alignment and its outputs in
   bs_folder <- paste0(alignment_folder,"bootstrap_",rep_number,"/")
   
@@ -42,6 +42,9 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   
   # Only create alignments, run IQ-Tree and all the tests/test statistics and everything if this is NOT a redo (redo == FALSE)
   if (redo == FALSE){
+    # Change the working directory to the bootstrap folder
+    setwd(bs_folder)
+    
     # Create the alignment 
     # Sample code for generating a parametric DNA sequence if you have a tree
     # s1 = simSeq(t1, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
@@ -124,6 +127,55 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   bs_al <- paste0(bs_folder, "alignment.nexus") # alignment name
   
   ## Calculate the test statistics
+  # run PHIPACK and 3seq
+  phi_path <- phipack_path # get path to phipack executable
+  seq_path <- threeseq_path # get path to 3seq executable
+  filetype = tail(strsplit(bs_al,"\\.")[[1]],n=1) # extract file format
+  if (filetype == "fasta"){
+    # if the alignment is already in fasta format, run PhiPack through R
+    phi_command <- paste0(phi_path," -f ",bs_al, " -v") # assemble system command
+    system(phi_command) #call phipack
+    
+    seq_command <- paste0(seq_path," -f ", bs_al)
+    system(seq_command) #call 3SEQ
+  } else if (filetype == "nexus"){
+    # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
+    data = read.nexus.data(bs_al) # read in nexus format alignment
+    fasta.name <- paste0(bs_al,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
+    write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
+    phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
+    system(phi_command) # run PHI test on the new fasta alignment
+    
+    seq_command <- paste0(seq_path," -f ", fasta.name)
+    system(seq_command) #call 3SEQ
+  }
+  # Extract significance from Phi Pack output
+  phi_file <- paste0(bs_folder,"Phi.log")
+  phi_file <- readLines(phi_file)
+  ind      <- grep("p-Value",phi_file)
+  phi_sig <- as.numeric(strsplit(phi_file[ind+3],":")[[1]][2])
+  ind      <- grep("PHI Values",phi_file)
+  phi_mean <- as.numeric(strsplit(phi_file[ind+4],"      ","")[[1]][2])
+  phi_var <- as.numeric(strsplit(phi_file[ind+5],"      ","")[[1]][2])
+  phi_obs <- as.numeric(strsplit(phi_file[ind+6],"      ","")[[1]][2])
+  
+  # Extract results output from 3Seq output
+  seq_file <- paste0(bs_folder,"3s.log")
+  seq_log <- readLines(seq_file) # open file
+  ind      <- grep("Number of recombinant triplets",seq_log) # find the number of recombinant triplets line index
+  num_trips <- seq_log[ind]
+  num_trips <- strsplit(num_trips,":")[[1]][2] # extract the number of recombinant triplets
+  num_trips <- trimws(num_trips) # trim the whitespace from the number of triplets
+  ind      <- grep("Number of distinct recombinant sequences",seq_log) # find the number of distinct recombinant sequences line index
+  num_dis <- seq_log[ind]
+  num_dis <- strsplit(num_dis,":")[[1]][2] # extract the number of distinct recombinant sequences
+  num_dis <- trimws(num_dis) # trim the whitespace from the number of distinct recombinant sequences
+  # null hypothesis is of clonal evolution - need significant p-value to accept the alternative hypothesis
+  ind      <- grep("Rejection of the null hypothesis of clonal evolution",seq_log) # find the p value line index
+  seq_sig <- seq_log[ind]
+  seq_sig <- strsplit(seq_sig,"=")[[1]][2] # extract the p value
+  seq_sig <- trimws(seq_sig) # trim the whitespace from the number of distinct recombinant sequences
+  
   
   # Extract quartet mapping from IQ-Tree results
   iq_log_path <- paste0(bs_al, ".iqtree")
@@ -156,6 +208,12 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   params_csv <- read.csv(paste0(alignment_folder,all_files[ind])) # open the parameter file
   params_csv <- params_csv[,2:ncol(params_csv)]
   # add test statistic results to params_csv
+  
+  params_csv$PHI_mean <- phi_mean
+  params_csv$PHI_variance <- phi_var
+  params_csv$PHI_observed <- phi_obs
+  params_csv$X3SEQ_num_recombinant_triplets <- num_trips
+  params_csv$X3SEQ_num_distinct_recombinant_sequences <- num_dis
   params_csv$num_quartets <- total_q
   params_csv$num_resolved_quartets <- resolved_q
   params_csv$prop_resolved_quartets <- prop_resolved
@@ -352,6 +410,9 @@ get.simulation.parameters <- function(dotiqtree_file){
 }
 
 phylo.collate.bootstrap <- function(alignment_folder){
+  # set the working directory to the alignment folder
+  setwd(alignment_folder)
+  
   # Open the original alignment results
   alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"))
   alignment_df$bootstrap_id <- "alignment"
@@ -359,8 +420,9 @@ phylo.collate.bootstrap <- function(alignment_folder){
   PHI_sig <- alignment_df$PHI_sig[1]
   seq_sig <- alignment_df$X3SEQ_p_value[1]
   # Extract only the columns you want
-  cols <- c("method","bootstrap_id","n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id",
-            "prop_resolved_quartets","splittable_percentage","pdm_difference","pdm_average","split_decomposition","neighbour_net")
+  cols <- c("method", "bootstrap_id", "n_taxa", "n_sites", "tree_age", "tree1", "proportion_tree1", "tree2", "proportion_tree2", "id", "PHI_mean", "PHI_variance",
+            "PHI_observed" ,"X3SEQ_num_recombinant_triplets", "X3SEQ_num_distinct_recombinant_sequences", "prop_resolved_quartets", "splittable_percentage",
+            "pdm_difference", "pdm_average", "split_decomposition", "neighbour_net")
   alignment_df <- alignment_df[,cols]
   
   # Collate bootstrap csvs
@@ -386,6 +448,8 @@ phylo.collate.bootstrap <- function(alignment_folder){
   write.csv(p_value_df,file = bs_collated_csv)
   
   # Calculate the p-values for each test statistic
+  PHI_observed_sig <- calculate.p_value(p_value_df$PHI_observed, p_value_df$bootstrap_id)
+  x3seq_sig <- calculate.p_value(p_value_df$X3SEQ_num_distinct_recombinant_sequences, p_value_df$bootstrap_id)
   prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
   splittable_percentage_sig <- calculate.p_value(p_value_df$splittable_percentage, p_value_df$bootstrap_id)
   pdm_difference_sig <- calculate.p_value(p_value_df$pdm_difference, p_value_df$bootstrap_id)
@@ -395,12 +459,13 @@ phylo.collate.bootstrap <- function(alignment_folder){
   
   # Create an output dataframe of just P-values
   op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["tree_age"]],alignment_df[["tree1"]],alignment_df[["proportion_tree1"]],alignment_df[["tree2"]],
-              alignment_df[["proportion_tree2"]], alignment_df[["id"]],PHI_sig, seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
+              alignment_df[["proportion_tree2"]], alignment_df[["id"]],PHI_sig, PHI_observed_sig, seq_sig, x3seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
               split_decomposition_sig, neighbour_net_sig)
-  output_df <- data.frame(matrix(nrow=0,ncol=16)) # make somewhere to store the results
+  output_df <- data.frame(matrix(nrow=0,ncol=18)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
-  names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value","3Seq_p_value","likelihood_mapping_p_value",
-                        "splittable_percentage_p_value","pdm_difference_p_value","pdm_average_p_value","split_decomposition_p_value","neighbour_net_p_value")
+  names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value", "PHI_observed_p_value","3Seq_p_value",
+                        "num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","pdm_average_p_value",
+                        "split_decomposition_p_value","neighbour_net_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)
 }
