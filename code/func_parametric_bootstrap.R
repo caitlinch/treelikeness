@@ -448,7 +448,7 @@ phylo.collate.bootstrap <- function(alignment_folder){
   write.csv(p_value_df,file = bs_collated_csv)
   
   # Calculate the p-values for each test statistic
-  PHI_observed_sig <- calculate.p_value(p_value_df$PHI_mean, p_value_df$bootstrap_id)
+  PHI_mean_sig <- calculate.p_value(p_value_df$PHI_mean, p_value_df$bootstrap_id)
   PHI_observed_sig <- calculate.p_value(p_value_df$PHI_observed, p_value_df$bootstrap_id)
   x3seq_sig <- calculate.p_value(p_value_df$X3SEQ_num_distinct_recombinant_sequences, p_value_df$bootstrap_id)
   prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
