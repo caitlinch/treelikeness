@@ -414,7 +414,7 @@ phylo.collate.bootstrap <- function(alignment_folder){
   setwd(alignment_folder)
   
   # Open the original alignment results
-  alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"))
+  alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"), stringsAsFactors = FALSE)
   alignment_df$bootstrap_id <- "alignment"
   # Collect the PHI and 3Seq P-Values from the alignment df BEFORE pruning it
   PHI_sig <- alignment_df$PHI_sig[1]
