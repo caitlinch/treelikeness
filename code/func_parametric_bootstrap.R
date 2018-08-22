@@ -448,6 +448,7 @@ phylo.collate.bootstrap <- function(alignment_folder){
   write.csv(p_value_df,file = bs_collated_csv)
   
   # Calculate the p-values for each test statistic
+  PHI_observed_sig <- calculate.p_value(p_value_df$PHI_mean, p_value_df$bootstrap_id)
   PHI_observed_sig <- calculate.p_value(p_value_df$PHI_observed, p_value_df$bootstrap_id)
   x3seq_sig <- calculate.p_value(p_value_df$X3SEQ_num_distinct_recombinant_sequences, p_value_df$bootstrap_id)
   prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
@@ -459,13 +460,13 @@ phylo.collate.bootstrap <- function(alignment_folder){
   
   # Create an output dataframe of just P-values
   op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["tree_age"]],alignment_df[["tree1"]],alignment_df[["proportion_tree1"]],alignment_df[["tree2"]],
-              alignment_df[["proportion_tree2"]], alignment_df[["id"]],PHI_sig, PHI_observed_sig, seq_sig, x3seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
+              alignment_df[["proportion_tree2"]], alignment_df[["id"]],PHI_sig, PHI_mean_sig, PHI_observed_sig, seq_sig, x3seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
               split_decomposition_sig, neighbour_net_sig)
-  output_df <- data.frame(matrix(nrow=0,ncol=18)) # make somewhere to store the results
+  output_df <- data.frame(matrix(nrow=0,ncol=19)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
-  names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value", "PHI_observed_p_value","3Seq_p_value",
-                        "num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","pdm_average_p_value",
-                        "split_decomposition_p_value","neighbour_net_p_value")
+  names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value","PHI_mean_p_value","PHI_observed_p_value",
+                        "3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value",
+                        "pdm_average_p_value","split_decomposition_p_value","neighbour_net_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)
 }
