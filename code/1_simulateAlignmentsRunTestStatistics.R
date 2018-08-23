@@ -187,15 +187,15 @@ tic("plot4")
 
 ## For fourth set of plots:
 # Make empty dataframe:
-plot4_df <- data.frame((matrix(ncol = 10, nrow = 0)))
+plot4_df <- data.frame((matrix(ncol = 8, nrow = 0)))
 names(plot4_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
 # Parameters that are the same for each set of trees:
 output_folder <- op_folder
 n_sites <- 1300
 tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- seq(0,0.5,0.1)
-# plot4_id <- "plot4"
-plot4_id <- "TESTBOOTSTRAP"
+plot4_id <- "plot4"
+# plot4_id <- "TESTBOOTSTRAP"
 rep <- 1:100
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
                   "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
@@ -211,8 +211,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
 }
-# mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
-mclapply(1:100, phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
 # Collect the folders that contain the alignments for plot4
 all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get all the directory names in the output folder
 inds <- grep(plot4_id,all_folders) # find which indexes the plot4 (bootstrap) folders are at 
