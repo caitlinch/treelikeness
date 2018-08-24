@@ -93,14 +93,16 @@ id <- "plot1"
 rep <- 1:100
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS",
                   "08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS",
-                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS")
+                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS",
+                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_reciprocal_divergent_1event","08taxa_balanced_RHS_reciprocal_ancient_1event",
                   "08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_divergent_1event","08taxa_balanced_RHS_nonreciprocal_ancient_1event",
                   "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_reciprocal_divergent_1event","08taxa_intermediate_RHS_reciprocal_ancient_1event",
                   "08taxa_intermediate_RHS_nonreciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_divergent_1event","08taxa_intermediate_RHS_nonreciprocal_ancient_1event",
                   "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_reciprocal_divergent_1event","08taxa_unbalanced_RHS_reciprocal_ancient_1event",
-                  "08taxa_unbalanced_RHS_nonreciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_divergent_1event","08taxa_unbalanced_RHS_nonreciprocal_ancient_1event")
-tree_id <- 1:18
+                  "08taxa_unbalanced_RHS_nonreciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_divergent_1event","08taxa_unbalanced_RHS_nonreciprocal_ancient_1event",
+                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
+tree_id <- 1:21
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
@@ -128,11 +130,13 @@ id <- "plot2"
 rep <- 1:10
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
                   "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
-                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS")
+                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS",
+                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
                   "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
-                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event")
-tree_id <- 1:6
+                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event",
+                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
+tree_id <- 1:9
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
@@ -161,7 +165,8 @@ rep <- 1:100
 tree1_vector <- c("32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
                   "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
                   "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
-                  "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS")
+                  "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
+                  "32taxa_balanced_LHS")
 tree2_vector <- c("32taxa_balanced_RHS_reciprocal_close_1event","32taxa_balanced_RHS_reciprocal_close_2event",
                   "32taxa_balanced_RHS_reciprocal_close_3event","32taxa_balanced_RHS_reciprocal_close_4event",
                   "32taxa_balanced_RHS_reciprocal_close_5event","32taxa_balanced_RHS_reciprocal_close_6event",
@@ -169,8 +174,9 @@ tree2_vector <- c("32taxa_balanced_RHS_reciprocal_close_1event","32taxa_balanced
                   "32taxa_balanced_RHS_nonreciprocal_close_1event","32taxa_balanced_RHS_nonreciprocal_close_2event",
                   "32taxa_balanced_RHS_nonreciprocal_close_3event","32taxa_balanced_RHS_nonreciprocal_close_4event",
                   "32taxa_balanced_RHS_nonreciprocal_close_5event","32taxa_balanced_RHS_nonreciprocal_close_6event",
-                  "32taxa_balanced_RHS_nonreciprocal_close_7event","32taxa_balanced_RHS_nonreciprocal_close_8event")
-tree_id <- 1:16
+                  "32taxa_balanced_RHS_nonreciprocal_close_7event","32taxa_balanced_RHS_nonreciprocal_close_8event",
+                  "32taxa_balanced_LHS")
+tree_id <- 1:17
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
@@ -199,11 +205,13 @@ plot4_id <- "plot4"
 rep <- 1:100
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
                   "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
-                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS")
+                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS",
+                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
                   "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
-                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event")
-tree_id <- 1:6
+                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event",
+                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
+tree_id <- 1:9
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
