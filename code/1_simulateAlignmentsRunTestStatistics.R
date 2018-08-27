@@ -200,7 +200,7 @@ output_folder <- op_folder
 n_sites <- 1300
 tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- seq(0,0.5,0.1)
-id <- "plot4"
+id <- "plot4attempt2"
 # plot4_id <- "TESTBOOTSTRAP"
 rep <- 1:100
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
