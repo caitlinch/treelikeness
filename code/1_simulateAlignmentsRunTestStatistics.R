@@ -225,7 +225,18 @@ all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get 
 inds <- grep(id,all_folders) # find which indexes the plot4 (bootstrap) folders are at 
 plot4_folders <- all_folders[inds] # get the bootstrap folders
 plot4_folders <- paste0(plot4_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
-mclapply(plot4_folders, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 35) # run all the bootstraps!
+plot4_toRun <- c() # create an empty list to store the folders that need the bootstrap run
+# Check each simulation from the plot4_df for a p value csv
+for (folder in plot4_folders){
+  p_file <- paste0(folder,"p_value.csv")
+  if (file.exists(p_file) == FALSE) {
+    # if there's no p value csv, there's no bootstrap: add to the list of bootstraos to run
+    plot4_toRun <- c(plot4_toRun, folder)
+  }
+}
+# Apply the parametric bootstrap function to the folders without a bootstrap
+mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 35) # run all the bootstraps!
+# Collate all the bootstraps and calculate p-values
 mclapply(plot4_folders,phylo.collate.bootstrap, mc.cores = 35) # collate the bootstrap test statistics and calculate the p-values for the test statistics
 
 temp_time <- toc()
