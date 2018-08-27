@@ -24,7 +24,11 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   # fill out the rep numbers (padded with 0s to get to 4 digits)
   rep_ids <- 1:n_reps
   rep_ids <- sprintf("%04d", rep_ids)
+  # run each rep
   lapply(rep_ids,do.1.bootstrap,params,ML_tree,alignment_folder,iq_path,splitstree_path, phipack_path, threeseq_path)
+  
+  # collate the bootstrap data and calculate the p-values.
+  phylo.collate.bootstrap(alignment_folder)
 }
 
 # Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
