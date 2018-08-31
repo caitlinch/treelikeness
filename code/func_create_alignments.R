@@ -529,25 +529,34 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
     # Get paths to PhiPac, 3SEQ
     phi_path <- program_paths[["Phi"]] # get path to phipack executable
     seq_path <- program_paths[["3seq"]] # get path to 3seq executable
+    # Note that Phi and 3Seq will only be run if they haven't already been run (checks for log files)
     filetype = tail(strsplit(al_file,"\\.")[[1]],n=1) # extract file format
     # run PHIPACK and 3seq (depending on the file format, will need to convert to fasta)
     if (filetype == "fasta"){
       # if the alignment is already in fasta format, run PhiPack through R
-      phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
-      system(phi_command) #call phipack
+      if (file.exists(paste0(al_folder,"Phi.log")) == FALSE){
+        phi_command <- paste0(phi_path," -f ",al_file, " -v") # assemble system command
+        system(phi_command) #call phipack
+      }
       
-      seq_command <- paste0(seq_path," -f ", al_file)
-      system(seq_command) #call 3SEQ
+      if (file.exists(paste0(al_folder,"3s.log")) == FALSE){
+        seq_command <- paste0(seq_path," -f ", al_file)
+        system(seq_command) #call 3SEQ
+      }
     } else if (filetype == "nexus"){
       # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file
       data = read.nexus.data(al_file) # read in nexus format alignment
       fasta.name <- paste0(al_file,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
       write.fasta(sequences = data,names = names(data), file.out = fasta.name) # output alignment as a fasta format
-      phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
-      system(phi_command) # run PHI test on the new fasta alignment
+      if (file.exists(paste0(al_folder,"Phi.log")) == FALSE){
+        phi_command <- paste0(phi_path," -f ",fasta.name, " -v") # assemble system command as above
+        system(phi_command) # run PHI test on the new fasta alignment
+      }
       
-      seq_command <- paste0(seq_path," -f ", fasta.name)
-      system(seq_command) #call 3SEQ
+      if (file.exists(paste0(al_folder,"3s.log")) == FALSE){
+        seq_command <- paste0(seq_path," -f ", fasta.name)
+        system(seq_command) #call 3SEQ
+      }
     }
     # Extract significance from Phi Pack output
     phi_file <- paste0(al_folder,"Phi.log")
