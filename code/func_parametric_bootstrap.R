@@ -54,6 +54,8 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   
   # Change the working directory to the bootstrap folder
   setwd(bs_folder)
+  # name the alignment 
+  bs_al <- paste0(bs_folder, "alignment.nexus")
   
   if (alignment.exists == FALSE) {
     # If the alignment doesn't exist, create it
@@ -77,7 +79,6 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     dna_sim <- simSeq(tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
     
     # Save the DNA alignment
-    bs_al <- paste0(bs_folder, "alignment.nexus")
     write.phyDat(dna_sim,file = bs_al, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
     # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
     nexus <- readLines(bs_al) # open the new nexus file
