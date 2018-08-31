@@ -71,7 +71,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 4) # mclapply for phylo with fixed trees
 # Collect the folders that contain the alignments for plot4
 all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get all the directory names in the output folder
 inds <- grep(id,all_folders) # find which indexes the plot4 (bootstrap) folders are at 
@@ -87,5 +87,5 @@ for (folder in plot4_folders){
   }
 }
 # Apply the parametric bootstrap function to the folders without a bootstrap
-mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 35) # run all the bootstraps!
+mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 4) # run all the bootstraps!
 
