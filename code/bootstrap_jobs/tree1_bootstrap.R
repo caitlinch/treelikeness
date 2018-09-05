@@ -87,5 +87,5 @@ for (folder in plot4_folders){
   }
 }
 # Apply the parametric bootstrap function to the folders without a bootstrap
-mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 4) # run all the bootstraps!
+mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], exec_paths, tree_folder, mc.cores = 4) # run all the bootstraps!
 
