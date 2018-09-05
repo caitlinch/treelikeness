@@ -28,7 +28,7 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   lapply(rep_ids,do.1.bootstrap,params,ML_tree,alignment_folder,iq_path,splitstree_path, phipack_path, threeseq_path)
   
   # collate the bootstrap data and calculate the p-values.
-  phylo.collate.bootstrap(alignment_folder)
+  phylo.collate.bootstrap(alignment_folder,exec_paths, tree_folder)
 }
 
 # Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
@@ -384,7 +384,15 @@ phylo.collate.bootstrap <- function(alignment_folder){
   setwd(alignment_folder)
   
   # Open the original alignment results
-  alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"), stringsAsFactors = FALSE)
+  if (file.exists(paste0(alignment_folder,"testStatistics.csv")) == TRUE){
+    alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"), stringsAsFactors = FALSE)
+  } else if (file.exists(paste0(alignment_folder,"testStatistics.csv")) == FALSE){
+    params_file <- paste0(alignment_folder,"params.csv")
+    row <- read.csv(params_file,stringsAsFactors = FALSE)
+    phylo.fixedtrees.run1sim(row, program_paths, tree_folder)
+    alignment_df <- read.csv(paste0(alignment_folder,"testStatistics.csv"), stringsAsFactors = FALSE)
+  }
+  
   alignment_df$bootstrap_id <- "alignment"
   # Collect the PHI and 3Seq P-Values from the alignment df BEFORE pruning it
   PHI_sig <- alignment_df$PHI_sig[1]
