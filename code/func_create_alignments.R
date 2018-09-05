@@ -494,6 +494,8 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
     if (file.exists(al_file)==FALSE){
       # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
       redo <- FALSE # if the directory exists and the alignment doesn't, this is not a redo and all test statistics/tests need to be run
+    } if (file.exists(paste0(al_folder,"testStatistics.csv")) == FALSE){
+      redo <- FALSE
     } else {
       redo <- TRUE # if the alignment exists, this is a rerun of the same alignment. Don't rerun the test statistics.
     }
@@ -517,12 +519,16 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
     # Open the trees and get the number of taxa
     tree1 <- open.fixed.tree(tree1_name,tree_folder)
     tree2 <- open.fixed.tree(tree2_name, tree_folder)
-    # Create the alignment
-    phylo.fixedtrees.make1(al_folder, n_sites, tree_age, tree1, tree1_name, tree2, tree2_name, K, id)
+    # Create the alignment (if it hasn't already been created)
+    if (file.exists(paste0(al_folder,"alignment.nexus")) == FALSE) {
+      phylo.fixedtrees.make1(al_folder, n_sites, tree_age, tree1, tree1_name, tree2, tree2_name, K, id)
+    }
     
-    # The alignment now definitely exists. Now you can run IQ-tree on the alignment
+    # The alignment now definitely exists. Now you can run IQ-tree on the alignment (if it hasn't already been run)
     n_taxa <- length(tree1$tip.label)
-    call.IQTREE.quartet(program_paths[["IQTree"]],al_file,n_taxa)
+    if (file.exists(paste0(al_folder,"alignment.nexus.iqtree")) == FALSE){
+      call.IQTREE.quartet(program_paths[["IQTree"]],al_file,n_taxa)
+    }
     
     # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
     setwd(al_folder)
@@ -615,7 +621,6 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
     all_files <- list.files(al_folder) # get a list of all the files
     ind <- grep("params",all_files) # find which of those files is the parameters file
     params_csv <- read.csv(all_files[ind]) # open the parameter file
-    death_rate <- params_csv$death_rate # extract death rate
     proportion_tree_1 <- params_csv$proportion_tree1 # extract proportion of alignment from tree 1
     n_taxa <- length(tree1$tip.label) #ntaxa = number of labels on the tree
     # Make somewhere to store the results
@@ -731,7 +736,6 @@ phylo.fixedtrees.make1 <- function(output_folder, n_sites, tree_age, tree1, tree
   names(df) <- names # rename it so it's pretty and also actually helpful
   write.csv(df, file = output_name_template) # write the csv so you can use it later. 
 }
-
 
 
 
