@@ -489,12 +489,12 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   results_file <- phylo.fixedtrees.output.folder(row)[3]
   
   # Check to see if the output folder exists
-  if (dir.exists(al_folder)==TRUE){
+  if (dir.exists(al_folder) == TRUE){
     # If the folder exists, check to see if the alignment file exists
-    if (file.exists(al_file)==FALSE){
+    if (file.exists(al_file) == FALSE){
       # If the alignment file doesn't exist, create it by running the wrapper (which runs phylo.make1)
       redo <- FALSE # if the directory exists and the alignment doesn't, this is not a redo and all test statistics/tests need to be run
-    } if (file.exists(paste0(al_folder,"testStatistics.csv")) == FALSE){
+    } else if (file.exists(paste0(al_folder,"testStatistics.csv")) == FALSE){
       redo <- FALSE
     } else {
       redo <- TRUE # if the alignment exists, this is a rerun of the same alignment. Don't rerun the test statistics.
