@@ -379,7 +379,7 @@ get.simulation.parameters <- function(dotiqtree_file){
   return(params)
 }
 
-phylo.collate.bootstrap <- function(alignment_folder){
+phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   # set the working directory to the alignment folder
   setwd(alignment_folder)
   
