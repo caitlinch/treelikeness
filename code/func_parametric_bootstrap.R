@@ -10,7 +10,7 @@ library(phangorn)
 # the .iqtree file (number of taxa, number of sites, rates
 # and base frequencies)
 # make sure the alignment folder ends with a slash!
-phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path, phipack_path, threeseq_path) {
+phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstree_path, phipack_path, threeseq_path,exec_paths,tree_folder) {
   # extract the name of the .iqtree file that contains the parameters for the simulation
   dotiqtree_path <- paste0(alignment_folder, list.files(alignment_folder)[grep("iqtree", list.files(alignment_folder))])
   params <- get.simulation.parameters(dotiqtree_path) #need to feed in .iqtree file
