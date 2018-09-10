@@ -2,15 +2,14 @@
 
 # Function to collect all test statistic csv folders given an id to look for and a directory to look in
 # must have a unique id - will collect all results from any folders with id in their names
-collate.csv <- function(directory,id,output_path,run_id){
+collate.csv <- function(directory,file.name = "testStatistics",id,output_path){
   # Collect all the folders within the directory
   folder_paths <- list.files(directory)
-  # Get the positions at which the simulations containing the id are at
-  inds <- grep(id, folder_paths)
-  # Get only the relevant folders (folders containing the id)
-  csv_paths <- folder_paths[inds]
-  # Make the path to each output csv file
-  csv_paths <- paste0(directory, csv_paths, "/testStatistics.csv")
+  # Now reduce that to only get folders for the particular id of interest
+  id_inds <- grep(id,folder_paths)
+  id_folder_paths <- folder_paths[id_inds]
+  # Make the path to each csv file using the file name
+  csv_paths <- paste0(directory, id_folder_paths, "/",file.name,".csv")
   csv_paths_exist <- csv_paths[file.exists(csv_paths)] # only take paths that have an output
   # Set the number of rows in the dataframe (will equal the number of folders - one folder per simulation)
   num_rows <- length(csv_paths_exist)
@@ -19,13 +18,13 @@ collate.csv <- function(directory,id,output_path,run_id){
   # Reduce the dataframe from a list into a matrix
   output_df <- Reduce(rbind, output_list)
   # Remove the "X" column (row number for smaller csv files)
-  output_df <- output_df[,4:33]
+  output_df <- output_df[,2:ncol(output_df)]
+  # save the output dataframe
+  write.csv(output_df,file=paste0(output_path,id,"_",file.name,"_collatedSimulationData.csv"))
   
   # now save the paths that don't have an output
   csv_paths_missing <- csv_paths[file.exists(csv_paths)==FALSE]
-  write.csv(csv_paths_missing,file=paste0(output_path,id,"_missingSimulations_filePath_",run_id,".csv"))
-  
-  return(output_df)
+  write.csv(csv_paths_missing,file=paste0(output_path,id,"_",file.name,"_missingSimulations_filePaths.csv"))
 }
 
 collate.missing.params <- function(directory,id){
