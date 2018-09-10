@@ -617,7 +617,6 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
     # Output pictures of neighbour net and split decomposition networks
     
     # Collect results
-    # Extract death rate from params csv
     all_files <- list.files(al_folder) # get a list of all the files
     ind <- grep("params",all_files) # find which of those files is the parameters file
     params_csv <- read.csv(all_files[ind]) # open the parameter file
