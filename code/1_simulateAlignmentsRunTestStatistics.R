@@ -1,4 +1,5 @@
 # R code to create dataframes with a row for each simulation to run, simulate those alignments and output a csv with results of all test statistics
+# Sourcing this file will run all of the simulations below: the four separate plots for my thesis
 
 # Open packages
 library(parallel)
