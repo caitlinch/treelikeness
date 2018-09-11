@@ -111,7 +111,7 @@ for (csv in csvs){
   df["tree2_tree_shape"] <- tree2_shape
   df["tree2_event_type"] <- tree2_event_type
   df["number_of_events"] <- tree2_eventnum
-  write.csv(df, file = csv)
+  write.csv(df, file = csv, row.names = FALSE)
 }
 
 # Reshape the data into long format
@@ -121,7 +121,7 @@ for (csv in csvs[1:4]){
   measure_vars <- c("PHI_observed","prop_resolved_quartets","proportion_recombinant_triplets","splittable_percentage","pdm_difference","neighbour_net")
   melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
   output_name <- gsub(".csv","_melted.csv",csv)
-  write.csv(melt_df, file = output_name)
+  write.csv(melt_df, file = output_name, row.names = FALSE)
 }
 
 # Reshape p value df into melted (long) format
@@ -130,4 +130,4 @@ id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1"
 measure_vars <- c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
 output_name <- paste0(output_folder,"plot4_p_value_collatedSimulationData_melted.csv")
-write.csv(melt_df, file = output_name)
+write.csv(melt_df, file = output_name, row.names = FALSE)
