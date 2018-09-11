@@ -24,9 +24,7 @@ if (run_location == "mac"){
 source(paste0(maindir,"code/func_process_data.R"))
 
 # load required libraries
-library(ggplot2)
 library(reshape2)
-library(gridExtra)
 
 # Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
