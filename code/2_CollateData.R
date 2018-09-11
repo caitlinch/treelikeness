@@ -79,3 +79,10 @@ for (csv in csvs){
   output_name <- gsub(".csv","_melted.csv",csv)
   write.csv(melt_df, file = output_name)
 }
+
+# Reshape p value df into melted (long) format
+id_vars <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id")
+measure_vars <- c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value")
+melt_df <- melt(ps_op_df, id = id_vars, measure.vars = measure_vars)
+output_name <- paste0(output_folder,"plot4_p_value_collatedSimulationData_melted.csv")
+write.csv(melt_df, file = output_name)
