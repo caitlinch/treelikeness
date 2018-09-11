@@ -57,7 +57,7 @@ id <- c("plot1_","plot2_","plot3_","plot4_")
 csvs <- list.files(output_folder)
 inds <- lapply(id,grep,csvs)
 csvs <- csvs[unlist(inds)]
-csvs <- csvs[grep("testStatistics_collatedSimulationData",csvs)]
+csvs <- c(csvs[grep("testStatistics_collatedSimulationData",csvs)], csvs[grep("p_value_collatedSimulationData",csvs)])
 csvs <- paste0(output_folder,csvs)
 for (csv in csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
@@ -67,13 +67,57 @@ for (csv in csvs){
   # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
   df["num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
   df["proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
+  vector <- 1:length(df$tree2)
+  close_inds <- grep("close",df$tree2)
+  divergent_inds <- grep("divergent",df$tree2)
+  ancient_inds <- grep("ancient",df$tree2)
+  noevent_inds <- grep("LHS",df$tree2)
+  tree2_event_position <- vector
+  tree2_event_position[close_inds] <- "close"
+  tree2_event_position[divergent_inds] <- "divergent"
+  tree2_event_position[ancient_inds] <- "ancient"
+  tree2_event_position[noevent_inds] <- "none"
+  balanced_inds <- grep("balanced",df$tree1)
+  intermediate_inds <- grep("intermediate",df$tree1)
+  unbalanced_inds <- grep("unbalanced",df$tree1)
+  tree1_shape <- vector
+  tree1_shape[balanced_inds] <- "balanced"
+  tree1_shape[intermediate_inds] <- "intermediate"
+  tree1_shape[unbalanced_inds] <- "unbalanced"
+  balanced_inds <- grep("balanced",df$tree2)
+  intermediate_inds <- grep("intermediate",df$tree2)
+  unbalanced_inds <- grep("unbalanced",df$tree2)
+  tree2_shape <- vector
+  tree2_shape[balanced_inds] <- "balanced"
+  tree2_shape[intermediate_inds] <- "intermediate"
+  tree2_shape[unbalanced_inds] <- "unbalanced"
+  nonreciprocal_inds <- grep("_nonreciprocal",df$tree2)
+  noevent_inds <- grep("LHS",df$tree2)
+  reciprocal_inds <- grep("_reciprocal",df$tree2)
+  tree2_event_type <- vector
+  tree2_event_type[nonreciprocal_inds] <- "nonreciprocal"
+  tree2_event_type[noevent_inds] <- "none"
+  tree2_event_type[reciprocal_inds] <- "reciprocal"
+  tree2_eventnum <- vector
+  for (i in 1:8){
+    temp_inds <- grep(paste0(i,"event"),df$tree2)
+    tree2_eventnum[temp_inds] <- i
+  }
+  noevent_inds <- grep("LHS",df$tree2)
+  tree2_eventnum[noevent_inds] <- 0
+  tree2_eventnum <- as.numeric(tree2_eventnum)
+  df["tree2_event_position"] <- tree2_event_position
+  df["tree1_tree_shape"] <- tree1_shape
+  df["tree2_tree_shape"] <- tree2_shape
+  df["tree2_event_type"] <- tree2_event_type
+  df["number_of_events"] <- tree2_eventnum
   write.csv(df, file = csv)
 }
 
 # Reshape the data into long format
-for (csv in csvs){
+for (csv in csvs[1:4]){
   df <- read.csv(csv, stringsAsFactors = FALSE)
-  id_vars <- c("method","n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id")
+  id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
   measure_vars <- c("PHI_observed","prop_resolved_quartets","proportion_recombinant_triplets","splittable_percentage","pdm_difference","neighbour_net")
   melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
   output_name <- gsub(".csv","_melted.csv",csv)
@@ -81,8 +125,9 @@ for (csv in csvs){
 }
 
 # Reshape p value df into melted (long) format
-id_vars <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id")
+df <- read.csv(csvs[5], stringsAsFactors = FALSE)
+id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
 measure_vars <- c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value")
-melt_df <- melt(ps_op_df, id = id_vars, measure.vars = measure_vars)
+melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
 output_name <- paste0(output_folder,"plot4_p_value_collatedSimulationData_melted.csv")
 write.csv(melt_df, file = output_name)
