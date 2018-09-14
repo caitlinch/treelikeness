@@ -49,7 +49,7 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1 )
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Total element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Modified splittable percentage")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -77,7 +77,7 @@ e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Total element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Modified splittable percentage")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -99,7 +99,7 @@ e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$age = factor(e$tree_age)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Total element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Modified splittable percentage")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -126,7 +126,7 @@ e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Total element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Modified splittable percentage")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -147,7 +147,7 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Total element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Modified splittable percentage")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -172,7 +172,7 @@ e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$group = factor(e$variable,levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value"))
-facet_names <- list("neighbour_net_p_value" = "Tree-splits \n proportion \n (Neighbor-Net)","pdm_difference_p_value" = "Summed element-wise \n difference","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
+facet_names <- list("neighbour_net_p_value" = "Tree-splits \n proportion \n (Neighbor-Net)","pdm_difference_p_value" = "Total element-wise \n difference","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
                     "X3Seq_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Modified splittable \n percentage")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
