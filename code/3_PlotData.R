@@ -7,7 +7,7 @@ run_location = "mac"
 if (run_location == "mac"){
   # Set file paths etc
   input_folder <- "/Users/caitlincherryh/Documents/Results/collatedOutput/"
-  output_folder <- "/Users/caitlincherryh/Documents/Results/plots/seminarPlots/ggsave/"
+  output_folder <- "/Users/caitlincherryh/Documents/Results/plots/seminarPlots/attempt_2/"
   # Set working directory
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
@@ -73,6 +73,8 @@ print("Plot 2")
 e = subset(plot2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
 facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
@@ -93,6 +95,8 @@ ggsave(filename = paste0(output_folder,"plot2_increasingProportionTree2.png"), p
 print("Plot 3")
 e = subset(plot2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
 e$age = factor(e$tree_age)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
 facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
@@ -118,6 +122,8 @@ print("Plot 4")
 e = subset(plot3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
 facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Summed element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
@@ -164,6 +170,7 @@ e = subset(bs_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
 e$group = factor(e$variable,levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value"))
 facet_names <- list("neighbour_net_p_value" = "Tree-splits \n proportion \n (Neighbor-Net)","pdm_difference_p_value" = "Summed element-wise \n difference","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
                     "X3Seq_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Modified splittable \n percentage")
