@@ -30,8 +30,8 @@ library(reshape2)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4fixedp", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4fixedp", output_path = output_folder)
 
 # # If ran multiple jobs for plot 4, collate the csv files
 # plot4_ids <- paste0("plot4tree",1:9)
