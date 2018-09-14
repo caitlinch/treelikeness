@@ -52,14 +52,14 @@ if (run_location == "mac"){
   	network_functions <- "code/func_split_decomposition_nci.R"
   	run_id <- "nci2"
 } else if (run_location=="soma"){
-	op_folder <- "/data/caitlin/treelikeness/output/"
-	results_folder <- "/data/caitlin/treelikeness/results/"
-	maindir <- "/data/caitlin/treelikeness/"
-	exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
-	                "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
-	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
-	network_functions <- "code/func_split_decomposition.R"
-	run_id <- "soma_fullSet"
+  op_folder <- "/data/caitlin/treelikeness/output_20180913/"
+  results_folder <- "/data/caitlin/treelikeness/results_20180913/"
+  maindir <- "/data/caitlin/treelikeness/"
+  exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
+                  "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
+  names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+  network_functions <- "code/func_split_decomposition.R"
+  run_id <- "soma_fullSet"
 }
 
 # Set working directory
@@ -93,17 +93,11 @@ proportion_tree2 <- 0.5
 id <- "plot1"
 rep <- 1:100
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS",
-                  "08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS","08taxa_intermediate_LHS",
-                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS","08taxa_unbalanced_LHS",
-                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
+                  "08taxa_balanced_LHS")
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_reciprocal_divergent_1event","08taxa_balanced_RHS_reciprocal_ancient_1event",
                   "08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_divergent_1event","08taxa_balanced_RHS_nonreciprocal_ancient_1event",
-                  "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_reciprocal_divergent_1event","08taxa_intermediate_RHS_reciprocal_ancient_1event",
-                  "08taxa_intermediate_RHS_nonreciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_divergent_1event","08taxa_intermediate_RHS_nonreciprocal_ancient_1event",
-                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_reciprocal_divergent_1event","08taxa_unbalanced_RHS_reciprocal_ancient_1event",
-                  "08taxa_unbalanced_RHS_nonreciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_divergent_1event","08taxa_unbalanced_RHS_nonreciprocal_ancient_1event",
-                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
-tree_id <- 1:21
+                  "08taxa_balanced_LHS")
+tree_id <- 1:7
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
@@ -129,15 +123,9 @@ tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- seq(0,0.5,0.01)
 id <- "plot2"
 rep <- 1:10
-tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
-                  "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
-                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS",
-                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
-tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
-                  "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
-                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event",
-                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
-tree_id <- 1:9
+tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS")
+tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_LHS")
+tree_id <- 1:3
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
@@ -152,7 +140,7 @@ times <- c(times, temp_time$msg)
 time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
 tic("plot3")
 
-## For third set of plots:
+# For third set of plots:
 # Make empty dataframe:
 plot3_df <- data.frame((matrix(ncol = 8, nrow = 0)))
 names(plot3_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
@@ -201,18 +189,11 @@ output_folder <- op_folder
 n_sites <- 1300
 tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- seq(0,0.5,0.1)
-id <- "plot4attempt2"
-# plot4_id <- "TESTBOOTSTRAP"
+id <- "plot4"
 rep <- 1:100
-tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS",
-                  "08taxa_intermediate_LHS","08taxa_intermediate_LHS",
-                  "08taxa_unbalanced_LHS","08taxa_unbalanced_LHS",
-                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
-tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event",
-                  "08taxa_intermediate_RHS_reciprocal_close_1event","08taxa_intermediate_RHS_nonreciprocal_close_1event",
-                  "08taxa_unbalanced_RHS_reciprocal_close_1event","08taxa_unbalanced_RHS_nonreciprocal_close_1event",
-                  "08taxa_balanced_LHS","08taxa_intermediate_LHS","08taxa_unbalanced_LHS")
-tree_id <- 1:9
+tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS")
+tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_LHS")
+tree_id <- 1:3
 for (i in tree_id){
   tree1_temp <- tree1_vector[[i]]
   tree2_temp <- tree2_vector[[i]]
