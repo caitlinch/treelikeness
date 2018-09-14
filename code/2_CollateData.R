@@ -30,27 +30,31 @@ library(reshape2)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
-plot4_ids <- paste0("plot4tree",1:9)
-for (i in plot4_ids){
-  collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = i, output_path = output_folder)
-  collate.csv(directory = raw_data_folder, file.name = "p_value", id = i, output_path = output_folder)
-}
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
 
-# Collate the files for plot4
-csvs <- list.files(output_folder)
-csvs <- csvs[grep("plot4tree",csvs)]
-ts <- csvs[grep("testStatistics_collatedSimulationData",csvs)]
-ts <- paste0(output_folder,ts)
-ts_op_list <- lapply(ts, read.csv, stringsAsFactors = FALSE)
-ts_op_df <- Reduce(rbind, ts_op_list)
-ts_op_df <- ts_op_df[,2:ncol(ts_op_df)]
-write.csv(ts_op_df,file=paste0(output_folder,"plot4_testStatistics_collatedSimulationData.csv"))
-ps <- csvs[grep("p_value_collatedSimulationData",csvs)]
-ps <- paste0(output_folder,ps)
-ps_op_list <- lapply(ps, read.csv, stringsAsFactors = FALSE)
-ps_op_df <- Reduce(rbind, ps_op_list)
-ps_op_df <- ps_op_df[,2:ncol(ps_op_df)]
-write.csv(ps_op_df,file=paste0(output_folder,"plot4_p_value_collatedSimulationData.csv"))
+# # If ran multiple jobs for plot 4, collate the csv files
+# plot4_ids <- paste0("plot4tree",1:9)
+# for (i in plot4_ids){
+#   collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = i, output_path = output_folder)
+#   collate.csv(directory = raw_data_folder, file.name = "p_value", id = i, output_path = output_folder)
+# }
+# 
+# # Collate the files for plot4
+# csvs <- list.files(output_folder)
+# csvs <- csvs[grep("plot4tree",csvs)]
+# ts <- csvs[grep("testStatistics_collatedSimulationData",csvs)]
+# ts <- paste0(output_folder,ts)
+# ts_op_list <- lapply(ts, read.csv, stringsAsFactors = FALSE)
+# ts_op_df <- Reduce(rbind, ts_op_list)
+# ts_op_df <- ts_op_df[,2:ncol(ts_op_df)]
+# write.csv(ts_op_df,file=paste0(output_folder,"plot4_testStatistics_collatedSimulationData.csv"))
+# ps <- csvs[grep("p_value_collatedSimulationData",csvs)]
+# ps <- paste0(output_folder,ps)
+# ps_op_list <- lapply(ps, read.csv, stringsAsFactors = FALSE)
+# ps_op_df <- Reduce(rbind, ps_op_list)
+# ps_op_df <- ps_op_df[,2:ncol(ps_op_df)]
+# write.csv(ps_op_df,file=paste0(output_folder,"plot4_p_value_collatedSimulationData.csv"))
 
 # Calculate the proportion of recombinant triplets and add it onto each set of simulations
 id <- c("plot1_","plot2_","plot3_","plot4_")
