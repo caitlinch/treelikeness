@@ -1,8 +1,8 @@
 # R code to import and collate test statistic results, and to process the results
 
 # Specify which file paths to use
-run_location = "mac"
-# run_location = "soma"
+# run_location = "mac"
+run_location = "soma"
 
 if (run_location == "mac"){
   # Set file paths etc
@@ -13,8 +13,8 @@ if (run_location == "mac"){
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
   # Set file paths etc
-  raw_data_folder <- "/data/caitlin/treelikeness/output/"
-  output_folder <- "/data/caitlin/treelikeness/results/"
+  raw_data_folder <- "/data/caitlin/treelikeness/output_20180913/"
+  output_folder <- "/data/caitlin/treelikeness/results_20180913/"
   
   # Set working directory
   maindir <- "/data/caitlin/treelikeness/"
@@ -30,8 +30,8 @@ library(reshape2)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
 collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4fixedp", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4fixedp", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
 
 # # If ran multiple jobs for plot 4, collate the csv files
 # plot4_ids <- paste0("plot4tree",1:9)

@@ -6,8 +6,8 @@ run_location = "mac"
 
 if (run_location == "mac"){
   # Set file paths etc
-  input_folder <- "/Users/caitlincherryh/Documents/Results/collatedOutput/"
-  output_folder <- "/Users/caitlincherryh/Documents/Results/plots/seminarPlots/attempt_2/"
+  input_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/collatedOutput/"
+  output_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/plots/"
   # Set working directory
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
