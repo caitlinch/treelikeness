@@ -122,7 +122,6 @@ print("Plot 4")
 e = subset(plot3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
-e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
@@ -145,7 +144,6 @@ print("Plot 5")
 e = subset(plot3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
-e = subset(e, tree2_event_type != "none")
 e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
 facet_names <- list("neighbour_net" = "Tree-splits proportion \n (Neighbor-Net)","pdm_difference" = "Total element-wise difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Modified splittable percentage")
@@ -180,7 +178,7 @@ facet_labeller <- function(variable){
 p <- ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~proportion_tree2,scales = "free_y", labeller = labeller(group = facet_labeller)) +
-  scale_x_continuous(name = "P value") +
+  xlab("P value") +
   ylab("Count") +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
