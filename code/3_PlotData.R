@@ -67,6 +67,19 @@ p <- ggplot(e, aes(x = type, y = value)) +
 # To get proper test size etc, save with the following dimensions: 4090 x 1938
 ggsave(filename = paste0(output_folder,"plot1_differentEventTypes.png"), plot = p, units = "in", width = 43, height = 20.4)
 
+p <- ggplot(e, aes(x = type, y = value)) +
+  geom_boxplot() +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_discrete(name = "\n Type of introgression event \n",
+                   labels=c("none none" = "None", "reciprocal close" = "Reciprocal, \n Close", "reciprocal divergent" = "Reciprocal, \n Divergent", "reciprocal ancient" = "Reciprocal, \n Ancient",
+                            "nonreciprocal close" = "Nonreciprocal, \n Close", "nonreciprocal divergent" = "Nonreciprocal, \n Divergent", "nonreciprocal ancient" = "Nonreciprocal, \n Ancient"),
+                   limits=c("none none","reciprocal close","nonreciprocal close","reciprocal divergent","nonreciprocal divergent","reciprocal ancient","nonreciprocal ancient")) +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+# To get proper test size etc, save with the following dimensions: 4090 x 1938
+ggsave(filename = paste0(output_folder,"plot1_differentEventTypes_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
+
 
 # Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness?
 print("Plot 2")
@@ -90,6 +103,15 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
 ggsave(filename = paste0(output_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 43, height = 20.4)
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(size=5) +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+ggsave(filename = paste0(output_folder,"plot2_increasingProportionTree2_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 3: How does tree age affect detection of treelikeness?
 print("Plot 3")
@@ -117,6 +139,19 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 48, height = 20.4)
 
+p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
+  geom_smooth(size = 3) +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 45),
+        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"),
+        strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm"))) +
+  scale_color_viridis(discrete = TRUE, option = "viridis") +
+  guides(color = guide_legend(title = "Tree depth"))
+ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2_portrait.png"), plot = p, units = "in", width = 45, height = 46.8)
+
 # Plot 4: How does the number of events impact detection of tree likeness?
 print("Plot 4")
 e = subset(plot3_df, tree1_tree_shape == 'balanced')
@@ -138,6 +173,15 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
 ggsave(filename = paste0(output_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 43, height = 20.4)
+
+p <- ggplot(e, aes(x = event_asfactor, y = value)) +
+  geom_boxplot() +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_discrete(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+ggsave(filename = paste0(output_folder,"plot4_numberOfEvents_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
 print("Plot 5")
@@ -161,6 +205,18 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
   scale_color_viridis(discrete = TRUE, option = "plasma", labels = c("Nonreciprocal", "Reciprocal")) + 
   guides(color = guide_legend(title = "Event type"))
 ggsave(filename = paste0(output_folder,"plot5_ReciprocialAndNonreciprocalEvents.png"), plot = p, units = "in", width = 48, height = 20.4)
+
+p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
+  geom_smooth(size = 3) +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 45),
+        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm"))) + 
+  scale_color_viridis(discrete = TRUE, option = "plasma", labels = c("Nonreciprocal", "Reciprocal")) + 
+  guides(color = guide_legend(title = "Event type"))
+ggsave(filename = paste0(output_folder,"plot5_ReciprocialAndNonreciprocalEvents_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 6: Are the results statistically significant?
 print("Plot 6")
