@@ -55,7 +55,7 @@ facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
 p <- ggplot(e, aes(x = type, y = value)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller)) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, \n Close", "reciprocal divergent" = "Reciprocal, \n Divergent", "reciprocal ancient" = "Reciprocal, \n Ancient",
@@ -68,7 +68,7 @@ p <- ggplot(e, aes(x = type, y = value)) +
 ggsave(filename = paste0(output_folder,"plot1_differentEventTypes.png"), plot = p, units = "in", width = 43, height = 20.4)
 
 p <- ggplot(e, aes(x = type, y = value)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, \n Close", "reciprocal divergent" = "Reciprocal, \n Divergent", "reciprocal ancient" = "Reciprocal, \n Ancient",
@@ -166,7 +166,7 @@ facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller)) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
@@ -175,7 +175,7 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
 ggsave(filename = paste0(output_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 43, height = 20.4)
 
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
-  geom_boxplot() +
+  geom_boxplot(outlier.size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
