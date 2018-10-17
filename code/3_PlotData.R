@@ -7,7 +7,7 @@ run_location = "mac"
 if (run_location == "mac"){
   # Set file paths etc
   input_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/collatedOutput/"
-  output_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/plots/plots_20181003/"
+  output_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/plots/plots_20181017/"
   # Set working directory
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
@@ -48,9 +48,9 @@ e = subset(plot1_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1 )
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree proportion","pdm_difference" = "Distance difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
-                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio")
+e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","proportion_recombinant_triplets","pdm_difference","prop_resolved_quartets","neighbour_net"))
+facet_names <- list("neighbour_net" = "Tree proportion \n (This thesis)","pdm_difference" = "Distance difference \n (This thesis)","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio \n (This thesis)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
@@ -89,9 +89,9 @@ e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree proportion","pdm_difference" = "Distance difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
-                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio")
+e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","proportion_recombinant_triplets","pdm_difference","prop_resolved_quartets","neighbour_net"))
+facet_names <- list("neighbour_net" = "Tree proportion \n (This thesis)","pdm_difference" = "Distance difference \n (This thesis)","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio \n (This thesis)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
@@ -120,9 +120,9 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$age = factor(e$tree_age)
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree proportion","pdm_difference" = "Distance difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
-                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio")
+e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","proportion_recombinant_triplets","pdm_difference","prop_resolved_quartets","neighbour_net"))
+facet_names <- list("neighbour_net" = "Tree proportion \n (This thesis)","pdm_difference" = "Distance difference \n (This thesis)","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio \n (This thesis)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
@@ -139,16 +139,17 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 48, height = 20.4)
 
+colour_list <- c("1" = "#7a0177", "0.5" = "#c51b8a", "0.1" = "#f768a1", "0.05" = "#fbb4b9")
 p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 45),
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
         legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"),
         strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm"))) +
-  scale_color_viridis(discrete = TRUE, option = "viridis") +
+  scale_color_manual(values = colour_list) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2_portrait.png"), plot = p, units = "in", width = 45, height = 46.8)
 
@@ -159,9 +160,9 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree proportion","pdm_difference" = "Distance difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
-                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio")
+e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","proportion_recombinant_triplets","pdm_difference","prop_resolved_quartets","neighbour_net"))
+facet_names <- list("neighbour_net" = "Tree proportion \n (This thesis)","pdm_difference" = "Distance difference \n (This thesis)","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio \n (This thesis)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
@@ -188,9 +189,9 @@ print("Plot 5")
 e = subset(plot3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","splittable_percentage","pdm_difference","neighbour_net"))
-facet_names <- list("neighbour_net" = "Tree proportion","pdm_difference" = "Distance difference","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
-                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio")
+e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","proportion_recombinant_triplets","pdm_difference","prop_resolved_quartets","neighbour_net"))
+facet_names <- list("neighbour_net" = "Tree proportion \n (This thesis)","pdm_difference" = "Distance difference \n (This thesis)","PHI_observed" = "PHI \n (PhiPack)","prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage" = "Distance ratio \n (This thesis)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
@@ -214,8 +215,8 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
         axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 45),
         legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm"))) + 
-  scale_color_viridis(discrete = TRUE, option = "plasma", labels = c("Nonreciprocal", "Reciprocal")) + 
-  guides(color = guide_legend(title = "Event type"))
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("#ca0020","#0571b0"),labels = c("Nonreciprocal", "Reciprocal"))
 ggsave(filename = paste0(output_folder,"plot5_ReciprocialAndNonreciprocalEvents_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 6: Are the results statistically significant?
@@ -311,4 +312,22 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value, color = variable,
   scale_colour_manual("Test statistic", values=cols, labels = names) +
   scale_shape_manual("Test statistic", values=shapes, labels = names)
 ggsave(filename = paste0(output_folder,"plot8_StatisticallySignificantResults.png"), plot = p, units = "in", width = 43, height = 20.4)
+
+# Plot 9: facetted significance
+
+f$group = factor(f$variable,levels = c("PHI_p_value","splittable_percentage_p_value","X3SEQ_p_value","pdm_difference_p_value","likelihood_mapping_p_value","neighbour_net_p_value"))
+facet_names <- list("neighbour_net_p_value" = "Tree proportion \n (This thesis)","pdm_difference_p_value" = "Distance difference \n (This thesis)","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "X3SEQ_p_value" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance ratio \n (This thesis)")
+facet_labeller <- function(variable){
+  variable <- facet_names[variable]
+}
+p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
+  geom_line(size=3) +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Percent of simulations that reject the null hypothesis \n (p-value < 0.05) \n") +
+  theme(axis.text.x = element_text(size = 50), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 50), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
+        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+ggsave(filename = paste0(output_folder,"plot9_facetedPValues.png"), plot = p, units = "in", width = 40, height = 46.8)
 
