@@ -139,7 +139,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 48, height = 20.4)
 
-colour_list <- c("1" = "#7a0177", "0.5" = "#c51b8a", "0.1" = "#f768a1", "0.05" = "#fbb4b9")
+colour_list <- c("1" = "#000000", "0.5" = "#E69F00", "0.1" = "#56B4E9", "0.05" = "#CC79A7")
 p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
@@ -148,7 +148,8 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
         axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
         legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"),
-        strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm"))) +
+        strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")), panel.background = element_rect(fill="white"),
+        panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
   scale_color_manual(values = colour_list) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2_portrait.png"), plot = p, units = "in", width = 45, height = 46.8)
