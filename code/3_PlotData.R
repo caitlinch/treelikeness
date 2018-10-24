@@ -227,6 +227,8 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
+e = subset(e, variable != "PHI_observed_p_value")
+e = subset(e, variable != "num_recombinant_sequences_p_value")
 e$group = factor(e$variable,levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value"))
 facet_names <- list("neighbour_net_p_value" = "Tree \n proportion","pdm_difference_p_value" = "Distance \n difference","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
                     "X3Seq_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance \n ratio")
@@ -251,6 +253,8 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
+e = subset(e, variable != "PHI_observed_p_value")
+e = subset(e, variable != "num_recombinant_sequences_p_value")
 e = subset(e, variable == "neighbour_net_p_value")
 e$group = factor(e$variable,levels = c("neighbour_net_p_value"))
 facet_names <- list("neighbour_net_p_value" = "Tree proportion")
@@ -275,6 +279,8 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
+e = subset(e, variable != "PHI_observed_p_value")
+e = subset(e, variable != "num_recombinant_sequences_p_value")
 # to make new df for the plot
 PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                  nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
@@ -315,7 +321,7 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value, color = variable,
 ggsave(filename = paste0(output_folder,"plot8_StatisticallySignificantResults.png"), plot = p, units = "in", width = 43, height = 20.4)
 
 # Plot 9: facetted significance
-
+print("Plot 9")
 f$group = factor(f$variable,levels = c("PHI_p_value","splittable_percentage_p_value","X3SEQ_p_value","pdm_difference_p_value","likelihood_mapping_p_value","neighbour_net_p_value"))
 facet_names <- list("neighbour_net_p_value" = "Tree proportion \n (This thesis)","pdm_difference_p_value" = "Distance difference \n (This thesis)","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of resolved quartets \n (IQ-Tree)", 
                     "X3SEQ_p_value" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance ratio \n (This thesis)")
@@ -331,4 +337,64 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
         axis.text.y = element_text(size = 50), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
         legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
 ggsave(filename = paste0(output_folder,"plot9_facetedPValues.png"), plot = p, units = "in", width = 40, height = 46.8)
+
+# Plot 10 : parametric bootstrap p values for PHI and 3SEQ
+print("Plot 10")
+e = subset(bs_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
+PHI_p_value <- c(nrow(e[e$variable == "PHI_observed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_observed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_observed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                 nrow(e[e$variable == "PHI_observed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_observed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_observed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+X3SEQ_p_value <- c(nrow(e[e$variable == "num_recombinant_sequences_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "num_recombinant_sequences_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "num_recombinant_sequences_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                   nrow(e[e$variable == "num_recombinant_sequences_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "num_recombinant_sequences_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "num_recombinant_sequences_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+value <- c(PHI_p_value,X3SEQ_p_value,likelihood_mapping_p_value,splittable_percentage_p_value,pdm_difference_p_value,neighbour_net_p_value)
+value <- c(PHI_p_value,X3SEQ_p_value,likelihood_mapping_p_value,splittable_percentage_p_value,pdm_difference_p_value,neighbour_net_p_value)
+ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("splittable_percentage_p_value",6), rep("pdm_difference_p_value",6), rep("neighbour_net_p_value",6))
+proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
+f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
+f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value"))
+f$group = factor(f$variable,levels = c("PHI_p_value","splittable_percentage_p_value","X3SEQ_p_value","pdm_difference_p_value","likelihood_mapping_p_value","neighbour_net_p_value"))
+facet_names <- list("neighbour_net_p_value" = "Tree proportion \n (This thesis)","pdm_difference_p_value" = "Distance difference \n (This thesis)","PHI_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of resolved quartets \n (IQ-Tree)", 
+                    "X3SEQ_p_value" = "Proportion of recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance ratio \n (This thesis)")
+facet_labeller <- function(variable){
+  variable <- facet_names[variable]
+}
+p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
+  geom_line(size=3) +
+  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Percent of simulations that reject the null hypothesis \n (p-value < 0.05) \n") +
+  theme(axis.text.x = element_text(size = 50), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 50), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
+        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+ggsave(filename = paste0(output_folder,"plot10_facetedPValues_allParametric.png"), plot = p, units = "in", width = 40, height = 46.8)
+
+
+# Plot 11 - grid of p values, all parametric
+print("Plot 11")
+e = subset(bs_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
+e = subset(e, variable != "PHI_p_value")
+e = subset(e, variable != "X3Seq_p_value")
+e$group = factor(e$variable,levels = c("PHI_observed_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value"))
+facet_names <- list("neighbour_net_p_value" = "Tree \n proportion","pdm_difference_p_value" = "Distance \n difference","PHI_observed_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
+                    "num_recombinant_sequences_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance \n ratio")
+facet_labeller <- function(variable){
+  variable <- facet_names[variable]
+}
+p <- ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~proportion_tree2,scales = "free_y", labeller = labeller(group = facet_labeller)) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") +
+  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
+        axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
+ggsave(filename = paste0(output_folder,"plot11_StatisticalSignificance_allParametric.png"), plot = p, units = "in", width = 43, height = 43)
 
