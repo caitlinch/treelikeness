@@ -365,11 +365,27 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   geom_line(size=3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  theme(axis.text.x = element_text(size = 40), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
+        axis.text.y = element_text(size = 40), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) + 
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
+ggsave(filename = paste0(output_folder,"plot10_facetedPValues_allParametric_freeAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
+
+p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
+  geom_line(size=3) +
+  facet_wrap(~group, labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Percent of simulations that reject the null hypothesis \n (p-value < 0.05) \n") +
-  theme(axis.text.x = element_text(size = 50), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 50), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
-        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-ggsave(filename = paste0(output_folder,"plot10_facetedPValues_allParametric.png"), plot = p, units = "in", width = 40, height = 46.8)
+  theme(axis.text.x = element_text(size = 40), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
+        axis.text.y = element_text(size = 40), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) +
+  scale_y_continuous(labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
+ggsave(filename = paste0(output_folder,"plot10_facetedPValues_allParametric_fixedAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 
 # Plot 11 - grid of p values, all parametric
@@ -382,19 +398,36 @@ e = subset(e, tree2_event_type != "reciprocal")
 e = subset(e, variable != "PHI_p_value")
 e = subset(e, variable != "X3Seq_p_value")
 e$group = factor(e$variable,levels = c("PHI_observed_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value"))
-facet_names <- list("neighbour_net_p_value" = "Tree \n proportion","pdm_difference_p_value" = "Distance \n difference","PHI_observed_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
-                    "num_recombinant_sequences_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance \n ratio")
+facet_names <- list("neighbour_net_p_value" = "Tree \n proportion \n (This thesis)","pdm_difference_p_value" = "Distance \n difference \n (This thesis)","PHI_observed_p_value" = "PHI \n (PhiPack)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)", 
+                    "num_recombinant_sequences_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)", "splittable_percentage_p_value" = "Distance \n ratio \n (This thesis)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
+
 p <- ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~proportion_tree2,scales = "free_y", labeller = labeller(group = facet_labeller)) +
+  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
+        axis.text.y = element_text(size = 30), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) +
+  geom_vline(aes(xintercept = 0.05, colour = "red"), linetype = "dashed", size = 1.5, show.legend = TRUE) + 
+  scale_colour_manual("Statistical\nsignificance\nthreshold", values="red", labels = "p = 0.05")
+ggsave(filename = paste0(output_folder,"plot11_StatisticalSignificance_allParametric_freeAxes.png"), plot = p, units = "in", width = 43, height = 43)
+
+p <- ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~proportion_tree2, labeller = labeller(group = facet_labeller)) +
   xlab("\n P value \n") +
   ylab("\n Count \n") +
-  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
-        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
-  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(output_folder,"plot11_StatisticalSignificance_allParametric.png"), plot = p, units = "in", width = 43, height = 43)
+  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
+        axis.text.y = element_text(size = 30), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) +
+  scale_y_continuous(labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,10), limits = c(0,100)) + 
+  geom_vline(aes(xintercept = 0.05, colour = "red"), linetype = "dashed", size = 1.5, show.legend = TRUE) + 
+  scale_colour_manual("Statistical\nsignificance\nthreshold", values="red", labels = "p = 0.05")
+ggsave(filename = paste0(output_folder,"plot11_StatisticalSignificance_allParametric_fixedAxes.png"), plot = p, units = "in", width = 45, height = 43)
 
