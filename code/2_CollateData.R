@@ -1,13 +1,13 @@
 # R code to import and collate test statistic results, and to process the results
 
 # Specify which file paths to use
-# run_location = "mac"
-run_location = "soma"
+run_location = "mac"
+# run_location = "soma"
 
 if (run_location == "mac"){
   # Set file paths etc
   raw_data_folder <- "/Users/caitlincherryh/Documents/Results/Output/"
-  output_folder <- "/Users/caitlincherryh/Documents/Results/collatedOutput/"
+  output_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/collatedOutput/"
   
   # Set working directory
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
@@ -26,12 +26,12 @@ source(paste0(maindir,"code/func_process_data.R"))
 # load required libraries
 library(reshape2)
 
-# Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
+## Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
+#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
+#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
+#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
+#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
+#collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
 
 # # If ran multiple jobs for plot 4, collate the csv files
 # plot4_ids <- paste0("plot4tree",1:9)
@@ -131,7 +131,7 @@ for (csv in csvs[1:4]){
 # Reshape p value df into melted (long) format
 df <- read.csv(csvs[5], stringsAsFactors = FALSE)
 id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
-measure_vars <- c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value")
+measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value","neighbour_net_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
 output_name <- paste0(output_folder,"plot4_p_value_collatedSimulationData_melted.csv")
 write.csv(melt_df, file = output_name, row.names = FALSE)
