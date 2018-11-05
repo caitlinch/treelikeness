@@ -7,7 +7,7 @@ run_location = "mac"
 if (run_location == "mac"){
   # Set file paths etc
   input_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/collatedOutput/"
-  output_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/plots/plots_20181017/"
+  output_folder <- "/Users/caitlincherryh/Documents/Results/simulations_20180913/plots/plots_20181105/"
   # Set working directory
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
@@ -68,7 +68,7 @@ p <- ggplot(e, aes(x = type, y = value)) +
 ggsave(filename = paste0(output_folder,"plot1_differentEventTypes.png"), plot = p, units = "in", width = 43, height = 20.4)
 
 p <- ggplot(e, aes(x = type, y = value)) +
-  geom_boxplot(outlier.size = 3) +
+  geom_boxplot(outlier.size = 5, lwd = 2) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, \n Close", "reciprocal divergent" = "Reciprocal, \n Divergent", "reciprocal ancient" = "Reciprocal, \n Ancient",
@@ -76,7 +76,8 @@ p <- ggplot(e, aes(x = type, y = value)) +
                    limits=c("none none","reciprocal close","nonreciprocal close","reciprocal divergent","nonreciprocal divergent","reciprocal ancient","nonreciprocal ancient")) +
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "grey93"),panel.grid.minor = element_line(colour = "grey98"))
 # To get proper test size etc, save with the following dimensions: 4090 x 1938
 ggsave(filename = paste0(output_folder,"plot1_differentEventTypes_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
@@ -110,7 +111,8 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78"))
 ggsave(filename = paste0(output_folder,"plot2_increasingProportionTree2_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 3: How does tree age affect detection of treelikeness?
@@ -177,12 +179,13 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
 ggsave(filename = paste0(output_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 43, height = 20.4)
 
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
-  geom_boxplot(outlier.size = 3) +
+  geom_boxplot(outlier.size = 5, lwd = 2) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 2) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "grey93"),panel.grid.minor = element_line(colour = "grey98"))
 ggsave(filename = paste0(output_folder,"plot4_numberOfEvents_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
@@ -215,7 +218,8 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
         axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 45),
-        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm"))) + 
+        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) + 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("#ca0020","#0571b0"),labels = c("Nonreciprocal", "Reciprocal"))
 ggsave(filename = paste0(output_folder,"plot5_ReciprocialAndNonreciprocalEvents_portrait.png"), plot = p, units = "in", width = 40, height = 46.8)
@@ -335,7 +339,8 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   ylab("\n Percent of simulations that reject the null hypothesis \n (p-value < 0.05) \n") +
   theme(axis.text.x = element_text(size = 50), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
         axis.text.y = element_text(size = 50), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
-        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78"))
 ggsave(filename = paste0(output_folder,"plot9_facetedPValues.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 # Plot 10 : parametric bootstrap p values for PHI and 3SEQ
@@ -368,7 +373,8 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   theme(axis.text.x = element_text(size = 40), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
         axis.text.y = element_text(size = 40), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
-        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) + 
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm"),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 ggsave(filename = paste0(output_folder,"plot10_facetedPValues_allParametric_freeAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
@@ -381,7 +387,8 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   theme(axis.text.x = element_text(size = 40), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
         axis.text.y = element_text(size = 40), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
-        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) +
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm"),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
   scale_y_continuous(labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
@@ -410,7 +417,8 @@ p <- ggplot(e, aes(x = value)) +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
-        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) +
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm"),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) +
   geom_vline(aes(xintercept = 0.05, colour = "red"), linetype = "dashed", size = 1.5, show.legend = TRUE) + 
   scale_colour_manual("Statistical\nsignificance\nthreshold", values="red", labels = "p = 0.05")
@@ -424,7 +432,8 @@ p <- ggplot(e, aes(x = value)) +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
-        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm")) +
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm"),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) +
   scale_y_continuous(labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,10), limits = c(0,100)) + 
   geom_vline(aes(xintercept = 0.05, colour = "red"), linetype = "dashed", size = 1.5, show.legend = TRUE) + 
