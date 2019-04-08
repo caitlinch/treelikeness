@@ -17,4 +17,5 @@ exec_paths <- paste0(exec_folder,exec_paths)
 names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 
 # Call decomposition statistic
-x <- tree.proportion(iqpath = exec_paths[["IQTree"]], splitstree_path = exec_paths[["SplitsTree"]], path = al_path, network_algorithm = "neighbournet")
+x <- tree.proportion(iqpath = exec_paths[["IQTree"]], splitstree_path = exec_paths[["SplitsTree"]], path = al_path, network_algorithm = "neighbournet", trimmed = FALSE)
+y <- tree.proportion(iqpath = exec_paths[["IQTree"]], splitstree_path = exec_paths[["SplitsTree"]], path = al_path, network_algorithm = "neighbournet", trimmed = TRUE)
