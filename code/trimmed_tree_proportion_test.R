@@ -1,6 +1,6 @@
 # Source functions
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
-source(paste0(maindir,network_functions))
+source(paste0(maindir,"code/func_split_decomposition.R"))
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))

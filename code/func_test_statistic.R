@@ -372,7 +372,7 @@ tree.proportion <- function(iqpath, splitstree_path, path,network_algorithm = "n
   all_ii_sum <- 0
   trimmed_ii_sum <- 0
   
-  # Iterate through each of the rows in the splits dataframe
+  # Iterate through each of the rows in the splits dataframe and collect the splits
   for (i in 1:length(splits)){
     # For each split, get the split weight, whether it's trivial, and whether it's in the tree
     split_atts <- split.attributes(splits[i],tree)
@@ -398,17 +398,16 @@ tree.proportion <- function(iqpath, splitstree_path, path,network_algorithm = "n
       }
     }
   }
-  
+
   # Calculate the tree proportion by dividing the sum of split weights in the tree by the sum of all split weights
   # Use the tree_ii_sum which will already have pruned out the trivial splits if trimmed == TRUE
   if (trimmed == FALSE){
     # If no trimming, calculate by dividing by the sum of ALL isolation indexes
     ts <- tree_ii_sum / all_ii_sum
-  } else if (trimmed == FALSE){
+  } else if (trimmed == TRUE){
     # If trimming trivial splits, calculate test statistic by dividing by only the non-trivial splits
     ts <- tree_ii_sum / trimmed_ii_sum
   }
-
   # Return the test statistic result
   return(ts)
 }
@@ -434,14 +433,11 @@ split.attributes <- function(split, tree){
   # Checks both just to be sure 
   # If they're not both tre
   if (ss1_mono == TRUE && ss2_mono == TRUE){
-    ii <- attr(split, "weights") # set the isolation index to the split weight
-    print(ii)
     in.tree <- TRUE # Split is in tree
   } else {
-    ii <- NA # set the isolation index to NA as this split is not in the tree
     in.tree <- FALSE # Split is not in tree
   }
-  print(in.tree)
+  ii <- attr(split, "weights") # isolation index will equal the weight of the split (comes directly from the network) - this doesn't depend on whether the split is in the tree or not
   vals <- c(as.list(in.tree),ii,trivial)
   names(vals) <- c("is_split_in_tree","isolation_index","is_split_trivial")
   return(vals)
