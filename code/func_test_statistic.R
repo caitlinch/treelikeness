@@ -350,6 +350,39 @@ test.monophyly <- function(split, tree){
   return(ii)
 }
 
+# Test statistic 3: proportion of all split weights present in the tree
+# Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
+# network_algorithm - either "split decomposition" or "neighbournet" - defines which transformation will be applied
+#       to the alignment to turn it into a network in SplitsTree
+tree.proportion <- function(iqpath, splitstree_path, path,network_algorithm){
+  # Run IQ-tree if it hasn't already been run
+  call.IQTREE(iqpath,path) # path = path to alignment
+  # Calculate the split decomposition
+  call.SplitsTree(splitstree_path,path,network_algorithm)
+  # Retrieve the file name for the splits output file
+  splits.filepath <- splits.filename(path)
+  # Extract the splits 
+  splits <- read.nexus.splits(splits.filepath) # Open the splits from SplitsTree
+  ## Open the tree estimated by IQ-TREE
+  tree <- open.tree(path)
+  
+  # Test each split to see whether it's in the tree
+  # Make sure to feed in each line using [x] into the apply function, not [[x]] or the attributes (taxa names, weights) won't be passed to the test.monophyly function
+  tree_ii_sum <- 0 # create a vector to store split weights
+  for (i in 1:length(splits)){
+    # Iterate through each of the rows in the splits dataframe
+    test_ii <- test.monophyly(splits[i],tree) # test for monophyly
+    tree_ii_sum <- tree_ii_sum + test_ii # add weight to running sum (or 0 if split not in tree)
+  }
+  # Get the sum of all split weights
+  all_ii_sum <- sum.all.ii(splits)
+  # Divide the sum of split weights in the tree by the sum of all split weights
+  ts <- tree_ii_sum / all_ii_sum
+  # Return the test statistic result
+  return(ts)
+}
+
+
 # Function to sum all weights from a splits nexus file
 sum.all.ii <- function(splits){
   total_ii <- sum(attr(splits,"weights"))
