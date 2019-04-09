@@ -506,31 +506,31 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
     redo <- FALSE # if the directory and the alignment don't exist, this is not a redo and all test statistics/tests need to be run
   }
   
-  if (redo == FALSE){
-    # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
-    output_folder <- row[["output_folder"]]
-    n_sites <- as.numeric(row[["n_sites"]])
-    tree_age <- as.numeric(row[["tree_age"]])
-    tree1_name <- row[["tree1"]]
-    tree2_name <- row[["tree2"]]
-    K <- as.numeric(row[["proportion_tree2"]])
-    id <- paste0(row[["id"]],"_",row[["rep"]])
-    
-    # Open the trees and get the number of taxa
-    tree1 <- open.fixed.tree(tree1_name,tree_folder)
-    tree2 <- open.fixed.tree(tree2_name, tree_folder)
-    # Create the alignment (if it hasn't already been created)
-    if (file.exists(paste0(al_folder,"alignment.nexus")) == FALSE) {
-      phylo.fixedtrees.make1(al_folder, n_sites, tree_age, tree1, tree1_name, tree2, tree2_name, K, id)
-    }
-  }
-    
+  
+  # Extract values for creating the phylogenetic alignment from the input row (convert to numeric so can use the elements for ~ maths things ~)
+  output_folder <- row[["output_folder"]]
+  n_sites <- as.numeric(row[["n_sites"]])
+  tree_age <- as.numeric(row[["tree_age"]])
+  tree1_name <- row[["tree1"]]
+  tree2_name <- row[["tree2"]]
+  K <- as.numeric(row[["proportion_tree2"]])
+  id <- paste0(row[["id"]],"_",row[["rep"]])
+  
+  # Open the trees 
+  tree1 <- open.fixed.tree(tree1_name,tree_folder)
+  tree2 <- open.fixed.tree(tree2_name, tree_folder)
+  
+  # Create the alignment (if it hasn't already been created)
+  if (file.exists(paste0(al_folder,"alignment.nexus")) == FALSE) {
+    phylo.fixedtrees.make1(al_folder, n_sites, tree_age, tree1, tree1_name, tree2, tree2_name, K, id)
+  } 
+  
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment (if it hasn't already been run)
-  n_taxa <- length(tree1$tip.label)
+  n_taxa <- length(tree1$tip.label) # get the number of taxa
   if (file.exists(paste0(al_folder,"alignment.nexus.iqtree")) == FALSE){
     call.IQTREE.quartet(program_paths[["IQTree"]],al_file,n_taxa)
   }
-  
+    
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
   setwd(al_folder)
   # Get paths to PhiPac, 3SEQ
@@ -650,6 +650,7 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   names(df) <- df_names # add names to the df so you know what's what
   write.csv(df,file = results_file)
 }
+
 
 # Name output folders and files
 phylo.fixedtrees.output.folder <- function(row){
