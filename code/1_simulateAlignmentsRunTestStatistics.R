@@ -28,10 +28,10 @@ time_ids <- c()
 
 tic("initialising")
 if (run_location == "mac"){
-  	op_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
-  	results_folder <- "/Users/caitlincherryh/Documents/TestAlignmentResults/2_testFixedTrees/"
+  	op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/"
+  	results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/"
   	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
-  	exec_folder <- "/Users/caitlincherryh/Documents/Executables/"
+  	exec_folder <- "/Users/caitlincherryh/Documents/Honours/Executables/"
   	# Create a vector with all of the executable file paths
   	# To access a path: exec_paths[["name"]]
   	exec_paths <- c("3seq","iqtree","Phi","SimBac","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
@@ -105,7 +105,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -133,7 +133,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -173,7 +173,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot3_df <- rbind(plot3_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
@@ -201,7 +201,7 @@ for (i in tree_id){
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
   plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
 }
-mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 35) # mclapply for phylo with fixed trees
+mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
 # Collect the folders that contain the alignments for plot4
 all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get all the directory names in the output folder
 inds <- grep(id,all_folders) # find which indexes the plot4 (bootstrap) folders are at 
@@ -217,9 +217,9 @@ for (folder in plot4_folders){
   }
 }
 # Apply the parametric bootstrap function to the folders without a bootstrap
-mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 35) # run all the bootstraps!
+mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 10) # run all the bootstraps!
 # Collate all the bootstraps and calculate p-values
-mclapply(plot4_folders,phylo.collate.bootstrap, mc.cores = 35) # collate the bootstrap test statistics and calculate the p-values for the test statistics
+mclapply(plot4_folders,phylo.collate.bootstrap, mc.cores = 10) # collate the bootstrap test statistics and calculate the p-values for the test statistics
 
 temp_time <- toc()
 times <- c(times, temp_time$msg)
