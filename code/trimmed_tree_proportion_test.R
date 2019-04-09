@@ -23,6 +23,14 @@ y <- tree.proportion(iqpath = exec_paths[["IQTree"]], splitstree_path = exec_pat
 
 # Call delta plot function
 mldm <- mldist.pdm(al2_path)
-pdm <- as.matrix(mldm)
-pdm[upper.tri(pdm)] <- t(pdm)[upper.tri(pdm)] # copy across upper diagonal
-z <- delta.plot(pdm, k = 20, plot = TRUE, which = 1:2)
+pdmm <- as.matrix(mldm)
+deltaplot_results <- delta.plot(pdmm,k = 101, plot = FALSE) # calculate the delta.plot
+counts <- deltaplot_results$counts
+intervals <- seq(0,1,(1/(length(counts)-1)))
+deltaplot_df <- data.frame(intervals,counts)
+names(deltaplot_df) <- c("intervals","counts")
+deltaplot_df_name <- phylo.fixedtrees.output.folder(row)[4]
+write.csv(df,file = deltaplot_df_name)
+# Want to calculate the mean and median delta q value - unfortunately the delta.plot function doesn't output raw data, so make a pseudo data set using the histogram values
+mean_dq <- mean(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the mean
+median_dq <- median(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the median
