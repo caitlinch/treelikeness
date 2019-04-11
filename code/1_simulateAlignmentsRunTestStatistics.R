@@ -52,8 +52,8 @@ if (run_location == "mac"){
   	network_functions <- "code/func_split_decomposition_nci.R"
   	run_id <- "nci2"
 } else if (run_location=="soma"){
-  op_folder <- "/data/caitlin/treelikeness/output_20180913/"
-  results_folder <- "/data/caitlin/treelikeness/results_20180913/"
+  op_folder <- "/data/caitlin/treelikeness/output_20190411/"
+  results_folder <- "/data/caitlin/treelikeness/results_20190411/"
   maindir <- "/data/caitlin/treelikeness/"
   exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
                   "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")

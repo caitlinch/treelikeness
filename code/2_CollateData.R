@@ -1,8 +1,8 @@
 # R code to import and collate test statistic results, and to process the results
 
 # Specify which file paths to use
-run_location = "mac"
-# run_location = "soma"
+#run_location = "mac"
+run_location = "soma"
 
 if (run_location == "mac"){
   # Set file paths etc
@@ -13,8 +13,8 @@ if (run_location == "mac"){
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
   # Set file paths etc
-  raw_data_folder <- "/data/caitlin/treelikeness/output_20180913/"
-  output_folder <- "/data/caitlin/treelikeness/results_20180913/"
+  raw_data_folder <- "/data/caitlin/treelikeness/output_20190411/"
+  output_folder <- "/data/caitlin/treelikeness/results_20190411/"
   
   # Set working directory
   maindir <- "/data/caitlin/treelikeness/"
