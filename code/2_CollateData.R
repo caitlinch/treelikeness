@@ -26,12 +26,12 @@ source(paste0(maindir,"code/func_process_data.R"))
 # load required libraries
 library(reshape2)
 
-## Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
+# Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
 
 # # If ran multiple jobs for plot 4, collate the csv files
 # plot4_ids <- paste0("plot4tree",1:9)
@@ -39,7 +39,7 @@ library(reshape2)
 #   collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = i, output_path = output_folder)
 #   collate.csv(directory = raw_data_folder, file.name = "p_value", id = i, output_path = output_folder)
 # }
-# 
+#
 # # Collate the files for plot4
 # csvs <- list.files(output_folder)
 # csvs <- csvs[grep("plot4tree",csvs)]
