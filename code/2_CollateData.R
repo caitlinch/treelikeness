@@ -1,8 +1,8 @@
 # R code to import and collate test statistic results, and to process the results
 
 # Specify which file paths to use
-run_location = "mac"
-#run_location = "soma"
+# run_location = "mac"
+run_location = "soma"
 
 if (run_location == "mac"){
   # Set file paths etc
