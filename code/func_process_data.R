@@ -4,7 +4,7 @@
 # must have a unique id - will collect all results from any folders with id in their names
 collate.csv <- function(directory,file.name = "testStatistics",id,output_path){
   # Collect all the folders within the directory
-  folder_paths <- list.files(directory)
+  folder_paths <- list.dirs(directory, full.names = FALSE, recursive = FALSE)
   # Now reduce that to only get folders for the particular id of interest
   id_inds <- grep(id,folder_paths)
   id_folder_paths <- folder_paths[id_inds]
