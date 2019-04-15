@@ -352,7 +352,7 @@ test.monophyly <- function(split, tree){
 
 # Tree proportion
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
-tree.proportion <- function(iqpath, splitstree_path, path,network_algorithm = "neighbournet", trimmed = FALSE){
+tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = FALSE){
   # network_algorithm takes values "split decomposition" or "neighbournet", default is "neighbournet"
   # trimmed takes values TRUE or FALSE, default is FALSE (all branches in network included in tree)
   
