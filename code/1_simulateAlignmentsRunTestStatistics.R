@@ -221,9 +221,6 @@ for (folder in plot4_folders){
 # Apply the parametric bootstrap function to the folders without a bootstrap
 mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 10) # run all the bootstraps!
 
-# Collate all the bootstraps and calculate p-values
-mclapply(plot4_folders,phylo.collate.bootstrap, exec_paths, tree_folder, mc.cores = 10) # collate the bootstrap test statistics and calculate the p-values for the test statistics
-
 temp_time <- toc()
 times <- c(times, temp_time$msg)
 time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
