@@ -25,7 +25,7 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   rep_ids <- 1:n_reps
   rep_ids <- sprintf("%04d", rep_ids)
   # run each rep
-  lapply(rep_ids,do.1.bootstrap,params,ML_tree,alignment_folder,iq_path,splitstree_path, phipack_path, threeseq_path)
+  lapply(rep_ids, do.1.bootstrap, params, ML_tree, alignment_folder, iq_path, splitstree_path, phipack_path, threeseq_path)
   
   # collate the bootstrap data and calculate the p-values.
   phylo.collate.bootstrap(alignment_folder,exec_paths, tree_folder)
@@ -158,6 +158,21 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     total_q <- (resolved_q+partly_resolved_q+unresolved_q)
     prop_resolved <- resolved_q/total_q
     
+    # Calculate the median and mean delta score
+    print(bs_al)
+    pdmm <- as.matrix(mldist.pdm(bs_al)) # open pairwise distance matrix as a matrix
+    deltaplot_results <- delta.plot(pdmm, k = 51, plot = FALSE) # calculate the delta.plot
+    counts <- deltaplot_results$counts
+    intervals <- seq(0,1,(1/(length(counts)-1)))
+    deltaplot_df <- data.frame(intervals,counts)
+    names(deltaplot_df) <- c("intervals","counts")
+    deltaplot_df_name <- paste0(bs_folder,"deltaplot_histogram.csv")
+    write.csv(deltaplot_df,file = deltaplot_df_name)
+    # Want to calculate the mean and median delta q value - unfortunately the delta.plot function doesn't output raw data, so make a pseudo data set using the histogram values
+    mean_dq <- mean(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the mean
+    median_dq <- median(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the median
+    mode_dq <- deltaplot_df[order(deltaplot_df$count, decreasing = TRUE),][1,1] # sort the dataframe by count values and extract the mode
+    
     # Run my test statistics
     # Want the path to be the path to the alignment you're testing - here that's the bootstrap alignment (bs_al)
     # run pdm ratio (TS1) (modified splittable percentage)
@@ -167,9 +182,11 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
     npdm <- normalised.pdm.diff.mean(iqpath = iq_path, path = bs_al)
     # run split decomposition (TS3) (split decomposition using splitstree)
-    sd <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "split decomposition")
-    # run NeighbourNet (TS3, with neighbour net not split decomposition using splitstree)
-    nn <- SplitsTree.decomposition.statistic(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "neighbournet")
+    # Run trimmed and untrimmed versions of the split decomposition and NeighborNet tree proportion
+    sd_untrimmed <- tree.proportion(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "split decomposition", trimmed = FALSE)
+    nn_untrimmed <- tree.proportion(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "neighbournet", trimmed = FALSE)
+    sd_trimmed <- tree.proportion(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "split decomposition", trimmed = TRUE)
+    nn_trimmed <- tree.proportion(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "neighbournet", trimmed = TRUE)
     
     # Extract params csv from alignment folder
     all_files <- list.files(alignment_folder) # get a list of all the files
@@ -191,8 +208,13 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     params_csv$splittable_percentage <- splittable_percentage
     params_csv$pdm_difference <- npds
     params_csv$pdm_average <- npdm
-    params_csv$split_decomposition <- sd
-    params_csv$neighbour_net <- nn
+    params_csv$split_decomposition_trimmed <- sd_trimmed
+    params_csv$neighbour_net_trimmed <- nn_trimmed
+    params_csv$split_decomposition_untrimmed <- sd_untrimmed
+    params_csv$neighbour_net_untrimmed <- nn_untrimmed
+    params_csv$mean_delta_q <- mean_dq
+    params_csv$median_delta_q <- median_dq
+    params_csv$mode_delta_q <- mode_dq
     params_csv$bootstrap_id <- paste0("bootstrap_",rep_number)
     
     # Output results as a csv in the bootstrap folder
@@ -400,7 +422,8 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   # Extract only the columns you want
   cols <- c("method", "bootstrap_id", "n_taxa", "n_sites", "tree_age", "tree1", "proportion_tree1", "tree2", "proportion_tree2", "id", "PHI_mean", "PHI_variance",
             "PHI_observed" ,"X3SEQ_num_recombinant_triplets", "X3SEQ_num_distinct_recombinant_sequences", "prop_resolved_quartets", "splittable_percentage",
-            "pdm_difference", "pdm_average", "split_decomposition", "neighbour_net")
+            "pdm_difference", "pdm_average", "split_decomposition_untrimmed", "neighbour_net_untrimmed","split_decomposition_trimmed","neighbour_net_trimmed",
+            "mean_delta_q","median_delta_q","mode_delta_q")
   alignment_df <- alignment_df[,cols]
   
   # Collate bootstrap csvs
@@ -433,18 +456,24 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   splittable_percentage_sig <- calculate.p_value(p_value_df$splittable_percentage, p_value_df$bootstrap_id)
   pdm_difference_sig <- calculate.p_value(p_value_df$pdm_difference, p_value_df$bootstrap_id)
   pdm_average_sig <- calculate.p_value(p_value_df$pdm_average, p_value_df$bootstrap_id)
-  split_decomposition_sig <- calculate.p_value(p_value_df$split_decomposition, p_value_df$bootstrap_id)
-  neighbour_net_sig <- calculate.p_value(p_value_df$neighbour_net, p_value_df$bootstrap_id)
+  sd_untrimmed_sig <- calculate.p_value(p_value_df$split_decomposition_untrimmed, p_value_df$bootstrap_id)
+  nn_untrimmed_sig <- calculate.p_value(p_value_df$neighbour_net_untrimmed, p_value_df$bootstrap_id)
+  sd_trimmed_sig <- calculate.p_value(p_value_df$split_decomposition_trimmed, p_value_df$bootstrap_id)
+  nn_trimmed_sig <- calculate.p_value(p_value_df$neighbour_net_trimmed, p_value_df$bootstrap_id)
+  mean_delta_q_sig  <- calculate.p_value(p_value_df$mean_delta_q, p_value_df$bootstrap_id)
+  median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
+  mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
   
   # Create an output dataframe of just P-values
   op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["tree_age"]],alignment_df[["tree1"]],alignment_df[["proportion_tree1"]],alignment_df[["tree2"]],
               alignment_df[["proportion_tree2"]], alignment_df[["id"]],PHI_sig, PHI_mean_sig, PHI_observed_sig, seq_sig, x3seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
-              split_decomposition_sig, neighbour_net_sig)
+              sd_untrimmed_sig, nn_untrimmed_sig, sd_trimmed_sig, nn_trimmed_sig, mean_delta_q_sig, median_delta_q_sig, mode_delta_q_sig)
   output_df <- data.frame(matrix(nrow=0,ncol=19)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value","PHI_mean_p_value","PHI_observed_p_value",
                         "3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value",
-                        "pdm_average_p_value","split_decomposition_p_value","neighbour_net_p_value")
+                        "pdm_average_p_value","split_decomposition_untrimmed_p_value","neighbour_net_untrimmed_p_value","split_decomposition_trimmed_p_value",
+                        "neighbour_net_trimmed_p_value","mean_delta_q_p_value","median_delta_q_p_value","mode_delta_q_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)
   }
