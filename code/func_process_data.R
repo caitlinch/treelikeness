@@ -51,17 +51,4 @@ collate.missing.params <- function(directory,id){
   return(output_df)
 }
 
-# Extract the relevant columns for analysing the SimBac simulations
-simplify.SimBac <- function(df){
-  cols <- c(1:5,14:30) 
-  df <- df[cols]
-  return(df)
-}
-
-# Extract the relevant columns for analysing the phylogenetic simulations
-simplify.phylo <- function(df){
-  cols <- c(1:2,6:11,14:30) 
-  df <- df[cols]
-  return(df)
-}
 
