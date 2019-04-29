@@ -26,13 +26,21 @@ if (run_location == "mac"){
 # Source files for functions
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
+source(paste0(maindir,"code/func_BA.R"))
 
 # Extract the file names of the alignments
-files <- list.files(dirs,recursive = TRUE) # list all files
-als <- paste0(dirs,files[grep(".nex",files)]) # get all the nexus files
+files <- list.files(BA_dir,recursive = TRUE) # list all files
+als <- paste0(BA_dir,files[grep(".nex",files)]) # get all the nexus files
 als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
 
-empirical.runTS(als[1],exec_paths)
+alignment_path <- als[1]
+program_paths <- exec_paths
+
+tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]],path = "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/Anderson_2013/16S/16S_withTaxaBlock.nexus", network_algorithm = "split decomposition", trimmed = FALSE)
+
+tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]],path = "/Users/caitlincherryh/Documents/Honours/Executables/alignment.nexus", network_algorithm = "split decomposition", trimmed = FALSE)
+
+#empirical.runTS(als[1],exec_paths)
 
 #for (al in als[1]){
 #  empirical.runTS(al,exec_paths)
