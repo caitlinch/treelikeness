@@ -9,8 +9,15 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   alignment_folder <- paste0(dirname(alignment_path),"/")
   # Extract the dataset name (basename of alignment folder: element after last "/" in alignment_folder)
   dataset <- basename(alignment_folder)
+  output_id <- gsub(".nex","",basename(alignment_path))
   # Create some folder and filenames
-  loci_name <- gsub(".nex","",basename(alignment_path))
+  if (bootstrap_id == FALSE){
+    # Get the alignment name and remove the extension to get the loci name
+    loci_name <- gsub(".nex","",basename(alignment_path))
+  } else {
+    # If the alignment is a bootstrap replicate, need to remove the rep number to get the loci name
+    loci_name <- strsplit(basename(alignment_path),"_")[[1]][1]
+  }
   log_folder <- paste0(alignment_folder,loci_name,"/")
   
   # If the log file doesn't exist, create it 
@@ -26,8 +33,12 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
   call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
   
+  # If you're working on the original alignment, create a unique folder (so files won't be overwritten)
   # Change to the folder for this alignment - means that 3seq and Phi files will be saved into a unique folder
-  setwd(log_folder)
+  if (bootstrap_id == FALSE){
+    setwd(log_folder)
+  }
+  # If you're working on a bootstrap replicate you can stay in the same folder
   # Get paths to PhiPac, 3SEQ
   phi_path <- program_paths[["Phi"]] # get path to phipack executable
   seq_path <- program_paths[["3seq"]] # get path to 3seq executable
@@ -95,7 +106,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   intervals <- seq(0,1,(1/(length(counts)-1)))
   deltaplot_df <- data.frame(intervals,counts)
   names(deltaplot_df) <- c("intervals","counts")
-  deltaplot_df_name <- paste0(log_folder,loci_name,"_deltaplot_histogram.csv")
+  deltaplot_df_name <- paste0(alignment_folder,output_id,"_deltaplot_histogram.csv")
   write.csv(deltaplot_df,file = deltaplot_df_name)
   # Want to calculate the mean and median delta q value - unfortunately the delta.plot function doesn't output raw data, so make a pseudo data set using the histogram values
   mean_dq <- mean(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the mean
@@ -126,16 +137,8 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   sd_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = new_nexus_file, network_algorithm = "split decomposition", trimmed = TRUE, tree_path = initial_iqtree_tree, run_IQTREE = FALSE)
   nn_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = new_nexus_file, network_algorithm = "neighbournet", trimmed = TRUE, tree_path = initial_iqtree_tree, run_IQTREE = FALSE)
   
-  # Name the test statistics file (if it's a  bootstrap replicate, add the replicate number!)
-  # Create the variable for bootstrap replicate
-  if (bootstrap_id == FALSE){
-    results_file <- paste0(alignment_folder,loci_name,"_testStatistics.csv")
-    rep_id = "empiricalAlignment"
-  } else {
-    results_file <- paste0(alignment_folder,loci_name,"_bootstrapReplicate",bootstrap_id,"_testStatistics.csv")
-    rep_id <- paste0("bootstrapReplicate",bootstrap_id)
-  }
-  
+  # Name the test statistics file using the output id (this way if it's a  bootstrap replicate, it adds the replicate number!)
+  results_file <- paste0(alignment_folder,output_id,"_testStatistics.csv")
   # Make somewhere to store the results
   df_names <- c("dataset","loci","bootstrap_replicate_id","n_taxa","n_sites","alignment_file",
                 "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets",
@@ -152,12 +155,34 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   write.csv(df,file = results_file)
 }
 
-empirical.parametric.bootstrap <- function(){
+do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignment_params, program_paths, bootstrap_id){
+  # Create the folder for this replicate
+  loci_name <- gsub(".nex","",basename(empirical_alignment_path))
+  bootstrap_name <- paste0(loci_name,"_",bootstrap_id) # this will be the name of the alignment
+  bootstrap_folder <- paste0(dirname(empirical_alignment_path),"/",bootstrap_name,"/") # folder to store results from this bootstrap in
+  # If the bootstrap folder doesn't exist, create it
+  if (dir.exists(bootstrap_folder) == FALSE){
+    dir.create(bootstrap_folder)
+  }
+  
+  # Create an alignment for this replicate using the alignment params - name will be loci_bootstrapReplicateXXXX
+  
+  
+  # Run all the test statistics
+  # bootstrap_id will be "bootstrapReplicateXXXX" where XXXX is a number
+  empirical.runTS(bootstrap_alignment_path, program_paths = program_paths, bootstrap_id = bootstrap_id)
+}
+
+empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths, number_of_replicates){
   # If it hasn't already been run, call and run IQTree
   call.IQTREE(program_paths["IQTree"],alignment_path)
   
   #Extract the parameters from the .iqtree log file.
   params <- get.simulation.parameters(paste0(alignment_path,".iqtree"))
   
-  # output_dataframe: dataset, loci name, number of taxa, number of characters, test statistic values
+  # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
+  
+  # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
+  # collate the bootstrap info into 1 folder
+  
 }
