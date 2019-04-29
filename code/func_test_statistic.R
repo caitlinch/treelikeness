@@ -351,20 +351,31 @@ test.monophyly <- function(split, tree){
 
 # Tree proportion
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
-tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = FALSE){
+tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = FALSE, tree_path = FALSE, run_IQTREE = FALSE){
   # network_algorithm takes values "split decomposition" or "neighbournet", default is "neighbournet"
   # trimmed takes values TRUE or FALSE, default is FALSE (all branches in network included in tree)
   
-  # Run IQ-tree if it hasn't already been run
-  call.IQTREE(iqpath,path) # path = path to alignment
+  # Only runs IQTree if run)IQTREE is set to TRUE
+  # Then it will only run if it hasn't run before (won't run if .iqtree file exists)
+  if (run_IQTREE == TRUE){
+    # Run IQ-tree if it hasn't already been run
+    call.IQTREE(iqpath,path) # path = path to alignment
+  }
+  
   # Calculate the split decomposition
   call.SplitsTree(splitstree_path,path,network_algorithm)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
   # Extract the splits 
   splits <- read.nexus.splits(splits.filepath) # Open the splits from SplitsTree
-  ## Open the tree estimated by IQ-TREE
-  tree <- open.tree(path)
+  # If no tree is provided, open the tree estimated by IQ_tree
+  if (tree_path == FALSE){
+    ## Open the tree estimated by IQ-TREE
+    tree <- open.tree(path)
+  } else {
+    # if a tree is provided, open that tree
+    tree <- read.tree(tree_path)
+  }
 
   # Create empty sums to store the sum of isolation index weights in
   tree_ii_sum <- 0 
@@ -446,4 +457,60 @@ split.attributes <- function(split, tree){
 sum.all.ii <- function(splits){
   total_ii <- sum(attr(splits,"weights"))
   return(total_ii)
+}
+
+# Run split decomposition using SplitsTree
+call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm){
+  suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
+  if (suffix == "fasta"){
+    # If the file is a fasta file, convert it to nexus file format
+    data <- read.fasta(alignment_path) # read in the fasta data
+    alignment_path_converted <- paste0(alignment_path,".nexus") # create a name for the nexus alignment (just the fasta alignment with a .nexus tacked on)
+    write.nexus.data(data, file = alignment_path_converted,format = "dna",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file)
+    # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+    nexus <- readLines(alignment_path_converted) # open the new nexus file
+    ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
+    nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+    writeLines(nexus,alignment_path_converted) # output the edited nexus file
+    plot_path <- gsub(".fasta.nexus","",alignment_path_converted)
+  } else if (suffix == "nexus"){
+    alignment_path_converted <- alignment_path
+    plot_path <- gsub(".nexus","",alignment_path_converted)
+  }
+  else if (suffix == "nex"){
+    alignment_path_converted <- alignment_path
+    plot_path <- gsub(".nex","",alignment_path_converted)
+  }
+  output_path <- splits.filename(alignment_path) # create an output path
+  if (network_algorithm == "split decomposition"){
+    # Create the splitstree command
+    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
+    # to export images of the networks (not working in soma)
+    # splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=SplitDecomposition; SAVE FILE=", output_path," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=SVG file=",paste0(plot_path,"_splitDecomposition.svg")," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=PNG file=",paste0(plot_path,"_splitDecomposition.png")," REPLACE=yes; QUIT'")
+  } else if (network_algorithm == "neighbournet"){
+    splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=NeighbourNet; SAVE FILE=", output_path," REPLACE=yes; QUIT'")
+    # to export images of the networks (not working in soma)
+    # splitstree_command <- paste0(splitstree_path, " -g -x 'OPEN FILE=", alignment_path_converted,"; ASSUME chartransform =Uncorrected_P HandleAmbiguousStates=Ignore Normalize=true; ASSUME disttransform=NeighbourNet; SAVE FILE=", output_path," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=SVG file=",paste0(plot_path,"_NeighbourNet.svg")," REPLACE=yes; UPDATE; EXPORTGRAPHICS format=png file=",paste0(plot_path,"_NeighbourNet.png")," REPLACE=yes; QUIT'")
+  }
+  # Call splitstree and do the split decomposition, save the results (overwrite any existing results)
+  system(splitstree_command) # Call the splitstree command using the system 
+}
+
+# Function to create a file name for the SplitsTree output
+splits.filename <- function(alignment_path){
+  suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
+  # Create a identifiable name for the output file from splitstree
+  if (suffix == "fasta"){
+    # Add "_splits" into the filename (so can find file later)
+    output_path <- gsub(".fasta","_splits.nexus",alignment_path)
+  }
+  if (suffix == "nexus"){
+    # Add "_splits" into the filename (so can find file later)
+    output_path <- gsub(".nexus","_splits.nexus",alignment_path)
+  }
+  if (suffix == "nex"){
+    # Add "_splits" into the filename (so can find file later)
+    output_path <- gsub(".nex","_splits.nex",alignment_path)
+  }
+  return(output_path)
 }
