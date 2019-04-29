@@ -1,5 +1,8 @@
 # Script to apply test statistics and parametric bootstrap to empirical data sets in the BenchmarkAlignments database
 
+library(ape)
+library(phangorn)
+
 run_location = "mac"
 # run_location = "soma"
 
@@ -20,11 +23,17 @@ if (run_location == "mac"){
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 }
 
+# Source files for functions
+source(paste0(maindir,"code/func_test_statistic.R"))
+source(paste0(maindir,"code/func_parametric_bootstrap.R"))
+
 # Extract the file names of the alignments
 files <- list.files(dirs,recursive = TRUE) # list all files
 als <- paste0(dirs,files[grep(".nex",files)]) # get all the nexus files
 als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
 
-for (al in als){
-  call.IQTREE(iqtree_path = "/Users/caitlincherryh/Documents/Honours/Executables/iqtree" , alignment_path = al)
-}
+empirical.runTS(als[1],exec_paths)
+
+#for (al in als[1]){
+#  empirical.runTS(al,exec_paths)
+#}
