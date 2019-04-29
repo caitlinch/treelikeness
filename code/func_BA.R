@@ -164,9 +164,46 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
   if (dir.exists(bootstrap_folder) == FALSE){
     dir.create(bootstrap_folder)
   }
+  bootstrap_alignment_path <- paste0(bootstrap_folder,bootstrap_name,".nex")
   
   # Create an alignment for this replicate using the alignment params - name will be loci_bootstrapReplicateXXXX
-  
+  if (file.exists(bootstrap_alignment_path) == FALSE) {
+    # If the alignment doesn't exist, create it!
+    
+    # Sample code for generating a parametric DNA sequence if you have a tree
+    # s1 = simSeq(t1, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
+    # s2 = simSeq(t2, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
+    # aln = c(s1, s2) # concatenate the alignments
+    
+    # You'll need to create x alignments, where x is the number of gamma categories
+    # create an empty alignment
+    aln <- c()
+    # Get the number of gamma rate categories
+    
+    # Iterate through the gamma rate categories
+    for 
+    
+    # Extract the parameters you need to enter into simSeq
+    n_bp = as.numeric(params$parameters[4,2]) # want a sequence that is 1300 base pairs long
+    # Extract the vector form of the rate matrix 
+    m <- params$Q_rate_matrix[,2:5] # extract the square block with the rates and not the header column
+    Q_vec <- c(m[2,1],m[3,1],m[3,2],m[4,1],m[4,2],m[4,3]) # extract the rates 
+    # Extract the base frequencies in the following order: A, C, G, T
+    base_freqs <- c(as.numeric(params$parameters[[12,2]]), as.numeric(params$parameters[[13,2]]), as.numeric(params$parameters[[14,2]]), as.numeric(params$parameters[[15,2]]))
+    seq_type <- "DNA" # generate DNA sequence
+    
+    # Generate the DNA sequence
+    # Don't need to specify rate variation because using JC model with no rate options
+    dna_sim <- simSeq(tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
+    
+    # Save the DNA alignment
+    write.phyDat(dna_sim,file = bs_al, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
+    # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+    nexus <- readLines(bs_al) # open the new nexus file
+    ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
+    nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+    writeLines(nexus,bs_al) # output the edited nexus file
+  }
   
   # Run all the test statistics
   # bootstrap_id will be "bootstrapReplicateXXXX" where XXXX is a number
