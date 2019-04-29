@@ -17,7 +17,7 @@ call.IQTREE <- function(iqtree_path,alignment_path){
 
 call.IQTREE.quartet <- function(iqtree_path,alignment_path,nsequences){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
-  if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
+  if (file.exists(paste0(alignment_path,".lmap.eps")) == FALSE){
     # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
     # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
     nquartet <- 25*as.numeric(nsequences)
