@@ -156,7 +156,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
 }
 
 do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignment_params, program_paths, bootstrap_id){
-  # Create the folder for this replicate
+  # Create the folder for this replicate, gather and create filenames
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   bootstrap_name <- paste0(loci_name,"_",bootstrap_id) # this will be the name of the alignment
   bootstrap_folder <- paste0(dirname(empirical_alignment_path),"/",bootstrap_name,"/") # folder to store results from this bootstrap in
@@ -165,26 +165,32 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
     dir.create(bootstrap_folder)
   }
   bootstrap_alignment_path <- paste0(bootstrap_folder,bootstrap_name,".nex")
+  empirical_alignment_tree_path <- paste0(empirical_alignment_path,".treefile")
+  empirical_alignment_tree <- read.tree(empirical_alignment_tree_path)
+  
+  # open the empirical alignment to get information about the sequence
+  n <- read.nexus.data(empirical_alignment_path)
+  p <- phyDat(n)
+  new_aln <- p
+  
+  # First generate completely new DNA using the params
+  # Then 
+  
+  # for each alignment:
+  # - copy the sequence out from the new alignment: temp <- as.numeric(new_aln$X)
+  # - replace the non 18s with the generated sequence of the right length: temp[which(new_aln$X !=18)] <- new_seq
+  # - replace the new seq into the new aln: new_aln$X <- temp
+  
   
   # Create an alignment for this replicate using the alignment params - name will be loci_bootstrapReplicateXXXX
   if (file.exists(bootstrap_alignment_path) == FALSE) {
-    # If the alignment doesn't exist, create it!
-    
     # Sample code for generating a parametric DNA sequence if you have a tree
     # s1 = simSeq(t1, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
     # s2 = simSeq(t2, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
     # aln = c(s1, s2) # concatenate the alignments
     
-    # You'll need to create x alignments, where x is the number of gamma categories
-    # create an empty alignment
-    aln <- c()
-    # Get the number of gamma rate categories
-    
-    # Iterate through the gamma rate categories
-    for 
-    
     # Extract the parameters you need to enter into simSeq
-    n_bp = as.numeric(params$parameters[4,2]) # want a sequence that is 1300 base pairs long
+    n_bp = as.numeric(params$parameters[4,2])  # sequence length should be the same as in the original sequence
     # Extract the vector form of the rate matrix 
     m <- params$Q_rate_matrix[,2:5] # extract the square block with the rates and not the header column
     Q_vec <- c(m[2,1],m[3,1],m[3,2],m[4,1],m[4,2],m[4,3]) # extract the rates 
@@ -192,17 +198,27 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
     base_freqs <- c(as.numeric(params$parameters[[12,2]]), as.numeric(params$parameters[[13,2]]), as.numeric(params$parameters[[14,2]]), as.numeric(params$parameters[[15,2]]))
     seq_type <- "DNA" # generate DNA sequence
     
-    # Generate the DNA sequence
-    # Don't need to specify rate variation because using JC model with no rate options
-    dna_sim <- simSeq(tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
+    # need to generate the number of sites for each gamma category:
+    g_cat <- params$gamma_categories
+    cat_sites <- round(n_bp*g_cat$proportion,digits = 0)
+    g_cat$cat_sites <- cat_sites
+    cat_sites <- fix.gammaCategory.siteNums(g_cat,n_bp) # make sure the sum of the gamma sites category is correct
+    # Get the number of gamma rate categories
+    num_g_cat <- length(g_cat$category)
+    # Initialise an empty sequence
+    new_aln <- c()
     
-    # Save the DNA alignment
-    write.phyDat(dna_sim,file = bs_al, format = "nexus",interleaved = TRUE, datablock = FALSE) # write the output as a nexus file
-    # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
-    nexus <- readLines(bs_al) # open the new nexus file
-    ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
-    nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
-    writeLines(nexus,bs_al) # output the edited nexus file
+    # Iterate through the gamma categories and create an alignment with each of the relative rates
+    for (i in g_cat){
+      row <- g_cat[i,]
+      relative_rate <- row$relative_rate
+      # Generate the DNA sequence using the informtion from the parameter list
+      dna_sim <- simSeq(x = empirical_alignment_tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec, rate = relative_rate)
+      #concatenate the sequence with the new alignment
+      new_aln <- c(new_aln,dna_sim)
+    }
+    
+    # Randomise sites in new_aln
   }
   
   # Run all the test statistics
@@ -222,4 +238,29 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
   # collate the bootstrap info into 1 folder
   
+}
+
+fix.gammaCategory.siteNums <- function(df,num){
+  # Quick function to randomly add/subtract to make sure that the number of sites in each gamma category is correct
+  if (sum(df$cat_sites)==num){
+    # If the sum of the num of sites = num of sites, return the df (all is good)
+    return(df)
+  }
+  else {
+    while (sum(df$cat_sites)!=num){
+      # randomly sample a row
+      row <- df[sample(nrow(df),1),]
+      row_id <- which(df$category==row$category)
+      if (sum(df$cat_sites)<num){
+        row$cat_sites <- row$cat_sites + 1
+      }
+      if (sum(df$cat_sites)>num){
+        row$cat_sites <- row$cat_sites - 1
+      }
+      # replace the row
+      df[row_id,]<-row
+    }
+    # outside the while loop: therefor return the gamma categories matrix
+    return(df)
+  }
 }
