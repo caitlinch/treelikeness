@@ -174,14 +174,6 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
   new_aln <- p
   
   # First generate completely new DNA using the params
-  # Then 
-  
-  # for each alignment:
-  # - copy the sequence out from the new alignment: temp <- as.numeric(new_aln$X)
-  # - replace the non 18s with the generated sequence of the right length: temp[which(new_aln$X !=18)] <- new_seq
-  # - replace the new seq into the new aln: new_aln$X <- temp
-  
-  
   # Create an alignment for this replicate using the alignment params - name will be loci_bootstrapReplicateXXXX
   if (file.exists(bootstrap_alignment_path) == FALSE) {
     # Sample code for generating a parametric DNA sequence if you have a tree
@@ -202,23 +194,37 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
     g_cat <- params$gamma_categories
     cat_sites <- round(n_bp*g_cat$proportion,digits = 0)
     g_cat$cat_sites <- cat_sites
-    cat_sites <- fix.gammaCategory.siteNums(g_cat,n_bp) # make sure the sum of the gamma sites category is correct
+    g_cat <- fix.gammaCategory.siteNums(g_cat,n_bp) # make sure the sum of the gamma sites category is correct
     # Get the number of gamma rate categories
     num_g_cat <- length(g_cat$category)
     # Initialise an empty sequence
-    new_aln <- c()
+    aln_exists <- FALSE
     
     # Iterate through the gamma categories and create an alignment with each of the relative rates
-    for (i in g_cat){
+    for (i in 1:num_g_cat){
       row <- g_cat[i,]
-      relative_rate <- row$relative_rate
-      # Generate the DNA sequence using the informtion from the parameter list
-      dna_sim <- simSeq(x = empirical_alignment_tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec, rate = relative_rate)
+      # Generate the DNA sequence using the informtion from the parameter list and the rate and number of sites for THIS GAMMA CATEGORY
+      dna_sim <- simSeq(x = empirical_alignment_tree, l = row$cat_sites, type = seq_type, bf = base_freqs, Q = Q_vec, rate = row$relative_rate)
       #concatenate the sequence with the new alignment
-      new_aln <- c(new_aln,dna_sim)
+      if (aln_exists == FALSE){
+        # If the alignment doesn't exist, create it
+        new_aln <- dna_sim
+        aln_exists <- TRUE
+      } else if (aln_exists == TRUE){
+        # If the alignment does exist, concatenate it
+        new_aln <- c(new_aln,dna_sim)
+      }
     }
     
-    # Randomise sites in new_aln
+    # Second, randomise sites in new_aln (otherwise masking will mean the gamma categories disproportionately get affected)
+    
+    # Third, mask each alignment with the gaps from the original sequence 
+    # for each alignment:
+    # - copy the sequence out from the new alignment: temp <- as.numeric(new_aln$X)
+    # - replace the non 18s with the generated sequence of the right length: temp[which(new_aln$X !=18)] <- new_seq
+    # - replace the new seq into the new aln: new_aln$X <- temp
+    
+    
   }
   
   # Run all the test statistics
