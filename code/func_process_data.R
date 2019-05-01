@@ -27,6 +27,27 @@ collate.csv <- function(directory,file.name = "testStatistics",id,output_path){
   write.csv(csv_paths_missing,file=paste0(output_path,id,"_",file.name,"_missingSimulations_filePaths.csv"))
 }
 
+collate.bootstraps <- function(directory, file.name, id, output.file.name){
+  # Collect all the folders within the directory
+  all_files <- list.files(directory, full.names = FALSE, recursive = TRUE)
+  # Now reduce that to only get folders for the particular id of interest
+  id_files <- all_files[grep(id,all_files)]
+  # Get the files of interest and their full file paths
+  csv_paths <- id_files[grep(file.name,id_files)]
+  csv_paths <- paste0(directory,"/",csv_paths)
+  # Set the number of rows in the dataframe (will equal the number of csv files: one per simulation + one for the original empirical alignment)
+  num_rows <- length(csv_paths)
+  # Open all the csv files, store the results as a list
+  output_list <- lapply(csv_paths, read.csv, stringsAsFactors = FALSE)
+  # Reduce the dataframe from a list into a matrix
+  output_df <- Reduce(rbind, output_list)
+  # Remove the "X" column (row number for smaller csv files)
+  output_df <- output_df[,2:ncol(output_df)]
+  # save the output dataframe
+  write.csv(output_df, file = output.file.name)
+  return(output_df)
+}
+
 collate.missing.params <- function(directory,id){
   # Collect all the folders within the directory
   folder_paths <- list.files(directory)
