@@ -7,18 +7,33 @@ library(phangorn)
 empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE){
   # extract the alignment folder from the alignment path
   alignment_folder <- paste0(dirname(alignment_path),"/")
-  # Extract the dataset name (basename of alignment folder: element after last "/" in alignment_folder)
-  dataset <- basename(alignment_folder)
   output_id <- gsub(".nex","",basename(alignment_path))
   # Create some folder and filenames
   if (bootstrap_id == FALSE){
     # Get the alignment name and remove the extension to get the loci name
     loci_name <- gsub(".nex","",basename(alignment_path))
+    # Extract the dataset name (basename of alignment folder: element after last "/" in alignment_folder)
+    dataset <- basename(alignment_folder)
   } else {
     # If the alignment is a bootstrap replicate, need to remove the rep number to get the loci name
     loci_name <- strsplit(basename(alignment_path),"_")[[1]][1]
+    # Extract the dataset name (basename of alignment folder: element after second-last "/" in alignment_folder)
+    dataset <- basename(dirname(alignment_folder))
   }
-  log_folder <- paste0(alignment_folder,loci_name,"/")
+  
+  if (bootstrap_id == FALSE){
+    # If this is not a bootstrap replicate, you need to create a folder to store the program logs in
+    # Otherwise they will get overwritten for each locus you run - this means you can keep them for late
+    log_folder <- paste0(alignment_folder,loci_name,"/")
+    # make a rep id - e.g. an id to store in output df so you can identify what's a simulation and what's from empirical data
+    rep_id <- loci_name
+  } else {
+    # If the run is a bootstrap replicate, you can just save the information in its folder (only 1 alignment per folder in bootstrap replicate folders)
+    log_folder <- alignment_folder
+    # make a rep id - e.g. an id to store in output df so you can identify what's a simulation and what's from empirical data
+    rep_id <- bootstrap_id
+  }
+  
   
   # If the log file doesn't exist, create it 
   if (dir.exists(log_folder) == FALSE){
@@ -33,17 +48,13 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
   call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
   
-  # If you're working on the original alignment, create a unique folder (so files won't be overwritten)
-  # Change to the folder for this alignment - means that 3seq and Phi files will be saved into a unique folder
-  if (bootstrap_id == FALSE){
-    setwd(log_folder)
-  }
-  # If you're working on a bootstrap replicate you can stay in the same folder
+  # Change to the log (storage for log files) folder for this alignment - means that 3seq and Phi files will be saved into a unique folder
+  setwd(log_folder)
   # Get paths to PhiPac, 3SEQ
   phi_path <- program_paths[["Phi"]] # get path to phipack executable
   seq_path <- program_paths[["3seq"]] # get path to 3seq executable
   # Phipack only reads in Phylip or fasta format - need to convert if the alignment is a nexus file (using the nexus data opened above)
-  fasta.name <- paste0(log_folder,loci_name,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
+  fasta.name <- paste0(log_folder,output_id,".fasta") # make a name for the fasta alignment by adding .fasta (super original ;) )
   write.fasta(sequences = n,names = names(n), file.out = fasta.name) # output alignment as a fasta format
   # run PHIPACK and 3seq 
   # Note that Phi and 3Seq will only be run if they haven't already been run (checks for log files)
@@ -122,8 +133,8 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = alignment_path)
   
   # Run trimmed and untrimmed versions of the split decomposition and NeighborNet tree proportion
-  # Create a new nexus file with a taxa block
-  new_nexus_file <- paste0(alignment_folder,loci_name,"_withTaxaBlock.nexus")
+  # Splitstree needs a specific file format - so create a new nexus file with a taxa block
+  new_nexus_file <- paste0(alignment_folder,output_id,"_withTaxaBlock.nexus")
   write.nexus.data(n, file = new_nexus_file,datablock = FALSE, interleaved = FALSE)
   # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
   nexus_edit <- readLines(new_nexus_file) # open the new nexus file
@@ -155,7 +166,9 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
   write.csv(df,file = results_file)
 }
 
-do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignment_params, program_paths, bootstrap_id){
+
+
+do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment_path, alignment_params, program_paths){
   # Create the folder for this replicate, gather and create filenames
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   bootstrap_name <- paste0(loci_name,"_",bootstrap_id) # this will be the name of the alignment
@@ -164,6 +177,7 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
   if (dir.exists(bootstrap_folder) == FALSE){
     dir.create(bootstrap_folder)
   }
+  shuffled_alignment_path <- paste0(bootstrap_folder,bootstrap_name,"_shuffled_noGaps.nex")
   bootstrap_alignment_path <- paste0(bootstrap_folder,bootstrap_name,".nex")
   empirical_alignment_tree_path <- paste0(empirical_alignment_path,".treefile")
   empirical_alignment_tree <- read.tree(empirical_alignment_tree_path)
@@ -217,13 +231,48 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
     }
     
     # Second, randomise sites in new_aln (otherwise masking will mean the gamma categories disproportionately get affected)
+    #   Turn the phyDat into a dataframe and shuffle the rows using sample()
+    #   Rows are shuffled as columns represent sequences - shuffling the rows keeps the relationships between species (shown by rows) 
+    #   but rearranges the order the relationships occur in
+    new_aln_df <- as.data.frame(new_aln) # turn the new alignment into a dataframe
+    new_aln_df <- new_aln_df[sample(nrow(new_aln_df)),] # sample the rows randomly (this will randomly distribute the gamma categories throughout)
+    rownames(new_aln_df) <- 1:nrow(new_aln_df) # reset the row names as 1:nrows (they got mixed up when the sampling occurred)
+    # Turn the dataframe back into an alignment:
+    new_aln_shuffled <- as.phyDat(new_aln_df)
+    #write the shuffled alignment to disk
+    write.phyDat(new_aln_shuffled, file = shuffled_alignment_path, format = "nexus", interleave = FALSE)
+    # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+    nexus_edit <- readLines(shuffled_alignment_path) # open the new nexus file
+    ind <- grep("BEGIN DATA",nexus_edit)+2 # find which line
+    nexus_edit[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+    writeLines(nexus_edit,shuffled_alignment_path) # output the edited nexus file
     
-    # Third, mask each alignment with the gaps from the original sequence 
+    # Third, mask each alignment with the gaps and unknown characters from the original sequence 
     # for each alignment:
-    # - copy the sequence out from the new alignment: temp <- as.numeric(new_aln$X)
-    # - replace the non 18s with the generated sequence of the right length: temp[which(new_aln$X !=18)] <- new_seq
-    # - replace the new seq into the new aln: new_aln$X <- temp
-    
+    #     - copy the sequence out from the new alignment: temp <- as.numeric(new_aln$X)
+    #     - replace the non 18s with the generated sequence of the right length: temp[which(new_aln$X !=18)] <- new_seq
+    #     - replace the new seq into the new aln: new_aln$X <- temp
+    # Open the new alignment as a nexus file
+    n_new <- read.nexus.data(shuffled_alignment_path)
+    # Get the names of all the sequences
+    seq_names <- names(n_new)
+    # Iterate through the names
+    for (seq_name in seq_names){
+      original_seq <- n[[seq_name]] # get the original empirical sequence
+      new_seq <- n_new[[seq_name]] # get the new simulated sequence that has the same name
+      gap_inds <- which(original_seq == "-") # find out which sites are a gap in the original alignment
+      unknown_inds <- which(original_seq == "?") # find out which sites are unknown in the original alignment
+      new_seq[gap_inds] <- "-" # add the gaps into the simulated alignment
+      new_seq[unknown_inds] <- "?" # add the unknowns into the simulated alignment
+      n_new[[seq_name]] <- new_seq
+    }
+    # Output the final alignment (same parameters and gaps as input alignment) as a nexus file
+    write.nexus.data(n_new,file = bootstrap_alignment_path, format = "dna", interleaved = FALSE)
+    # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+    nexus_edit <- readLines(bootstrap_alignment_path) # open the new nexus file
+    ind <- grep("BEGIN DATA",nexus_edit)+2 # find which line
+    nexus_edit[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+    writeLines(nexus_edit,bootstrap_alignment_path) # output the edited nexus file
     
   }
   
@@ -231,6 +280,8 @@ do1.empirical.parametric.bootstrap <- function(empirical_alignment_path, alignme
   # bootstrap_id will be "bootstrapReplicateXXXX" where XXXX is a number
   empirical.runTS(bootstrap_alignment_path, program_paths = program_paths, bootstrap_id = bootstrap_id)
 }
+
+
 
 empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths, number_of_replicates){
   # If it hasn't already been run, call and run IQTree
@@ -240,11 +291,15 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   params <- get.simulation.parameters(paste0(alignment_path,".iqtree"))
   
   # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
+  bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
   
   # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
   # collate the bootstrap info into 1 folder
+  do1.empirical.parametric.bootstrap(bootstrap_id, empirical_alignment_path, alignment_params, program_paths)
   
 }
+
+
 
 fix.gammaCategory.siteNums <- function(df,num){
   # Quick function to randomly add/subtract to make sure that the number of sites in each gamma category is correct
