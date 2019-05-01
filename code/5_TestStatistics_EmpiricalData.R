@@ -41,7 +41,7 @@ empirical_alignment_path <- "/Users/caitlincherryh/Documents/Chapter01_TestStati
 params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
 bootstrap_id <- "bootstrapReplicate0001"
 alignment_params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
-empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 2)
+empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 4)
 
 #for (al in als[1]){
 #  empirical.runTS(al,exec_paths)
