@@ -25,6 +25,7 @@ if (run_location == "mac"){
 
 # Source files for functions
 source(paste0(maindir,"code/func_test_statistic.R"))
+source(paste0(maindir,"code/func_process_data.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
 source(paste0(maindir,"code/func_BA.R"))
 
@@ -36,9 +37,11 @@ als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to
 alignment_path <- als[1]
 program_paths <- exec_paths
 
-empirical_alignment_path <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/Anderson_2013/16S.nex"
+empirical_alignment_path <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/Anderson_2013/COI_1stpos.nex"
 params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
 bootstrap_id <- "bootstrapReplicate0001"
+alignment_params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
+empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 2)
 
 #for (al in als[1]){
 #  empirical.runTS(al,exec_paths)

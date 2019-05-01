@@ -4,24 +4,29 @@ library(phytools)
 library(ape)
 library(phangorn)
 
-empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE){
+empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
+  print(bootstrap_id)
   # extract the alignment folder from the alignment path
   alignment_folder <- paste0(dirname(alignment_path),"/")
   output_id <- gsub(".nex","",basename(alignment_path))
   # Create some folder and filenames
-  if (bootstrap_id == FALSE){
+  if (bootstrap_id == "alignment"){
     # Get the alignment name and remove the extension to get the loci name
     loci_name <- gsub(".nex","",basename(alignment_path))
     # Extract the dataset name (basename of alignment folder: element after last "/" in alignment_folder)
     dataset <- basename(alignment_folder)
   } else {
-    # If the alignment is a bootstrap replicate, need to remove the rep number to get the loci name
-    loci_name <- strsplit(basename(alignment_path),"_")[[1]][1]
+    # If the alignment is a bootstrap replicate, need to remove the bootstrap rep number to get the loci name
+    loci_name <- gsub(".nex","",basename(alignment_path)) # get the basis of the loci name
+    loci_list <- unlist(strsplit(loci_name, "_")) # break the alignment name into bits
+    max_ind <- grep("bootstrapReplicate",loci_list) - 1 # which ind is the bootstrapReplicate at?
+    loci_list <- loci_list[1:max_ind] # get only parts of alignment name
+    loci_name <- paste(loci_list,collapse="_") # squash the alignment name together
     # Extract the dataset name (basename of alignment folder: element after second-last "/" in alignment_folder)
     dataset <- basename(dirname(alignment_folder))
   }
   
-  if (bootstrap_id == FALSE){
+  if (bootstrap_id == "alignment"){
     # If this is not a bootstrap replicate, you need to create a folder to store the program logs in
     # Otherwise they will get overwritten for each locus you run - this means you can keep them for late
     log_folder <- paste0(alignment_folder,loci_name,"/")
@@ -169,6 +174,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id = FALSE)
 
 
 do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment_path, alignment_params, program_paths){
+  print(bootstrap_id)
   # Create the folder for this replicate, gather and create filenames
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   bootstrap_name <- paste0(loci_name,"_",bootstrap_id) # this will be the name of the alignment
@@ -206,27 +212,33 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
     
     # need to generate the number of sites for each gamma category:
     g_cat <- params$gamma_categories
-    cat_sites <- round(n_bp*g_cat$proportion,digits = 0)
-    g_cat$cat_sites <- cat_sites
-    g_cat <- fix.gammaCategory.siteNums(g_cat,n_bp) # make sure the sum of the gamma sites category is correct
-    # Get the number of gamma rate categories
-    num_g_cat <- length(g_cat$category)
-    # Initialise an empty sequence
-    aln_exists <- FALSE
-    
-    # Iterate through the gamma categories and create an alignment with each of the relative rates
-    for (i in 1:num_g_cat){
-      row <- g_cat[i,]
-      # Generate the DNA sequence using the informtion from the parameter list and the rate and number of sites for THIS GAMMA CATEGORY
-      dna_sim <- simSeq(x = empirical_alignment_tree, l = row$cat_sites, type = seq_type, bf = base_freqs, Q = Q_vec, rate = row$relative_rate)
-      #concatenate the sequence with the new alignment
-      if (aln_exists == FALSE){
-        # If the alignment doesn't exist, create it
-        new_aln <- dna_sim
-        aln_exists <- TRUE
-      } else if (aln_exists == TRUE){
-        # If the alignment does exist, concatenate it
-        new_aln <- c(new_aln,dna_sim)
+    # If uniform gamma categories, can just simulate a sequence straight off
+    if (class(g_cat) == "character"){
+      new_aln <- simSeq(x = empirical_alignment_tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)
+    } else if (class(g_cat) == "data.frame") {
+      # If there are gamma categories, create multiple alignments and concatenate them: one for each gamma category
+      cat_sites <- round(n_bp*g_cat$proportion,digits = 0)
+      g_cat$cat_sites <- cat_sites
+      g_cat <- fix.gammaCategory.siteNums(g_cat,n_bp) # make sure the sum of the gamma sites category is correct
+      # Get the number of gamma rate categories
+      num_g_cat <- length(g_cat$category)
+      # Initialise an empty sequence
+      aln_exists <- FALSE
+      
+      # Iterate through the gamma categories and create an alignment with each of the relative rates
+      for (i in 1:num_g_cat){
+        row <- g_cat[i,]
+        # Generate the DNA sequence using the informtion from the parameter list and the rate and number of sites for THIS GAMMA CATEGORY
+        dna_sim <- simSeq(x = empirical_alignment_tree, l = row$cat_sites, type = seq_type, bf = base_freqs, Q = Q_vec, rate = row$relative_rate)
+        #concatenate the sequence with the new alignment
+        if (aln_exists == FALSE){
+          # If the alignment doesn't exist, create it
+          new_aln <- dna_sim
+          aln_exists <- TRUE
+        } else if (aln_exists == TRUE){
+          # If the alignment does exist, concatenate it
+          new_aln <- c(new_aln,dna_sim)
+        }
       }
     }
     
@@ -278,25 +290,65 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
   
   # Run all the test statistics
   # bootstrap_id will be "bootstrapReplicateXXXX" where XXXX is a number
-  empirical.runTS(bootstrap_alignment_path, program_paths = program_paths, bootstrap_id = bootstrap_id)
+  empirical.runTS(alignment_path = bootstrap_alignment_path, program_paths = program_paths, bootstrap_id = bootstrap_id)
 }
 
 
 
 empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths, number_of_replicates){
+  # Create output file names
+  collated_ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_collatedBSReplicates.csv")
+  p_value_file  <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_pValues.csv")
+  
   # If it hasn't already been run, call and run IQTree
-  call.IQTREE(program_paths["IQTree"],alignment_path)
+  call.IQTREE(program_paths["IQTree"],empirical_alignment_path)
+  
+  # Calculate the test statistics if it hasn't already been done
+  ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_testStatistics.csv")
+  if (file.exists(ts_file) == FALSE){
+    empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
+  }
   
   #Extract the parameters from the .iqtree log file.
-  params <- get.simulation.parameters(paste0(alignment_path,".iqtree"))
+  params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
   
   # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
   bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
   
   # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
-  # collate the bootstrap info into 1 folder
-  do1.empirical.parametric.bootstrap(bootstrap_id, empirical_alignment_path, alignment_params, program_paths)
+  lapply(bootstrap_ids, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
   
+  # collate the bootstrap info into 1 file
+  loci_name <- gsub(".nex","",basename(empirical_alignment_path))
+  alignment_folder <- dirname(empirical_alignment_path)
+  p_value_df <- collate.bootstraps(directory = alignment_folder, file.name = "testStatistics", id = loci_name, output.file.name = collated_ts_file)
+  # add the column with the bootstrap replicates and "alignment"
+  new_bootstrap_ids <- p_value_df$bootstrap_replicate_id # copy col
+  aln_id <- grep(new_bootstrap_ids[!grepl("bootstrapReplicate",new_bootstrap_ids)],new_bootstrap_ids) # get which element of col is the alignment
+  new_bootstrap_ids[11] <- "alignment"
+  p_value_df$bootstrap_id <- new_bootstrap_ids
+  
+  # Calculate the p-values and add them to the original test statistic dataframe
+  # Open the original test statistic file
+  ts_df <- read.csv(ts_file)
+  # Calculate the p_values of the variables of interest
+  # Calculate the p-values for each test statistic
+  ts_df$PHI_mean_sig <- calculate.p_value(p_value_df$PHI_mean, p_value_df$bootstrap_id)
+  ts_df$PHI_observed_sig <- calculate.p_value(p_value_df$PHI_observed, p_value_df$bootstrap_id)
+  ts_df$x3seq_sig <- calculate.p_value(p_value_df$X3SEQ_num_distinct_recombinant_sequences, p_value_df$bootstrap_id)
+  ts_df$prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
+  ts_df$splittable_percentage_sig <- calculate.p_value(p_value_df$splittable_percentage, p_value_df$bootstrap_id)
+  ts_df$pdm_difference_sig <- calculate.p_value(p_value_df$pdm_difference, p_value_df$bootstrap_id)
+  ts_df$pdm_average_sig <- calculate.p_value(p_value_df$pdm_average, p_value_df$bootstrap_id)
+  ts_df$sd_untrimmed_sig <- calculate.p_value(p_value_df$split_decomposition_untrimmed, p_value_df$bootstrap_id)
+  ts_df$nn_untrimmed_sig <- calculate.p_value(p_value_df$neighbour_net_untrimmed, p_value_df$bootstrap_id)
+  ts_df$sd_trimmed_sig <- calculate.p_value(p_value_df$split_decomposition_trimmed, p_value_df$bootstrap_id)
+  ts_df$nn_trimmed_sig <- calculate.p_value(p_value_df$neighbour_net_trimmed, p_value_df$bootstrap_id)
+  ts_df$mean_delta_q_sig  <- calculate.p_value(p_value_df$mean_delta_q, p_value_df$bootstrap_id)
+  ts_df$median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
+  ts_df$mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
+  # Output the p-values file
+  write.csv(ts_df,file = p_value_file)
 }
 
 
