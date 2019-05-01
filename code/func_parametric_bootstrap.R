@@ -328,8 +328,8 @@ get.simulation.parameters <- function(dotiqtree_file){
       # if the end isn't an empty line, subtract one from the end count 
       # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
       # to see if this is what's happening, check whether the line starts with a numeric section (i.e. a category for the gamma rate)
-      check_line <- gsub(" ","",(strsplit(end_line, "        " )[[1]][1]))
-      if (length(check_line) > 3){
+      check_line <- length(strsplit(strsplit(end_line, "        " )[[1]][1]," ")[[1]])
+      if (check_line > 3){
         # If the check_line is longer than 3 characters, it won't be a group for the gamma categories but an instruction
         # Instructions can be excluded from the gamma matrix (but categories can't)
         g_end = g_end - 1
