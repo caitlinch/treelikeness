@@ -5,7 +5,6 @@ library(ape)
 library(phangorn)
 
 empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
-  print(bootstrap_id)
   # extract the alignment folder from the alignment path
   alignment_folder <- paste0(dirname(alignment_path),"/")
   output_id <- gsub(".nex","",basename(alignment_path))
@@ -174,7 +173,6 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
 
 
 do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment_path, alignment_params, program_paths){
-  print(bootstrap_id)
   # Create the folder for this replicate, gather and create filenames
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   bootstrap_name <- paste0(loci_name,"_",bootstrap_id) # this will be the name of the alignment
