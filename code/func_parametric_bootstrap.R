@@ -340,7 +340,7 @@ get.simulation.parameters <- function(dotiqtree_file){
       g3 <- c()
       # Iterate through rows in gamma matrix
       for (i in g_start:g_end){
-        row <- strsplit(iq_file[[i]],"        ") # split the rows on the long string of " "'s in the middle
+        row <- strsplit(iq_file[[i]],"      ") # split the rows on the long string of " "'s in the middle
         g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
         g2 <- c(g2,as.numeric(row[[1]][2]))
         g3 <- c(g3,as.numeric(row[[1]][3]))
