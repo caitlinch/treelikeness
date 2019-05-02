@@ -340,10 +340,11 @@ get.simulation.parameters <- function(dotiqtree_file){
       g3 <- c()
       # Iterate through rows in gamma matrix
       for (i in g_start:g_end){
-        row <- strsplit(iq_file[[i]],"      ") # split the rows on the long string of " "'s in the middle
-        g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
-        g2 <- c(g2,as.numeric(row[[1]][2]))
-        g3 <- c(g3,as.numeric(row[[1]][3]))
+        row <- strsplit(iq_file[[i]],"    ")[[1]] # split the rows on the long string of " "'s in the middle
+        row2 <- row[!is.na(as.numeric(row))] # convert the row to numeric - NAs appear for "" (blank strings). Remove NAs from vector
+        g1 <- c(g1,as.numeric(row2[1])) # add the values to the columns
+        g2 <- c(g2,as.numeric(row2[2]))
+        g3 <- c(g3,as.numeric(row2[3]))
       }
       g_df <- data.frame(g1,g2,g3, stringsAsFactors = FALSE) # create a dataframe of the information
       names(g_df) <- c("category","relative_rate","proportion") # name the columns
