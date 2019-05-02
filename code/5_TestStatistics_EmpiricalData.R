@@ -41,7 +41,8 @@ source(paste0(maindir,"code/func_BA.R"))
 files <- list.files(BA_dir,recursive = TRUE) # list all files
 als <- paste0(BA_dir,files[grep(".nex",files)]) # get all the nexus files
 als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
-als <- als[!als %in% als[grep("bootstrapReplicate",als)]] # remove all bootstrap alignments
+als <- als[!als %in% als[grep("bootstrapReplicate",als)]] # remove all bootstrap alignments (if any present)
+als <- als[!als %in% als[grep("alignment.nex",als)]] # remove full alignments (only want to run per loci)
 
 # Calculate the test statistics and run the bootstraps
 # To run for one alignment: empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
