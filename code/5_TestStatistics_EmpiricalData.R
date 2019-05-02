@@ -2,13 +2,18 @@
 
 library(ape)
 library(phangorn)
+library(phytools)
+library(seqinr)
+library(stringr)
+library(TreeSim)
 
 run_location = "mac"
 # run_location = "soma"
 
 if (run_location == "mac"){
   BA_dir <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/"
-  maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
+  output_dir <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet_output/"
+  maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # where the code is
   exec_folder <- "/Users/caitlincherryh/Documents/Honours/Executables/"
   # Create a vector with all of the executable file paths
   # To access a path: exec_paths[["name"]]
@@ -17,7 +22,10 @@ if (run_location == "mac"){
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 } else if (run_location=="soma"){
   BA_dir <- ""
-  maindir <- "/data/caitlin/treelikeness/"
+  output_dir <- ""
+  maindir <- "/data/caitlin/treelikeness/" # where the code is
+  # Create a vector with all of the executable file paths
+  # To access a path: exec_paths[["name"]]
   exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
                   "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
@@ -35,15 +43,11 @@ als <- paste0(BA_dir,files[grep(".nex",files)]) # get all the nexus files
 als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
 als <- als[!als %in% als[grep("bootstrapReplicate",als)]] # remove all bootstrap alignments
 
+# Calculate the test statistics and run the bootstraps
+# To run for one alignment: empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
+lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 9)
 
-empirical_alignment_path <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/Bergsten_2013/16S.nex"
-params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
-bootstrap_id <- "bootstrapReplicate0001"
-alignment_params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
-empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
+# Collate all the results
+results_file <- paste0(output_dir,"")
+df <- collate.bootstraps(directory = "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet", file.name = "pValues", id = "", output.file.name = results_file)
 
-df <- collate.bootstraps(directory = "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet", file.name = "pValues", id = "", output.file.name = "/Users/caitlincherryh/Desktop/test.csv")
-
-#for (al in als[1]){
-#  empirical.runTS(al,exec_paths)
-#}

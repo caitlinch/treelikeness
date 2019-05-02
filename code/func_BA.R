@@ -357,7 +357,6 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
 }
 
 
-
 fix.gammaCategory.siteNums <- function(df,num){
   # Quick function to randomly add/subtract to make sure that the number of sites in each gamma category is correct
   if (sum(df$cat_sites)==num){
