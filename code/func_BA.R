@@ -285,12 +285,9 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
     writeLines(nexus_edit,bootstrap_alignment_path) # output the edited nexus file
     
   }
-  print(paste0("run TS for ", bootstrap_id))
-  
   # Run all the test statistics
   # bootstrap_id will be "bootstrapReplicateXXXX" where XXXX is a number
   empirical.runTS(alignment_path = bootstrap_alignment_path, program_paths = program_paths, bootstrap_id = bootstrap_id)
-  print(paste0("TS done for ", bootstrap_id))
 }
 
 
@@ -315,13 +312,9 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
   bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
   
-  print("run bootstraps")
   # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
   lapply(bootstrap_ids, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
-  
-  print("completed boostraps")
-  print("collate csvs")
-  
+
   # collate the bootstrap info into 1 file
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   alignment_folder <- dirname(empirical_alignment_path)
@@ -332,7 +325,6 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   new_bootstrap_ids[aln_id] <- "alignment"
   p_value_df$bootstrap_id <- new_bootstrap_ids
   
-  print("calculate p-values")
   # Calculate the p-values and add them to the original test statistic dataframe
   # Open the original test statistic file
   ts_df <- read.csv(ts_file)
