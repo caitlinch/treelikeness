@@ -33,15 +33,16 @@ source(paste0(maindir,"code/func_BA.R"))
 files <- list.files(BA_dir,recursive = TRUE) # list all files
 als <- paste0(BA_dir,files[grep(".nex",files)]) # get all the nexus files
 als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
+als <- als[!als %in% als[grep("bootstrapReplicate",als)]] # remove all bootstrap alignments
 
-alignment_path <- als[1]
-program_paths <- exec_paths
 
-empirical_alignment_path <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/Anderson_2013/COI_1stpos.nex"
+empirical_alignment_path <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/Bergsten_2013/16S.nex"
 params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
 bootstrap_id <- "bootstrapReplicate0001"
 alignment_params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
-empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 4)
+empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
+
+df <- collate.bootstraps(directory = "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet", file.name = "pValues", id = "", output.file.name = "/Users/caitlincherryh/Desktop/test.csv")
 
 #for (al in als[1]){
 #  empirical.runTS(al,exec_paths)
