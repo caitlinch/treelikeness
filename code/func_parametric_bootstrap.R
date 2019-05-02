@@ -4,6 +4,7 @@ library(phytools)
 library(seqinr)
 library(ape)
 library(phangorn)
+library(stringr)
 
 # Given a directory and a number of replicates, this function will
 # generate that number of alignments in the directory with the parameters from 
@@ -298,14 +299,13 @@ get.simulation.parameters <- function(dotiqtree_file){
     # For each row in the iqtree file rate matrix
     for (i in Q_start:Q_end){
       # Split the row
-      row <- strsplit(iq_file[[i]],"   ")[[1]]
-      row <- row[row!=""] # remove any empty strings from the vector
-      row <- row[row!=" "] # remove any 1 space strings from the vector
+      row <- strsplit(iq_file[[i]]," ")[[1]]
+      row <- row[str_detect(row,"([0-9])")] # take only the numeric elements of the vector
       # Add the resulting values to the relevant columns
-      c2 <- c(c2,as.numeric(row[2])) # convert to numeric so can use the numbers more easily later
-      c3 <- c(c3,as.numeric(row[3]))
-      c4 <- c(c4,as.numeric(row[4]))
-      c5 <- c(c5,as.numeric(row[5]))
+      c2 <- c(c2,as.numeric(row[1])) # convert to numeric so can use the numbers more easily later
+      c3 <- c(c3,as.numeric(row[2]))
+      c4 <- c(c4,as.numeric(row[3]))
+      c5 <- c(c5,as.numeric(row[4]))
     }
     # Create a dataframe of the rate matrix Q
     q_df <- data.frame(c1,c2,c3,c4,c5, stringsAsFactors = FALSE)
@@ -340,16 +340,15 @@ get.simulation.parameters <- function(dotiqtree_file){
       g3 <- c()
       # Iterate through rows in gamma matrix
       for (i in g_start:g_end){
-        row <- strsplit(iq_file[[i]],"    ")[[1]] # split the rows on the long string of " "'s in the middle
-        row2 <- row[!is.na(as.numeric(row))] # convert the row to numeric - NAs appear for "" (blank strings). Remove NAs from vector
-        g1 <- c(g1,as.numeric(row2[1])) # add the values to the columns
-        g2 <- c(g2,as.numeric(row2[2]))
-        g3 <- c(g3,as.numeric(row2[3]))
+        row <- strsplit(iq_file[[i]]," ")[[1]] # split the rows on the (large amount of) " "'s in the middle
+        row <- row[str_detect(row,"([0-9])")] # take only the numeric elements of the vector
+        g1 <- c(g1,as.numeric(row[1])) # add the values to the columns
+        g2 <- c(g2,as.numeric(row[2]))
+        g3 <- c(g3,as.numeric(row[3]))
       }
       g_df <- data.frame(g1,g2,g3, stringsAsFactors = FALSE) # create a dataframe of the information
       names(g_df) <- c("category","relative_rate","proportion") # name the columns
     }
-    
     
     # Create a list of the three dataframes
     # This will be the output 
