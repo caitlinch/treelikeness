@@ -213,16 +213,17 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
     # aln = c(s1, s2) # concatenate the alignments
     
     # Extract the parameters you need to enter into simSeq
-    n_bp = as.numeric(params$parameters[4,2])  # sequence length should be the same as in the original sequence
+    n_bp = as.numeric(alignment_params$parameters[4,2])  # sequence length should be the same as in the original sequence
     # Extract the vector form of the rate matrix 
-    m <- params$Q_rate_matrix[,2:5] # extract the square block with the rates and not the header column
+    m <- alignment_params$Q_rate_matrix[,2:5] # extract the square block with the rates and not the header column
     Q_vec <- c(m[2,1],m[3,1],m[3,2],m[4,1],m[4,2],m[4,3]) # extract the rates 
     # Extract the base frequencies in the following order: A, C, G, T
-    base_freqs <- c(as.numeric(params$parameters[[12,2]]), as.numeric(params$parameters[[13,2]]), as.numeric(params$parameters[[14,2]]), as.numeric(params$parameters[[15,2]]))
+    base_freqs <- c(as.numeric(alignment_params$parameters[[12,2]]), as.numeric(alignment_params$parameters[[13,2]]),
+                    as.numeric(alignment_params$parameters[[14,2]]), as.numeric(alignment_params$parameters[[15,2]]))
     seq_type <- "DNA" # generate DNA sequence
     
     # need to generate the number of sites for each gamma category:
-    g_cat <- params$gamma_categories
+    g_cat <- alignment_params$gamma_categories
     # If uniform gamma categories, can just simulate a sequence straight off
     if (class(g_cat) == "character"){
       new_aln <- simSeq(x = empirical_alignment_tree, l = n_bp, type = seq_type, bf = base_freqs, Q = Q_vec)

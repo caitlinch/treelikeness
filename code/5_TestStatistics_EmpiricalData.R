@@ -48,12 +48,13 @@ als <- als[!als %in% als[grep("alignment.nex",als)]] # remove full alignments (o
 # Calculate the test statistics and run the bootstraps
 # To run for one alignment: empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
 if (run_location=="soma"){
-  mclapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 199, mc.cores = 10) 
+  # mclapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 199, mc.cores = 10) 
+  lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 199) 
 } else if (run_location=="mac"){
   lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 9) 
 }
 
 # Collate all the results
 results_file <- paste0(output_dir,basename(BA_dir),"_completeResults.csv")
-df <- collate.bootstraps(directory = "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet", file.name = "pValues", id = "", output.file.name = results_file)
+df <- collate.bootstraps(directory = BA_dir, file.name = "pValues", id = "", output.file.name = results_file)
 
