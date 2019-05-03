@@ -1,6 +1,7 @@
 # Script to apply test statistics and parametric bootstrap to empirical data sets in the BenchmarkAlignments database
 
 library(ape)
+library(parallel)
 library(phangorn)
 library(phytools)
 library(seqinr)
@@ -46,7 +47,11 @@ als <- als[!als %in% als[grep("alignment.nex",als)]] # remove full alignments (o
 
 # Calculate the test statistics and run the bootstraps
 # To run for one alignment: empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
-lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 9)
+if (run_location=="soma"){
+  mclapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 199, mc.cores = 10) 
+} else if (run_location=="mac"){
+  lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 9) 
+}
 
 # Collate all the results
 results_file <- paste0(output_dir,"")
