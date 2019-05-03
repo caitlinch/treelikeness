@@ -5,6 +5,8 @@ library(ape)
 library(phangorn)
 
 empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
+  print("in empirical.runTS")
+  print(alignment_path)
   # extract the alignment folder from the alignment path
   alignment_folder <- paste0(dirname(alignment_path),"/")
   output_id <- gsub(".nex","",basename(alignment_path))
@@ -50,9 +52,11 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   n_char <- length(unlist(n[1]))
   
   # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
+  print("run IQTree")
   call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
   
   # Change to the log (storage for log files) folder for this alignment - means that 3seq and Phi files will be saved into a unique folder
+  print("run PHI and 3SEQ")
   setwd(log_folder)
   # Get paths to PhiPac, 3SEQ
   phi_path <- program_paths[["Phi"]] # get path to phipack executable
@@ -103,6 +107,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   setwd(alignment_folder)
   
   # Extract quartet mapping
+  print("extract likelihood mapping")
   iq_log_path <- paste0(alignment_path,".iqtree")
   iq_log <- readLines(iq_log_path)
   ind <- grep("Number of fully resolved  quartets",iq_log)
@@ -115,6 +120,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   prop_resolved <- resolved_q/total_q
   
   # Calculate the median and mean delta score 
+  print("estimate delta plots")
   pdmm <- as.matrix(mldist.pdm(alignment_path)) # open pairwise distance matrix as a matrix
   deltaplot_results <- delta.plot(pdmm, k = 51, plot = FALSE) # calculate the delta.plot
   counts <- deltaplot_results$counts
@@ -129,6 +135,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   mode_dq <- deltaplot_df[order(deltaplot_df$count, decreasing = TRUE),][1,1] # sort the dataframe by count values and extract the mode
   
   # Run my test statistics
+  print("run my test statistics")
   # run pdm ratio (TS1) (modified splittable percentage)
   splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = alignment_path)
   # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
@@ -153,6 +160,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   nn_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = new_nexus_file, network_algorithm = "neighbournet", trimmed = TRUE, tree_path = initial_iqtree_tree, run_IQTREE = FALSE)
   
   # Name the test statistics file using the output id (this way if it's a  bootstrap replicate, it adds the replicate number!)
+  print(paste0("output results for ",output_id))
   results_file <- paste0(alignment_folder,output_id,"_testStatistics.csv")
   # Make somewhere to store the results
   df_names <- c("dataset","loci","bootstrap_replicate_id","n_taxa","n_sites","alignment_file",
@@ -173,6 +181,9 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
 
 
 do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment_path, alignment_params, program_paths){
+  print("in do1.empirical.parametric.bootstrap")
+  print(empirical_alignment_path)
+  print(bootstrap_id)
   # Create the folder for this replicate, gather and create filenames
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   bootstrap_name <- paste0(loci_name,"_",bootstrap_id) # this will be the name of the alignment
@@ -187,6 +198,7 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
   empirical_alignment_tree <- read.tree(empirical_alignment_tree_path)
   
   # open the empirical alignment to get information about the sequence
+  print("open nexus files")
   n <- read.nexus.data(empirical_alignment_path)
   p <- phyDat(n)
   new_aln <- p
@@ -194,6 +206,7 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
   # First generate completely new DNA using the params
   # Create an alignment for this replicate using the alignment params - name will be loci_bootstrapReplicateXXXX
   if (file.exists(bootstrap_alignment_path) == FALSE) {
+    print("creating alignment")
     # Sample code for generating a parametric DNA sequence if you have a tree
     # s1 = simSeq(t1, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
     # s2 = simSeq(t2, l = 500, type="DNA", bf=c(.25,.25,.25,.25), Q=c(1,1,1,1,1,1), rate=1)
@@ -241,6 +254,7 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
     }
     
     # Second, randomise sites in new_aln (otherwise masking will mean the gamma categories disproportionately get affected)
+    print("shuffling alignment")
     #   Turn the phyDat into a dataframe and shuffle the rows using sample()
     #   Rows are shuffled as columns represent sequences - shuffling the rows keeps the relationships between species (shown by rows) 
     #   but rearranges the order the relationships occur in
@@ -258,6 +272,7 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
     writeLines(nexus_edit,shuffled_alignment_path) # output the edited nexus file
     
     # Third, mask each alignment with the gaps and unknown characters from the original sequence 
+    print("masking alignment")
     # for each alignment:
     #     - copy the sequence out from the new alignment: temp <- as.numeric(new_aln$X)
     #     - replace the non 18s with the generated sequence of the right length: temp[which(new_aln$X !=18)] <- new_seq
@@ -266,6 +281,8 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
     n_new <- read.nexus.data(shuffled_alignment_path)
     # Get the names of all the sequences
     seq_names <- names(n_new)
+    print(paste0("number of names: ",length(seq_names)))
+    print(paste0("number of unique names: ",length(unique(seq_names))))
     # Iterate through the names
     for (seq_name in seq_names){
       original_seq <- n[[seq_name]] # get the original empirical sequence
@@ -277,6 +294,7 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
       n_new[[seq_name]] <- new_seq
     }
     # Output the final alignment (same parameters and gaps as input alignment) as a nexus file
+    print("output nexus file")
     write.nexus.data(n_new,file = bootstrap_alignment_path, format = "dna", interleaved = FALSE)
     # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
     nexus_edit <- readLines(bootstrap_alignment_path) # open the new nexus file
@@ -287,17 +305,21 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
   }
   # Run all the test statistics
   # bootstrap_id will be "bootstrapReplicateXXXX" where XXXX is a number
+  print("run test statistics")
   empirical.runTS(alignment_path = bootstrap_alignment_path, program_paths = program_paths, bootstrap_id = bootstrap_id)
 }
 
 
 
 empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths, number_of_replicates){
+  print("in empirical.bootstraps.wrapper")
+  print(empirical_alignment_path)
   # Create output file names
   collated_ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_collatedBSReplicates.csv")
   p_value_file  <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_pValues.csv")
   
   # If it hasn't already been run, call and run IQTree
+  print("call iqtree for empirical alignment")
   call.IQTREE(program_paths["IQTree"],empirical_alignment_path)
   
   # Calculate the test statistics if it hasn't already been done
@@ -307,15 +329,18 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   }
   
   #Extract the parameters from the .iqtree log file.
+  print("get simulation params")
   params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
   
   # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
   bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
   
   # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
+  print("run all bootstraps")
   lapply(bootstrap_ids, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
 
   # collate the bootstrap info into 1 file
+  print("collate bootstraps")
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   alignment_folder <- dirname(empirical_alignment_path)
   p_value_df <- collate.bootstraps(directory = alignment_folder, file.name = "testStatistics", id = loci_name, output.file.name = collated_ts_file)
@@ -326,6 +351,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   p_value_df$bootstrap_id <- new_bootstrap_ids
   
   # Calculate the p-values and add them to the original test statistic dataframe
+  print("calculate p values")
   # Open the original test statistic file
   ts_df <- read.csv(ts_file)
   # Calculate the p_values of the variables of interest
@@ -350,6 +376,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
 
 
 fix.gammaCategory.siteNums <- function(df,num){
+  print("fix gamma categories")
   # Quick function to randomly add/subtract to make sure that the number of sites in each gamma category is correct
   if (sum(df$cat_sites)==num){
     # If the sum of the num of sites = num of sites, return the df (all is good)
