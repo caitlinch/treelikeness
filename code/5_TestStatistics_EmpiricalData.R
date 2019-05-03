@@ -7,8 +7,8 @@ library(seqinr)
 library(stringr)
 library(TreeSim)
 
-run_location = "mac"
-# run_location = "soma"
+# run_location = "mac"
+run_location = "soma"
 
 if (run_location == "mac"){
   BA_dir <- "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet/"
@@ -21,8 +21,8 @@ if (run_location == "mac"){
   exec_paths <- paste0(exec_folder,exec_paths)
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 } else if (run_location=="soma"){
-  BA_dir <- ""
-  output_dir <- ""
+  BA_dir <- "/data/caitlin/treelikeness/BA_testSet/"
+  output_dir <- "/data/caitlin/treelikeness/BA_testSet_results/"
   maindir <- "/data/caitlin/treelikeness/" # where the code is
   # Create a vector with all of the executable file paths
   # To access a path: exec_paths[["name"]]
