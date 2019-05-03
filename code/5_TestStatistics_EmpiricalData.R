@@ -21,6 +21,7 @@ if (run_location == "mac"){
   exec_paths <- c("3seq","iqtree","Phi","SimBac","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
   exec_paths <- paste0(exec_folder,exec_paths)
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+  source(paste0(maindir,"code/func_BA.R"))
 } else if (run_location=="soma"){
   BA_dir <- "/data/caitlin/treelikeness/BA_testSet/"
   output_dir <- "/data/caitlin/treelikeness/BA_testSet_results/"
@@ -30,13 +31,13 @@ if (run_location == "mac"){
   exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
                   "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+  source(paste0(maindir,"code/func_BA_parallel.R"))
 }
 
 # Source files for functions
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_process_data.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
-source(paste0(maindir,"code/func_BA.R"))
 
 # Extract the file names of the alignments
 files <- list.files(BA_dir,recursive = TRUE) # list all files
@@ -48,7 +49,6 @@ als <- als[!als %in% als[grep("alignment.nex",als)]] # remove full alignments (o
 # Calculate the test statistics and run the bootstraps
 # To run for one alignment: empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
 if (run_location=="soma"){
-  # mclapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 199, mc.cores = 10) 
   lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 199) 
 } else if (run_location=="mac"){
   lapply(als,empirical.bootstraps.wrapper, program_paths = exec_paths, number_of_replicates = 9) 
