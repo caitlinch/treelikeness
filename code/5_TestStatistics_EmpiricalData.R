@@ -54,6 +54,6 @@ if (run_location=="soma"){
 }
 
 # Collate all the results
-results_file <- paste0(output_dir,"")
+results_file <- paste0(output_dir,basename(BA_dir),"_completeResults.csv")
 df <- collate.bootstraps(directory = "/Users/caitlincherryh/Documents/Chapter01_TestStatistics_BenchmarkAlignments/BA_testSet", file.name = "pValues", id = "", output.file.name = results_file)
 
