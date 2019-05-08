@@ -128,7 +128,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   deltaplot_df <- data.frame(intervals,counts)
   names(deltaplot_df) <- c("intervals","counts")
   deltaplot_df_name <- paste0(alignment_folder,output_id,"_deltaplot_histogram.csv")
-  write.csv(deltaplot_df,file = deltaplot_df_name)
+  write.csv(deltaplot_df,file = deltaplot_df_name, row.names = FALSE)
   # Want to calculate the mean and median delta q value - unfortunately the delta.plot function doesn't output raw data, so make a pseudo data set using the histogram values
   mean_dq <- mean(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the mean
   median_dq <- median(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the median
@@ -175,7 +175,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(df) <- df_names # add names to the df so you know what's what
   
-  write.csv(df,file = results_file)
+  write.csv(df,file = results_file, row.names = FALSE)
 }
 
 
@@ -372,7 +372,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   ts_df$median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
   ts_df$mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
   # Output the p-values file
-  write.csv(ts_df,file = p_value_file)
+  write.csv(ts_df,file = p_value_file, row.names = FALSE)
 }
 
 
