@@ -52,8 +52,15 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   n_char <- length(unlist(n[1]))
   
   # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
-  print("run IQTree")
-  call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
+  # Check that the original alignment ran ok
+  if (file.exists(paste0(alignment_path,".iqtree")) == FALSE || file.exists(paste0(alignment_path,".treefile")) == FALSE || file.exists(paste0(alignment_path,".lmap.eps")) == FALSE){
+    print("need to run IQ-Tree - missing files")
+    n <- read.nexus.data(alignment_path)
+    n_taxa <- length(n)
+    # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
+    print("run IQTree")
+    call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
+  }
   
   # Change to the log (storage for log files) folder for this alignment - means that 3seq and Phi files will be saved into a unique folder
   print("run PHI and 3SEQ")
@@ -321,10 +328,6 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   alignment_folder <- dirname(empirical_alignment_path)
   
-  # If it hasn't already been run, call and run IQTree
-  print("call iqtree for empirical alignment")
-  call.IQTREE(program_paths["IQTree"],empirical_alignment_path)
-  
   # Check that the original alignment ran ok
   if (file.exists(paste0(empirical_alignment_path,".iqtree")) == FALSE || file.exists(paste0(empirical_alignment_path,".treefile")) == FALSE || file.exists(paste0(empirical_alignment_path,".lmap.eps")) == FALSE){
     print("need to rerun IQ-Tree")
@@ -360,6 +363,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # These bootstrap replicates will thus be calculates
   # This should save A BUNCH of time because it means if the test statistic file exists, you don't have to run Splitstree four times
   print("run bootstrap replicates")
+  bs_als <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,".nex")
   ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
   missing_als <- bs_als[!file.exists(bs_als)]
   missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
