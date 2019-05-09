@@ -372,8 +372,10 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   ids_to_run <- bootstrap_ids[which((bs_als %in% all_to_run))]
   print(paste0("Number of alignments to run = ",length(ids_to_run)))
   print("run all previously-unrun bootstraps")
-  lapply(bootstrap_ids, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
-  
+  if(length(ids_to_run)>0){
+    lapply(ids_to_run, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
+  }
+
   # Before you can collate all the bootstrap files, you need to check every bootstrap ran and rerun the failed ones
   # Generate the names of each alignment, the test statistics csvs, the .iqtree files, the treefiles, the likelihood mapping files
   # Check which of these files are missing
@@ -390,7 +392,9 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   als_to_rerun <- bootstrap_ids[which((bs_als %in% all_missing))]
   print(paste0("Number of missing alignments to rerun = ",length(als_to_rerun)))
   # Rerun the missing als
-  lapply(als_to_rerun, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
+  if (length(als_to_rerun)>0){
+    lapply(als_to_rerun, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
+  }
   
   # collate the bootstrap info into 1 file
   print("collate bootstraps")
