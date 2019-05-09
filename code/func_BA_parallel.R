@@ -331,11 +331,11 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # Check that the original alignment ran ok
   if (file.exists(paste0(empirical_alignment_path,".iqtree")) == FALSE || file.exists(paste0(empirical_alignment_path,".treefile")) == FALSE || file.exists(paste0(empirical_alignment_path,".lmap.eps")) == FALSE){
     print("need to rerun IQ-Tree")
-    n <- read.nexus.data(alignment_path)
+    n <- read.nexus.data(empirical_alignment_path)
     n_taxa <- length(n)
     # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
     print("run IQTree")
-    call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
+    call.IQTREE.quartet(program_paths[["IQTree"]],empirical_alignment_path,n_taxa)
   }
   
   # Calculate the test statistics if it hasn't already been done
