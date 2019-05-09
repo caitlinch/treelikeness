@@ -16,13 +16,25 @@ call.IQTREE <- function(iqtree_path,alignment_path){
 }
 
 call.IQTREE.quartet <- function(iqtree_path,alignment_path,nsequences){
-  # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
-  if (file.exists(paste0(alignment_path,".lmap.eps")) == FALSE){
+  # For this alignment, check if the IQ-Tree log file, the treefile OR the likelihood map for this alignment exist
+  # If any of those files don't exist, run IQ-Tree
+  # This way if IQ-Tree failed to run properly, or if it ran before without doing the likelihood mapping, it will rerun here
+  if (file.exists(paste0(alignment_path,".iqtree")) == FALSE){
     # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
     # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
     nquartet <- 25*as.numeric(nsequences)
     system(paste0(iqtree_path," -s ",alignment_path," -nt 1 -lmap ",nquartet," -redo -safe")) # call IQ-tree!
-  }
+  } else if (file.exists(paste0(alignment_path,".lmap.eps")) == FALSE){
+    # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
+    # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
+    nquartet <- 25*as.numeric(nsequences)
+    system(paste0(iqtree_path," -s ",alignment_path," -nt 1 -lmap ",nquartet," -redo -safe")) # call IQ-tree!
+  } else if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
+    # Given an alignment, get a tree from IQ-tree and find the sum of the pairwise distance matrix
+    # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
+    nquartet <- 25*as.numeric(nsequences)
+    system(paste0(iqtree_path," -s ",alignment_path," -nt 1 -lmap ",nquartet," -redo -safe")) # call IQ-tree!
+  } 
 }
 
 call.IQTREE.quartet.bootstrap <- function(iqtree_path,alignment_path,nsequences){
