@@ -355,9 +355,20 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
   bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
   
-  # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
-  print("run all bootstraps")
-  mclapply(bootstrap_ids, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths, mc.cores = 25)
+  # Run all the bootstrap ids that HAVEN'T already been run (e.g. in previous attempts) using lapply (feed info into do1.empirical.parametric.bootstrap)
+  # If the alignment doesn't exist OR the test statistic csv doesnt exist, this indicates a complete run has not previously been done 
+  # These bootstrap replicates will thus be calculates
+  # This should save A BUNCH of time because it means if the test statistic file exists, you don't have to run Splitstree four times
+  print("run bootstrap replicates")
+  ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
+  missing_als <- bs_als[!file.exists(bs_als)]
+  missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
+  # Collate the missing files and identify the alignments to rerun
+  all_to_run <- unique(c(missing_als,missing_testStatistics))
+  ids_to_run <- bootstrap_ids[which((bs_als %in% all_to_run))]
+  print(paste0("Number of alignments to run = ",length(ids_to_run)))
+  print("run all previously-unrun bootstraps")
+  mclapply(ids_to_run, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths, mc.cores = 25)
   
   # Before you can collate all the bootstrap files, you need to check every bootstrap ran and rerun the failed ones
   # Generate the names of each alignment, the test statistics csvs, the .iqtree files, the treefiles, the likelihood mapping files
