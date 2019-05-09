@@ -326,7 +326,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   call.IQTREE(program_paths["IQTree"],empirical_alignment_path)
   
   # Check that the original alignment ran ok
-  if (file.exists(paste0(f,".iqtree")) == FALSE || file.exists(paste0(f,".treefile")) == FALSE || file.exists(paste0(f,".lmap.eps")) == FALSE){
+  if (file.exists(paste0(empirical_alignment_path,".iqtree")) == FALSE || file.exists(paste0(empirical_alignment_path,".treefile")) == FALSE || file.exists(paste0(empirical_alignment_path,".lmap.eps")) == FALSE){
     print("need to rerun IQ-Tree")
     n <- read.nexus.data(alignment_path)
     n_taxa <- length(n)
