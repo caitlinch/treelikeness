@@ -31,7 +31,8 @@ if (run_location == "mac"){
   exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree/bin/iqtree","/data/caitlin/linux_executables/PhiPack/Phi",
                   "/data/caitlin/linux_executables/SimBac/SimBac","/data/caitlin/splitstree4/SplitsTree")
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
-  source(paste0(maindir,"code/func_BA_parallel.R"))
+  # source(paste0(maindir,"code/func_BA_parallel.R")) # run code parallel
+  source(paste0(maindir,"code/func_BA.R")) # run code 1 bs rep at a time to troubleshoot
 }
 
 # Source files for functions
