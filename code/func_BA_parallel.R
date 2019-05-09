@@ -128,7 +128,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   deltaplot_df <- data.frame(intervals,counts)
   names(deltaplot_df) <- c("intervals","counts")
   deltaplot_df_name <- paste0(alignment_folder,output_id,"_deltaplot_histogram.csv")
-  write.csv(deltaplot_df,file = deltaplot_df_name)
+  write.csv(deltaplot_df,file = deltaplot_df_name, row.names = FALSE)
   # Want to calculate the mean and median delta q value - unfortunately the delta.plot function doesn't output raw data, so make a pseudo data set using the histogram values
   mean_dq <- mean(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the mean
   median_dq <- median(rep(deltaplot_df$intervals,deltaplot_df$counts)) # turn the interval data into a long list of "raw" values and calculate the median
@@ -175,7 +175,7 @@ empirical.runTS <- function(alignment_path, program_paths, bootstrap_id){
   df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(df) <- df_names # add names to the df so you know what's what
   
-  write.csv(df,file = results_file)
+  write.csv(df,file = results_file, row.names = FALSE)
 }
 
 
@@ -315,17 +315,36 @@ do1.empirical.parametric.bootstrap <- function(bootstrap_id, empirical_alignment
 empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths, number_of_replicates){
   print("in empirical.bootstraps.wrapper")
   print(empirical_alignment_path)
-  # Create output file names
+  # Create output file names, the name of the loci and the file path of the loci location
   collated_ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_collatedBSReplicates.csv")
   p_value_file  <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_pValues.csv")
+  loci_name <- gsub(".nex","",basename(empirical_alignment_path))
+  alignment_folder <- dirname(empirical_alignment_path)
   
   # If it hasn't already been run, call and run IQTree
   print("call iqtree for empirical alignment")
   call.IQTREE(program_paths["IQTree"],empirical_alignment_path)
   
+  # Check that the original alignment ran ok
+  if (file.exists(paste0(f,".iqtree")) == FALSE || file.exists(paste0(f,".treefile")) == FALSE || file.exists(paste0(f,".lmap.eps")) == FALSE){
+    print("need to rerun IQ-Tree")
+    n <- read.nexus.data(alignment_path)
+    n_taxa <- length(n)
+    # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
+    print("run IQTree")
+    call.IQTREE.quartet(program_paths[["IQTree"]],alignment_path,n_taxa)
+  }
+  
   # Calculate the test statistics if it hasn't already been done
   ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_testStatistics.csv")
   if (file.exists(ts_file) == FALSE){
+    print("run test statistics")
+    empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
+  }
+  
+  #Check that the test statistic file ran ok 
+  if (file.exists(ts_file) == FALSE){
+    print("need to rerun test statistics")
     empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
   }
   
@@ -339,11 +358,27 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # Run all the bootstrap ids using lapply (feed info into do1.empirical.parametric.bootstrap)
   print("run all bootstraps")
   mclapply(bootstrap_ids, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths, mc.cores = 25)
-
+  
+  # Before you can collate all the bootstrap files, you need to check every bootstrap ran and rerun the failed ones
+  # Generate the names of each alignment, the test statistics csvs, the .iqtree files, the treefiles, the likelihood mapping files
+  # Check which of these files are missing
+  print("check for missing alignments")
+  bs_als <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,".nex")
+  ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
+  missing_als <- bs_als[!file.exists(bs_als)]
+  missing_iqtree <- bs_als[!file.exists(paste0(bs_als,".iqtree"))]
+  missing_tree <- bs_als[!file.exists(paste0(bs_als,".treefile"))]
+  missing_lmap <- bs_als[!file.exists(paste0(bs_als,".lmap.eps"))]
+  missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
+  # Collate the missing files and identify the alignments to rerun
+  all_missing <- unique(c(missing_als,missing_iqtree,missing_tree,missing_lmap,missing_testStatistics))
+  als_to_rerun <- bootstrap_ids[which((bs_als %in% all_missing))]
+  print(paste0("Number of missing alignments to rerun = ",length(als_to_rerun)))
+  # Rerun the missing als
+  mclapply(als_to_rerun, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths, mc.cores = 25)
+  
   # collate the bootstrap info into 1 file
   print("collate bootstraps")
-  loci_name <- gsub(".nex","",basename(empirical_alignment_path))
-  alignment_folder <- dirname(empirical_alignment_path)
   p_value_df <- collate.bootstraps(directory = alignment_folder, file.name = "testStatistics", id = loci_name, output.file.name = collated_ts_file)
   # add the column with the bootstrap replicates and "alignment"
   new_bootstrap_ids <- p_value_df$bootstrap_replicate_id # copy col
@@ -372,7 +407,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   ts_df$median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
   ts_df$mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
   # Output the p-values file
-  write.csv(ts_df,file = p_value_file)
+  write.csv(ts_df,file = p_value_file, row.names = FALSE)
 }
 
 
