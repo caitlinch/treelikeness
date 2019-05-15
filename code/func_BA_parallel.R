@@ -372,7 +372,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   ids_to_run <- bootstrap_ids[which((bs_als %in% all_to_run))]
   print(paste0("Number of alignments to run = ",length(ids_to_run)))
   print("run all previously-unrun bootstraps")
-  if (length(ids_to_run)>0){
+  if(length(ids_to_run)>0){
     mclapply(ids_to_run, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths, mc.cores = 25)
   }
 
@@ -395,7 +395,7 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   if (length(als_to_rerun)>0){
     mclapply(als_to_rerun, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths, mc.cores = 25)
   }
-
+  
   # collate the bootstrap info into 1 file
   print("collate bootstraps")
   p_value_df <- collate.bootstraps(directory = alignment_folder, file.name = "testStatistics", id = loci_name, output.file.name = collated_ts_file)
