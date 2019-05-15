@@ -23,8 +23,8 @@ if (run_location == "mac"){
   names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
   source(paste0(maindir,"code/func_BA.R"))
 } else if (run_location=="soma"){
-  BA_dir <- "/data/caitlin/treelikeness/BA_testSet/"
-  output_dir <- "/data/caitlin/treelikeness/BA_testSet_results/"
+  BA_dir <- "/data/caitlin/treelikeness/BenchmarkAlignments_DataSubSet/"
+  output_dir <- "/data/caitlin/treelikeness/BenchmarkAlignments_DataSubSet_Results/"
   maindir <- "/data/caitlin/treelikeness/" # where the code is
   # Create a vector with all of the executable file paths
   # To access a path: exec_paths[["name"]]
@@ -45,6 +45,7 @@ als <- paste0(BA_dir,files[grep(".nex",files)]) # get all the nexus files
 als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
 als <- als[!als %in% als[grep("bootstrapReplicate",als)]] # remove all bootstrap alignments (if any present)
 als <- als[!als %in% als[grep("alignment.nex",als)]] # remove full alignments (only want to run per loci)
+als <- sort(als,decreasing = TRUE) # reverse list so it runs the HUGE mammal dataset first
 
 # Calculate the test statistics and run the bootstraps
 # To run for one alignment: empirical.bootstraps.wrapper(empirical_alignment_path = empirical_alignment_path, program_paths = program_paths, number_of_replicates = 9)
