@@ -331,108 +331,111 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   alignment_folder <- dirname(empirical_alignment_path)
   
-  # Check that the original alignment ran ok
-  if (file.exists(paste0(empirical_alignment_path,".iqtree")) == FALSE || file.exists(paste0(empirical_alignment_path,".treefile")) == FALSE || file.exists(paste0(empirical_alignment_path,".lmap.eps")) == FALSE){
-    print("need to rerun IQ-Tree")
-    n <- read.nexus.data(empirical_alignment_path)
-    n_taxa <- length(n)
-    # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
-    print("run IQTree")
-    call.IQTREE.quartet(program_paths[["IQTree"]],empirical_alignment_path,n_taxa)
+  # Only run this section if the p-value csv has not been created yet (skip reruns)
+  if (file.exists(p_value_file) == FALSE){
+    # Check that the original alignment ran ok
+    if (file.exists(paste0(empirical_alignment_path,".iqtree")) == FALSE || file.exists(paste0(empirical_alignment_path,".treefile")) == FALSE || file.exists(paste0(empirical_alignment_path,".lmap.eps")) == FALSE){
+      print("need to rerun IQ-Tree")
+      n <- read.nexus.data(empirical_alignment_path)
+      n_taxa <- length(n)
+      # Run IQ-tree on the alignment (if it hasn't already been run), and get the likelihood mapping results
+      print("run IQTree")
+      call.IQTREE.quartet(program_paths[["IQTree"]],empirical_alignment_path,n_taxa)
+    }
+    
+    # Calculate the test statistics if it hasn't already been done
+    ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_testStatistics.csv")
+    if (file.exists(ts_file) == FALSE){
+      print("run test statistics")
+      empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
+    }
+    
+    #Check that the test statistic file ran ok 
+    if (file.exists(ts_file) == FALSE){
+      print("need to rerun test statistics")
+      empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
+    }
+    
+    #Extract the parameters from the .iqtree log file.
+    print("get simulation params")
+    params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
+    write.csv(params$parameters,file = parameters_file, row.names = TRUE)
+    write.csv(params$gamma_categories,file = gamma_categories_file, row.names = TRUE)
+    write.csv(params$Q_rate_matrix,file = rate_matrix_file, row.names = TRUE)
+    
+    # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
+    bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
+    
+    # Run all the bootstrap ids that HAVEN'T already been run (e.g. in previous attempts) using lapply (feed info into do1.empirical.parametric.bootstrap)
+    # If the alignment doesn't exist OR the test statistic csv doesnt exist, this indicates a complete run has not previously been done 
+    # These bootstrap replicates will thus be calculates
+    # This should save A BUNCH of time because it means if the test statistic file exists, you don't have to run Splitstree four times
+    print("run bootstrap replicates")
+    bs_als <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,".nex")
+    ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
+    missing_als <- bs_als[!file.exists(bs_als)]
+    missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
+    # Collate the missing files and identify the alignments to rerun
+    all_to_run <- unique(c(missing_als,missing_testStatistics))
+    ids_to_run <- bootstrap_ids[which((bs_als %in% all_to_run))]
+    print(paste0("Number of alignments to run = ",length(ids_to_run)))
+    print("run all previously-unrun bootstraps")
+    if(length(ids_to_run)>0){
+      lapply(ids_to_run, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
+    }
+    
+    # Before you can collate all the bootstrap files, you need to check every bootstrap ran and rerun the failed ones
+    # Generate the names of each alignment, the test statistics csvs, the .iqtree files, the treefiles, the likelihood mapping files
+    # Check which of these files are missing
+    print("check for missing alignments")
+    bs_als <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,".nex")
+    ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
+    missing_als <- bs_als[!file.exists(bs_als)]
+    missing_iqtree <- bs_als[!file.exists(paste0(bs_als,".iqtree"))]
+    missing_tree <- bs_als[!file.exists(paste0(bs_als,".treefile"))]
+    missing_lmap <- bs_als[!file.exists(paste0(bs_als,".lmap.eps"))]
+    missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
+    # Collate the missing files and identify the alignments to rerun
+    all_missing <- unique(c(missing_als,missing_iqtree,missing_tree,missing_lmap,missing_testStatistics))
+    als_to_rerun <- bootstrap_ids[which((bs_als %in% all_missing))]
+    print(paste0("Number of missing alignments to rerun = ",length(als_to_rerun)))
+    # Rerun the missing als
+    if (length(als_to_rerun)>0){
+      lapply(als_to_rerun, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
+    }
+    
+    # collate the bootstrap info into 1 file
+    print("collate bootstraps")
+    p_value_df <- collate.bootstraps(directory = alignment_folder, file.name = "testStatistics", id = loci_name, output.file.name = collated_ts_file)
+    # add the column with the bootstrap replicates and "alignment"
+    new_bootstrap_ids <- p_value_df$bootstrap_replicate_id # copy col
+    aln_id <- grep(new_bootstrap_ids[!grepl("bootstrapReplicate",new_bootstrap_ids)],new_bootstrap_ids) # get which element of col is the alignment
+    new_bootstrap_ids[aln_id] <- "alignment"
+    p_value_df$bootstrap_id <- new_bootstrap_ids
+    
+    # Calculate the p-values and add them to the original test statistic dataframe
+    print("calculate p values")
+    # Open the original test statistic file
+    ts_df <- read.csv(ts_file)
+    # Calculate the p_values of the variables of interest
+    # Calculate the p-values for each test statistic
+    ts_df$PHI_mean_sig <- calculate.p_value(p_value_df$PHI_mean, p_value_df$bootstrap_id)
+    ts_df$PHI_observed_sig <- calculate.p_value(p_value_df$PHI_observed, p_value_df$bootstrap_id)
+    ts_df$x3seq_sig <- calculate.p_value(p_value_df$X3SEQ_num_distinct_recombinant_sequences, p_value_df$bootstrap_id)
+    ts_df$prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
+    ts_df$splittable_percentage_sig <- calculate.p_value(p_value_df$splittable_percentage, p_value_df$bootstrap_id)
+    ts_df$pdm_difference_sig <- calculate.p_value(p_value_df$pdm_difference, p_value_df$bootstrap_id)
+    ts_df$pdm_average_sig <- calculate.p_value(p_value_df$pdm_average, p_value_df$bootstrap_id)
+    ts_df$sd_untrimmed_sig <- calculate.p_value(p_value_df$split_decomposition_untrimmed, p_value_df$bootstrap_id)
+    ts_df$nn_untrimmed_sig <- calculate.p_value(p_value_df$neighbour_net_untrimmed, p_value_df$bootstrap_id)
+    ts_df$sd_trimmed_sig <- calculate.p_value(p_value_df$split_decomposition_trimmed, p_value_df$bootstrap_id)
+    ts_df$nn_trimmed_sig <- calculate.p_value(p_value_df$neighbour_net_trimmed, p_value_df$bootstrap_id)
+    ts_df$mean_delta_q_sig  <- calculate.p_value(p_value_df$mean_delta_q, p_value_df$bootstrap_id)
+    ts_df$median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
+    ts_df$mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
+    # Output the p-values file
+    write.csv(ts_df,file = p_value_file, row.names = FALSE)
   }
-  
-  # Calculate the test statistics if it hasn't already been done
-  ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_testStatistics.csv")
-  if (file.exists(ts_file) == FALSE){
-    print("run test statistics")
-    empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
-  }
-  
-  #Check that the test statistic file ran ok 
-  if (file.exists(ts_file) == FALSE){
-    print("need to rerun test statistics")
-    empirical.runTS(empirical_alignment_path, program_paths, bootstrap_id = "alignment")
-  }
-  
-  #Extract the parameters from the .iqtree log file.
-  print("get simulation params")
-  params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
-  write.csv(params$parameters,file = parameters_file, row.names = TRUE)
-  write.csv(params$gamma_categories,file = gamma_categories_file, row.names = TRUE)
-  write.csv(params$Q_rate_matrix,file = rate_matrix_file, row.names = TRUE)
-  
-  # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
-  bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
-  
-  # Run all the bootstrap ids that HAVEN'T already been run (e.g. in previous attempts) using lapply (feed info into do1.empirical.parametric.bootstrap)
-  # If the alignment doesn't exist OR the test statistic csv doesnt exist, this indicates a complete run has not previously been done 
-  # These bootstrap replicates will thus be calculates
-  # This should save A BUNCH of time because it means if the test statistic file exists, you don't have to run Splitstree four times
-  print("run bootstrap replicates")
-  bs_als <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,".nex")
-  ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
-  missing_als <- bs_als[!file.exists(bs_als)]
-  missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
-  # Collate the missing files and identify the alignments to rerun
-  all_to_run <- unique(c(missing_als,missing_testStatistics))
-  ids_to_run <- bootstrap_ids[which((bs_als %in% all_to_run))]
-  print(paste0("Number of alignments to run = ",length(ids_to_run)))
-  print("run all previously-unrun bootstraps")
-  if(length(ids_to_run)>0){
-    lapply(ids_to_run, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
-  }
-
-  # Before you can collate all the bootstrap files, you need to check every bootstrap ran and rerun the failed ones
-  # Generate the names of each alignment, the test statistics csvs, the .iqtree files, the treefiles, the likelihood mapping files
-  # Check which of these files are missing
-  print("check for missing alignments")
-  bs_als <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,".nex")
-  ts_csvs <- paste0(alignment_folder,"/",loci_name,"_",bootstrap_ids,"/",loci_name,"_",bootstrap_ids,"_testStatistics.csv")
-  missing_als <- bs_als[!file.exists(bs_als)]
-  missing_iqtree <- bs_als[!file.exists(paste0(bs_als,".iqtree"))]
-  missing_tree <- bs_als[!file.exists(paste0(bs_als,".treefile"))]
-  missing_lmap <- bs_als[!file.exists(paste0(bs_als,".lmap.eps"))]
-  missing_testStatistics <- bs_als[!file.exists(ts_csvs)]
-  # Collate the missing files and identify the alignments to rerun
-  all_missing <- unique(c(missing_als,missing_iqtree,missing_tree,missing_lmap,missing_testStatistics))
-  als_to_rerun <- bootstrap_ids[which((bs_als %in% all_missing))]
-  print(paste0("Number of missing alignments to rerun = ",length(als_to_rerun)))
-  # Rerun the missing als
-  if (length(als_to_rerun)>0){
-    lapply(als_to_rerun, do1.empirical.parametric.bootstrap, empirical_alignment_path = empirical_alignment_path, alignment_params = params, program_paths = program_paths)
-  }
-  
-  # collate the bootstrap info into 1 file
-  print("collate bootstraps")
-  p_value_df <- collate.bootstraps(directory = alignment_folder, file.name = "testStatistics", id = loci_name, output.file.name = collated_ts_file)
-  # add the column with the bootstrap replicates and "alignment"
-  new_bootstrap_ids <- p_value_df$bootstrap_replicate_id # copy col
-  aln_id <- grep(new_bootstrap_ids[!grepl("bootstrapReplicate",new_bootstrap_ids)],new_bootstrap_ids) # get which element of col is the alignment
-  new_bootstrap_ids[aln_id] <- "alignment"
-  p_value_df$bootstrap_id <- new_bootstrap_ids
-  
-  # Calculate the p-values and add them to the original test statistic dataframe
-  print("calculate p values")
-  # Open the original test statistic file
-  ts_df <- read.csv(ts_file)
-  # Calculate the p_values of the variables of interest
-  # Calculate the p-values for each test statistic
-  ts_df$PHI_mean_sig <- calculate.p_value(p_value_df$PHI_mean, p_value_df$bootstrap_id)
-  ts_df$PHI_observed_sig <- calculate.p_value(p_value_df$PHI_observed, p_value_df$bootstrap_id)
-  ts_df$x3seq_sig <- calculate.p_value(p_value_df$X3SEQ_num_distinct_recombinant_sequences, p_value_df$bootstrap_id)
-  ts_df$prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
-  ts_df$splittable_percentage_sig <- calculate.p_value(p_value_df$splittable_percentage, p_value_df$bootstrap_id)
-  ts_df$pdm_difference_sig <- calculate.p_value(p_value_df$pdm_difference, p_value_df$bootstrap_id)
-  ts_df$pdm_average_sig <- calculate.p_value(p_value_df$pdm_average, p_value_df$bootstrap_id)
-  ts_df$sd_untrimmed_sig <- calculate.p_value(p_value_df$split_decomposition_untrimmed, p_value_df$bootstrap_id)
-  ts_df$nn_untrimmed_sig <- calculate.p_value(p_value_df$neighbour_net_untrimmed, p_value_df$bootstrap_id)
-  ts_df$sd_trimmed_sig <- calculate.p_value(p_value_df$split_decomposition_trimmed, p_value_df$bootstrap_id)
-  ts_df$nn_trimmed_sig <- calculate.p_value(p_value_df$neighbour_net_trimmed, p_value_df$bootstrap_id)
-  ts_df$mean_delta_q_sig  <- calculate.p_value(p_value_df$mean_delta_q, p_value_df$bootstrap_id)
-  ts_df$median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
-  ts_df$mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
-  # Output the p-values file
-  write.csv(ts_df,file = p_value_file, row.names = FALSE)
 }
 
 
@@ -461,3 +464,4 @@ fix.gammaCategory.siteNums <- function(df,num){
     return(df)
   }
 }
+
