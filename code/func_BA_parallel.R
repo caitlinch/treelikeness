@@ -325,6 +325,9 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   # Create output file names, the name of the loci and the file path of the loci location
   collated_ts_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_collatedBSReplicates.csv")
   p_value_file  <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_pValues.csv")
+  parameters_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_parameterValues.csv")
+  gamma_categories_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_gammaCategories.csv")
+  rate_matrix_file <- paste0(dirname(empirical_alignment_path),"/",gsub(".nex","",basename(empirical_alignment_path)),"_QRateMatrix.csv")
   loci_name <- gsub(".nex","",basename(empirical_alignment_path))
   alignment_folder <- dirname(empirical_alignment_path)
   
@@ -354,6 +357,9 @@ empirical.bootstraps.wrapper <- function(empirical_alignment_path, program_paths
   #Extract the parameters from the .iqtree log file.
   print("get simulation params")
   params <- get.simulation.parameters(paste0(empirical_alignment_path,".iqtree"))
+  write.csv(params$parameters,file = parameters_file, row.names = TRUE)
+  write.csv(params$gamma_categories,file = gamma_categories_file, row.names = TRUE)
+  write.csv(params$Q_rate_matrix,file = rate_matrix_file, row.names = TRUE)
   
   # Create the bootstrap ids (pad out to 4 digits) - should be "bootstrapReplicateXXXX" where XXXX is a number
   bootstrap_ids <- paste0("bootstrapReplicate",sprintf("%04d",1:number_of_replicates))
