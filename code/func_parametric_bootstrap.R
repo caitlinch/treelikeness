@@ -496,7 +496,7 @@ calculate.p_value <- function(value_vector,id_vector){
     # For left tail probability: want to find the number of observations less than or equal to the alignment value, then divide by the number of bootstrap observations
     p_value_df <- p_value_df[order(p_value_df$value),] # order values from largest to smallest
     alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
-    alignment_value <- value_vector[alignment_row] # find the alignment's test statistic value
+    alignment_value <- p_value_df[alignment_row,1] # find the alignment's test statistic value
     # check whether there are other values that are the same as the alignment value
     identical_df <- subset(p_value_df,value == alignment_value)
     # if there are identical values, you don't know where the alignment actually falls within that list
@@ -516,7 +516,7 @@ calculate.p_value <- function(value_vector,id_vector){
     # For right tail probability: want to find the number of observations greater than or equal to the alignment value, then divide by the number of bootstrap observations
     p_value_df <- p_value_df[order(p_value_df$value, decreasing = TRUE),] # order values from smallest to largest
     alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
-    alignment_value <- value_vector[alignment_row] # find the alignment's test statistic value
+    alignment_value <- p_value_df[alignment_row,1] # find the alignment's test statistic value
     # check whether there are other values that are the same as the alignment value
     identical_df <- subset(p_value_df,value == alignment_value)
     # if there are identical values, you don't know where the alignment actually falls within that list
