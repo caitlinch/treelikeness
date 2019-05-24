@@ -41,10 +41,8 @@ collate.bootstraps <- function(directory, file.name, id, output.file.name){
   output_list <- lapply(csv_paths, read.csv, stringsAsFactors = FALSE)
   # Reduce the dataframe from a list into a matrix
   output_df <- Reduce(rbind, output_list)
-  # Remove the "X" column (row number for smaller csv files)
-  output_df <- output_df[,2:ncol(output_df)]
   # save the output dataframe
-  write.csv(output_df, file = output.file.name)
+  write.csv(output_df, file = output.file.name, row.names = FALSE)
   return(output_df)
 }
 
