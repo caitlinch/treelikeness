@@ -487,8 +487,7 @@ calculate.p_value <- function(value_vector,id_vector){
     # If the alignment value is NA, can't calculate a score
     # If it wasn't possible to calculate a score (will usually be a PHI score) for the alignment, output an NA
     p_value_2tail <- NA
-  }
-  else {
+  } else {
     # If it's possible to calculate a p-value, calculate one
     # Exclude NA rows
     p_value_df <-  p_value_df[!is.na(p_value_df$value),]
