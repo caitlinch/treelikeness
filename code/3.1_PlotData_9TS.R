@@ -55,9 +55,9 @@ e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This thesis)",
-                    "pdm_difference" = "Distance difference \n (This thesis)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This thesis)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This thesis)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
+                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -92,9 +92,9 @@ e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This thesis)",
-                    "pdm_difference" = "Distance difference \n (This thesis)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This thesis)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This thesis)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
+                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -122,9 +122,9 @@ e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This thesis)",
-                    "pdm_difference" = "Distance difference \n (This thesis)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This thesis)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This thesis)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
+                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -159,9 +159,9 @@ e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This thesis)",
-                    "pdm_difference" = "Distance difference \n (This thesis)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This thesis)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This thesis)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
+                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -189,9 +189,9 @@ e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This thesis)",
-                    "pdm_difference" = "Distance difference \n (This thesis)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This thesis)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This thesis)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
+                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
