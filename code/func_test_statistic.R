@@ -465,6 +465,15 @@ split.attributes <- function(split, tree){
   } else {
     trivial <- FALSE
   }
+  # Remove any asterisks in the split labels to match the taxa names in the tree
+  asterisk_taxa <- grep("\\*",taxa)
+  if (length(asterisk_taxa)>0){
+    # If any asterisk taxa exist, rename them by replacing the * with a _ - this is what happens when you open the IQTree tree
+    taxa <- gsub("\\*","_",taxa)
+    ss1_taxa <- taxa[ss1]
+    ss2_taxa <- setdiff(taxa,ss1_taxa)
+  }
+  
   # Test whether the split is in the tree by seeing whether ss1 and ss2 are monophyletic
   ss1_mono <- is.monophyletic(tree,ss1_taxa)
   ss2_mono <- is.monophyletic(tree,ss2_taxa)
