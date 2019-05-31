@@ -389,10 +389,10 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
   if (is.na(suppressWarnings(as.numeric(nsplits)))==TRUE){
     # If nsplits is not a number, return the ts as NA (can't calculate a tree proportion)
     ts <- NA
-  } else if (nsplits == 0){
+  } else if (as.numeric(nsplits) == 0){
     # If no splits, return NA (can't calculate a tree proportion)
     ts <- NA
-  } else if (nsplits > 0){
+  } else if (as.numeric(nsplits) > 0){
     # Otherwise, if the network does contain more than 0 splits:
     # Extract the splits 
     splits <- read.nexus.splits(splits.filepath) # Open the splits from SplitsTree
@@ -412,6 +412,7 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
     
     # Iterate through each of the rows in the splits dataframe and collect the splits
     for (i in 1:length(splits)){
+      print(i)
       # For each split, get the split weight, whether it's trivial, and whether it's in the tree
       split_atts <- split.attributes(splits[i],tree)
       
