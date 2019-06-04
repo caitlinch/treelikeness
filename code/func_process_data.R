@@ -34,16 +34,20 @@ collate.bootstraps <- function(directory, file.name, id, output.file.name){
   id_files <- all_files[grep(id,all_files)]
   # Get the files of interest and their full file paths
   csv_paths <- id_files[grep(file.name,id_files)]
-  csv_paths <- paste0(directory,"/",csv_paths)
-  # Set the number of rows in the dataframe (will equal the number of csv files: one per simulation + one for the original empirical alignment)
-  num_rows <- length(csv_paths)
-  # Open all the csv files, store the results as a list
-  output_list <- lapply(csv_paths, read.csv, stringsAsFactors = FALSE)
-  # Reduce the dataframe from a list into a matrix
-  output_df <- Reduce(rbind, output_list)
-  # save the output dataframe
-  write.csv(output_df, file = output.file.name, row.names = FALSE)
-  return(output_df)
+  if (length(csv_paths) > 0){
+    csv_paths <- paste0(dirname(directory),"/",basename(directory),"/",csv_paths)
+    # Set the number of rows in the dataframe (will equal the number of csv files: one per simulation + one for the original empirical alignment)
+    num_rows <- length(csv_paths)
+    # Open all the csv files, store the results as a list
+    output_list <- lapply(csv_paths, read.csv, stringsAsFactors = FALSE)
+    # Reduce the dataframe from a list into a matrix
+    output_df <- Reduce(rbind, output_list)
+    # save the output dataframe
+    write.csv(output_df, file = output.file.name, row.names = FALSE)
+    return(output_df)
+  } else {
+    return(NA)
+  }
 }
 
 collate.missing.params <- function(directory,id){
