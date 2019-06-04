@@ -465,3 +465,57 @@ fix.gammaCategory.siteNums <- function(df,num){
   }
 }
 
+
+
+# Function to return a list of alignment names by extracting alignments from a big old folder full of alignments (recursive folder are ok)
+# Note that alignments called "alignment.nex" are specifically excluded - this bad boy is looking for alignments of individual loci
+extract.BA.files <- function(dir, order_by = "none", user_ordered_list){
+  print("extracting alignments")
+  files <- list.files(dir,recursive = TRUE) # list all files
+  als <- paste0(dir,files[grep(".nex",files)]) # get all the nexus files
+  als <- als[!als %in% als[grep(".nex.",als)]] # remove all non alignment files to leave only alignments
+  als <- als[!als %in% als[grep("bootstrapReplicate",als)]] # remove all bootstrap alignments (if any present)
+  als <- als[!als %in% als[grep("alignment.nex",als)]] # remove full alignments (only want to run per loci)
+  # Sort the list of alignments by the desired order
+  if (order_by == "none"){
+    return(als)
+  } else if (order_by == "ntaxa"){
+    # Nucleotide datasets ordered from smallest to largest number of taxa
+    taxa_order <- c('Richart_2015','Smith_2014','Crawford_2012','Leache_2015','Meiklejohn_2016','Faircloth_2013',
+                    'McCormack_2013','Wood_2012','Bergsten_2013','Ran_2018_dna','Brown_2012','Cognato_2001',
+                    'Dornburg_2012','Prebus_2017','Sauquet_2011','Broughton_2013','Siler_2013','Devitt_2013',
+                    'Kawahara_2013','Cannon_2016_dna','Lartillot_2012','Oaks_2011','Wu_2018_dna','Worobey_2014c',
+                    'Rightmyer_2013','Seago_2011','Moyle_2016','Fong_2012','Unmack_2013','Sharanowski_2011',
+                    'Anderson_2013','Worobey_2014a','Day_2013','Branstetter_2017','Wainwright_2012','Horn_2014',
+                    'Tolley_2013','Reddy_2017','Murray_2013','Worobey_2014g','Worobey_2014b','Worobey_2014f',
+                    'Worobey_2014e','Worobey_2014h','Worobey_2014d','Near_2013','Looney_2016','Pyron_2011')
+    als <- sort.alignments(als,taxa_order)
+    return(als)
+  } else if (order_by == "npartition"){
+    # Nucleotide datasets ordered from smallest to largest number of partitions in original dataset
+    partition_order <- c("Worobey_2014h","Worobey_2014a","Worobey_2014f","Worobey_2014g","Worobey_2014e","Worobey_2014b",
+                       "Worobey_2014c","Worobey_2014d","Looney_2016","Anderson_2013","Devitt_2013","Seago_2011","Siler_2013",
+                       "Cognato_2001","Brown_2012","Wood_2012","Bergsten_2013","Murray_2013","Kawahara_2013","Sauquet_2011",
+                       "Day_2013","Sharanowski_2011","Tolley_2013","Dornburg_2012","Unmack_2013","Rightmyer_2013","Horn_2014",
+                        "Wainwright_2012","Near_2013","Pyron_2011","Oaks_2011","Lartillot_2012","Broughton_2013","Reddy_2017",
+                        "Fong_2012","Cannon_2016_dna","Faircloth_2013","Moyle_2016","Leache_2015","Branstetter_2017",
+                        "Crawford_2012","Smith_2014","Meiklejohn_2016","McCormack_2013","Richart_2015","Prebus_2017",
+                        "Ran_2018_dna","Wu_2018_dna")
+    als <- sort.alignments(als,partition_order)
+    return(als)
+  } else if (order_by == "user-specified"){
+    als <- sort.alignments(als,user_ordered_list)
+    return(als)
+  }
+}
+
+# Given an order of datasets and a list of loci from those datasets, this function orders and returns the list of loci
+sort.alignments <- function(als,taxa_order){
+  print("sorting alignments")
+  als_ordered <- c()
+  for (ds in taxa_order){
+    als_ordered <- c(als_ordered,als[grep(ds,als)])
+  }
+  als <- als_ordered
+  return(als)
+}
