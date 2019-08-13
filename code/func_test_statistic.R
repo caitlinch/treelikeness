@@ -412,7 +412,6 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
     
     # Iterate through each of the rows in the splits dataframe and collect the splits
     for (i in 1:length(splits)){
-      print(i)
       # For each split, get the split weight, whether it's trivial, and whether it's in the tree
       split_atts <- split.attributes(splits[i],tree)
       
