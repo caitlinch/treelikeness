@@ -1,4 +1,5 @@
 # R code to import and collate test statistic results, and to process the results
+# Sourcing this file will extract, collect, format the results from the simulations, and perform some additional calculations
 
 # Specify which file paths to use
 run_location = "mac"
@@ -8,15 +9,11 @@ if (run_location == "mac"){
   # Set file paths etc
   raw_data_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/"
   output_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput/"
-  
-  # Set working directory
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
   # Set file paths etc
   raw_data_folder <- "/data/caitlin/treelikeness/output_20190411/"
   output_folder <- "/data/caitlin/treelikeness/results_20190411/"
-  
-  # Set working directory
   maindir <- "/data/caitlin/treelikeness/"
 }
 
@@ -27,14 +24,13 @@ source(paste0(maindir,"code/func_process_data.R"))
 library(reshape2)
 
 # Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot1", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot2", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot3", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "plot4", output_path = output_folder)
-#collate.csv(directory = raw_data_folder, file.name = "p_value", id = "plot4", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "exp1", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "exp2", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "exp3", output_path = output_folder)
+collate.csv(directory = raw_data_folder, file.name = "p_value", id = "exp3", output_path = output_folder)
 
 # Calculate the proportion of recombinant triplets and add it onto each set of simulations
-id <- c("plot1_","plot2_","plot3_","plot4_")
+id <- c("exp1_","exp2_","exp3_")
 csvs <- list.files(output_folder)
 inds <- lapply(id,grep,csvs)
 csvs <- csvs[unlist(inds)]
