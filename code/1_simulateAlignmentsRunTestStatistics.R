@@ -1,7 +1,7 @@
 # R code to create dataframes with a row for each simulation to run, simulate those alignments and output a csv with results of all test statistics
 # Sourcing this file will run all of the simulations below: the four separate plots for my thesis
 
-# Open packages
+##### Step 1: Open packages
 library(parallel)
 library(seqinr)
 library(ape)
@@ -11,7 +11,6 @@ library(phangorn)
 library(base)
 library(ggplot2)
 library(reshape2)
-library(tictoc) # library for measuring timings! tic("label") to start, toc() to stop
 
 # Remember to have downloaded and tested the following programs: SplitsTree4, SimBac, IQ-Tree, PhiPack and 3Seq. 
 # 3Seq must have been associated with a P-value table for it to run properly
@@ -19,14 +18,10 @@ library(tictoc) # library for measuring timings! tic("label") to start, toc() to
 # LD_LIBRARY_PATH=$LD_LIBRARY_PATH:usr/local/lib:usr/lib/x86_64-linux-gnu
 # export LD_LIBRARY_PATH
 
+##### Step 2: Set the file paths for folders, executives, and 
 # run_location <- "mac"
-# run_location <- "nci"
 run_location <- "soma"
 
-times <- c()
-time_ids <- c()
-
-tic("initialising")
 if (run_location == "mac"){
   	op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/"
   	results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/"
@@ -39,18 +34,6 @@ if (run_location == "mac"){
   	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
   	network_functions <- "code/func_split_decomposition.R"
   	run_id <- "bootstrapTest"
-} else if (run_location == "nci") {
-  	op_folder <- "/short/xf1/cac599/sims_output/"
-  	maindir <- "/home/599/cac599/treelikeness/"
-  	exec_folder <- "/home/599/cac599/treelikeness/executables/"
-  	# Create a vector with all of the executable file paths
-  	# To access a path: exec_paths[["name"]]
-  	exec_paths <- c("3seq","iqtree","Phi","SimBac")
-  	exec_paths <- paste0(exec_folder,exec_paths)
-  	exec_paths <- c(exec_paths,"/home/599/cac599/splitstree4/SplitsTree")
-  	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
-  	network_functions <- "code/func_split_decomposition_nci.R"
-  	run_id <- "nci2"
 } else if (run_location=="soma"){
   op_folder <- "/data/caitlin/treelikeness/output_20190411/"
   results_folder <- "/data/caitlin/treelikeness/results_20190411/"
@@ -73,10 +56,6 @@ source(paste0(maindir,"code/func_process_data.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
 tree_folder <- paste0(maindir,"trees/")
 
-temp_time <- toc()
-times <- c(times, temp_time$msg)
-time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
-tic("plot1")
 
 ### Create dataframe for the final set of simulations (fixed trees)
 ### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
@@ -107,11 +86,6 @@ for (i in tree_id){
 }
 mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
 
-temp_time <- toc()
-times <- c(times, temp_time$msg)
-time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
-tic("plot2")
-
 ## For second set of plots:
 # Make empty dataframe:
 plot2_df <- data.frame((matrix(ncol = 8, nrow = 0)))
@@ -134,12 +108,6 @@ for (i in tree_id){
   plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
 }
 mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
-
-
-temp_time <- toc()
-times <- c(times, temp_time$msg)
-time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
-tic("plot3")
 
 # For third set of plots:
 # Make empty dataframe:
@@ -176,12 +144,10 @@ for (i in tree_id){
 }
 mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = 10) # mclapply for phylo with fixed trees
 
-temp_time <- toc()
-times <- c(times, temp_time$msg)
-time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
-tic("plot4")
-
 ## For fourth set of plots:
+# Fix the proportion of tree 1 and of tree 2 at 50%. Fix the tree as a balanced 8 taxon tree with one close introgression event
+#     (either reciprocal or non-reciprocal). 
+
 # Make empty dataframe:
 plot4_df <- data.frame((matrix(ncol = 8, nrow = 0)))
 names(plot4_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
@@ -214,17 +180,13 @@ plot4_toRun <- c() # create an empty list to store the folders that need the boo
 for (folder in plot4_folders){
   p_file <- paste0(folder,"p_value.csv")
   if (file.exists(p_file) == FALSE) {
-    # if there's no p value csv, there's no bootstrap: add to the list of bootstraos to run
+    # if there's no p value csv, there's no bootstrap: add to the list of bootstraps to run
     plot4_toRun <- c(plot4_toRun, folder)
   }
 }
 # Apply the parametric bootstrap function to the folders without a bootstrap
 mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = 10) # run all the bootstraps!
 
-temp_time <- toc()
-times <- c(times, temp_time$msg)
-time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
-tic("save parameter dataframes")
 
 # Save the parameter dataframes
 op_name <- paste0(results_folder,"plot1_input_parameters_",run_id,".csv")
@@ -235,14 +197,5 @@ op_name <- paste0(results_folder,"plot3_input_parameters_",run_id,".csv")
 write.csv(plot3_df,file=op_name)
 op_name <- paste0(results_folder,"plot4_input_parameters_",run_id,".csv")
 write.csv(plot4_df,file=op_name)
-
-temp_time <- toc()
-times <- c(times, temp_time$msg)
-time_ids <- c(time_ids, (temp_time$toc - temp_time$tic)[[1]])
-
-# save the times
-time_df <- data.frame(time_ids,times)
-op_name <- paste0(results_folder,"run_times_",run_id,".csv")
-write.csv(time_df,file=op_name)
 
 
