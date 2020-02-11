@@ -27,18 +27,18 @@ library(reshape2)
 # run_location <- set to "single" if running on a single core, or "parallel" if running with multiple cores
 # num_cores <- the number of cores to use. 1 for a single core (wholly sequential), or higher if using parallelisation.
 
-#run_location <- "single"
-run_location <- "parallel"
-num_cores <- 10
+run_location <- "single"
+# run_location <- "parallel"
+num_cores <- 1
 
 if (run_location == "single"){
-  	op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/"
-  	results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/"
+  	op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
+  	results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/results/"
   	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
   	exec_folder <- "/Users/caitlincherryh/Documents/Honours/Executables/"
   	# Create a vector with all of the executable file paths
   	# To access a path: exec_paths[["name"]]
-  	exec_paths <- c("3seq","iqtree","Phi","SimBac","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
+  	exec_paths <- c("3seq","iqtree-1.6.12-MacOSX/bin/iqtree","Phi","SimBac","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
   	exec_paths <- paste0(exec_folder,exec_paths)
   	names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
   	run_id <- "msTest"
@@ -69,7 +69,7 @@ tree_folder <- paste0(maindir,"trees/")
 ### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
 
 
-## For first set of plots:
+## For first experiment:
 # - What effect does varying the type of introgression event have on the treelikeness score?
 # - What effect does varying tree depth have on the treelikeness score?
 #       - Fix the number of sites
@@ -81,14 +81,14 @@ tree_folder <- paste0(maindir,"trees/")
 #       - Perform 100 replicates for each set of parameters
 
 # Make empty dataframe:
-plot1_df <- data.frame((matrix(ncol = 8, nrow = 0)))
-names(plot1_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+exp1_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(exp1_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
 # Parameters that are the same for each set of trees:
 output_folder <- op_folder
 n_sites <- 1300
 tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- 0.5
-id <- "plot1"
+id <- "exp1"
 rep <- 1:100
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS",
                   "08taxa_balanced_LHS")
@@ -102,17 +102,14 @@ for (i in tree_id){
   tree2_temp <- tree2_vector[[i]]
   temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-  plot1_df <- rbind(plot1_df,temp_df, stringsAsFactors = FALSE)
+  exp1_df <- rbind(exp1_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-if (run_location == "parallel") {
-  mclapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder, mc.cores = num_cores)# mclapply for phylo with fixed trees
-} else if (run_location == "single"){
-  lapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
-}
+# mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
-## For third set of plots:
+
+## For second experiment:
 # - What effect on the treelikeness score does increasing the number of introgression events have?
 #       - Fix the number of sites
 #       - Starting with a balanced 8-taxon tree, perform 0 - 8 simultaneous close introgression events
@@ -122,14 +119,14 @@ if (run_location == "parallel") {
 #       - Perform 100 replicates for each set of parameters
 
 # Make empty dataframe:
-plot3_df <- data.frame((matrix(ncol = 8, nrow = 0)))
-names(plot3_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+exp2_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(exp2_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
 # Parameters that are the same for each set of trees:
 output_folder <- op_folder
 n_sites <- 1300
 tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- (0.5)
-id <- "plot3"
+id <- "exp2"
 rep <- 1:100
 tree1_vector <- c("32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
                   "32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS","32taxa_balanced_LHS",
@@ -152,17 +149,13 @@ for (i in tree_id){
   tree2_temp <- tree2_vector[[i]]
   temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-  plot3_df <- rbind(plot3_df,temp_df, stringsAsFactors = FALSE)
+  exp2_df <- rbind(exp2_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-if (run_location == "parallel") {
-  mclapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-} else if (run_location == "single"){
-  lapply(1:nrow(plot3_df), phylo.fixedtrees.wrapper, plot3_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
-}
+# mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
-## For fourth set of plots:
+## For third experiment:
 # - Investigating performance of test statistics using a parametric bootstrap
 #       - Fix the number of sites
 #       - Fix the tree as a balanced 8 taxon tree with one close introgression event (either reciprocal or non-reciprocal).
@@ -172,15 +165,15 @@ if (run_location == "parallel") {
 #       - Perform 100 replicates for each set of parameters
 
 # Make empty dataframe:
-plot4_df <- data.frame((matrix(ncol = 8, nrow = 0)))
-names(plot4_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
+exp3_df <- data.frame((matrix(ncol = 8, nrow = 0)))
+names(exp3_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
 output_folder <- op_folder
 n_sites <- 1300
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS")
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_LHS")
 tree_age <- c(0.05, 0.1, 0.5, 1)
 proportion_tree2 <- seq(0,0.5,0.1)
-id <- "plot4"
+id <- "exp3"
 rep <- 1:100
 # Expand parameters into dataframe
 tree_id <- 1:3
@@ -189,42 +182,37 @@ for (i in tree_id){
   tree2_temp <- tree2_vector[[i]]
   temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
   names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-  plot4_df <- rbind(plot4_df,temp_df, stringsAsFactors = FALSE)
+  exp3_df <- rbind(exp3_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-if (run_location == "parallel") {
-  mclapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-} else if (run_location == "single"){
-  lapply(1:nrow(plot4_df), phylo.fixedtrees.wrapper, plot4_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
-}
+# mclapply(1:nrow(exp3_df), phylo.fixedtrees.wrapper, exp3_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
-# Collect the folders that contain the alignments for plot4 and rerun any alignments that failed on the previous run. 
+# Collect the folders that contain the alignments for third experiment and rerun any alignments that failed on the previous run. 
 all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get all the directory names in the output folder
-inds <- grep(id,all_folders) # find which indexes the plot4 (bootstrap) folders are at 
-plot4_folders <- all_folders[inds] # get the bootstrap folders
-plot4_folders <- paste0(plot4_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
-plot4_toRun <- c() # create an empty list to store the folders that need the bootstrap run
-# Check each simulation from the plot4_df for a p value csv
-for (folder in plot4_folders){
+inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders are at 
+exp3_folders <- all_folders[inds] # get the bootstrap folders
+exp3_folders <- paste0(exp3_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
+exp3_toRun <- c() # create an empty list to store the folders that need the bootstrap run
+# Check each simulation from the exp3_df for a p value csv
+for (folder in exp3_folders){
   p_file <- paste0(folder,"p_value.csv")
   if (file.exists(p_file) == FALSE) {
     # if there's no p value csv, there's no bootstrap: add to the list of bootstraps to run
-    plot4_toRun <- c(plot4_toRun, folder)
+    exp3_toRun <- c(exp3_toRun, folder)
   }
 }
 # Apply the parametric bootstrap function to the folders without a bootstrap
-mclapply(plot4_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
+# mclapply(exp3_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
 
 ##### Step 4: Save the parameter dataframes
-op_name <- paste0(results_folder,"plot1_input_parameters_",run_id,".csv")
-write.csv(plot1_df,file=op_name)
-op_name <- paste0(results_folder,"plot2_input_parameters_",run_id,".csv")
-write.csv(plot2_df,file=op_name)
-op_name <- paste0(results_folder,"plot3_input_parameters_",run_id,".csv")
-write.csv(plot3_df,file=op_name)
-op_name <- paste0(results_folder,"plot4_input_parameters_",run_id,".csv")
-write.csv(plot4_df,file=op_name)
+op_name <- paste0(results_folder,"exp1_input_parameters_",run_id,".csv")
+write.csv(exp1_df,file=op_name)
+op_name <- paste0(results_folder,"exp2_input_parameters_",run_id,".csv")
+write.csv(exp2_df,file=op_name)
+op_name <- paste0(results_folder,"exp3_input_parameters_",run_id,".csv")
+write.csv(exp3_df,file=op_name)
+
 
 
