@@ -111,44 +111,6 @@ if (run_location == "parallel") {
   lapply(1:nrow(plot1_df), phylo.fixedtrees.wrapper, plot1_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
 }
 
-## For second set of plots:
-# - What effect does varying tree depth have on treelikeness score?
-#       - Fix the number of sites
-#       - Starting with a balanced 8-taxon tree, perform 1 close introgression event (either reciprocal or non-reciprocal)
-#       - Vary the proportion of tree 2 from 0 - 50% in 1% increments (meaning initial proportion of tree 1 is 100% and final
-#         proportion of tree 1 is 50%)
-#       - Vary the tree depth from 0.05 to 1 substitution per site
-#       - Perform 10 replicates for each set of parameters
-
-# Make empty dataframe:
-plot2_df <- data.frame((matrix(ncol = 8, nrow = 0)))
-names(plot2_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-# Parameters that are the same for each set of trees:
-output_folder <- op_folder
-n_sites <- 1300
-tree_age <- c(0.05, 0.1, 0.5, 1)
-proportion_tree2 <- seq(0,0.5,0.01)
-id <- "plot2"
-rep <- 1:10
-# Expand parameters into dataframe
-tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS")
-tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_LHS")
-tree_id <- 1:3
-for (i in tree_id){
-  tree1_temp <- tree1_vector[[i]]
-  tree2_temp <- tree2_vector[[i]]
-  temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
-  names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-  plot2_df <- rbind(plot2_df,temp_df, stringsAsFactors = FALSE)
-}
-# Run simulation
-if (run_location == "parallel") {
-  mclapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-} else if (run_location == "single"){
-  lapply(1:nrow(plot2_df), phylo.fixedtrees.wrapper, plot2_df, exec_paths, tree_folder) # lapply for phylo with fixed trees
-}
-
-
 
 ## For third set of plots:
 # - What effect on the treelikeness score does increasing the number of introgression events have?
