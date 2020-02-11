@@ -21,19 +21,22 @@ library(reshape2)
 # op_folder <- the folder where simulated alignments and output from analysis (e.g. IQ-Tree output files, 3seq output files) will be placed
 # results_folder <- the folder where the result csvs will be placed
 # maindir <- "treelikeness" repository location
-# exec_folder <- folder containing executables
 # exec_paths <- location to each executable within the folder
 # run_id <- the key for this simulation. Will be in the names for outputs and the results csvs
-# run_location <- set to "single" if running on a single core, or "parallel" if running with multiple cores
 # num_cores <- the number of cores to use. 1 for a single core (wholly sequential), or higher if using parallelisation.
+
+# op_folder <- "" 
+# results_folder <- ""
+# maindir <- ""
+# exec_paths <- c()
+# run_id <- ""
+num_cores <- 1
 
 run_location <- "single"
 # run_location <- "parallel"
-num_cores <- 1
-
 if (run_location == "single"){
   	op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
-  	results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/6_test_new_TS/results/"
+  	results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
   	maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
   	exec_folder <- "/Users/caitlincherryh/Documents/Honours/Executables/"
   	# Create a vector with all of the executable file paths
@@ -61,6 +64,7 @@ source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
 tree_folder <- paste0(maindir,"trees/")
+names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 
 
 
@@ -105,6 +109,7 @@ for (i in tree_id){
   exp1_df <- rbind(exp1_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
+mclapply(1:10, phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 # mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
@@ -152,6 +157,7 @@ for (i in tree_id){
   exp2_df <- rbind(exp2_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
+mclapply(1:10, phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores)
 # mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
@@ -185,9 +191,10 @@ for (i in tree_id){
   exp3_df <- rbind(exp3_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
+mclapply(1:10, phylo.fixedtrees.wrapper, exp3_df, exec_paths, tree_folder, mc.cores = num_cores)
 # mclapply(1:nrow(exp3_df), phylo.fixedtrees.wrapper, exp3_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
-# Collect the folders that contain the alignments for third experiment and rerun any alignments that failed on the previous run. 
+# Collect the folders that contain the alignments for third experiment and run the parametric bootstraps. 
 all_folders <- list.dirs(op_folder, recursive = FALSE, full.names = TRUE) # get all the directory names in the output folder
 inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders are at 
 exp3_folders <- all_folders[inds] # get the bootstrap folders
@@ -201,7 +208,7 @@ for (folder in exp3_folders){
     exp3_toRun <- c(exp3_toRun, folder)
   }
 }
-# Apply the parametric bootstrap function to the folders without a bootstrap
+# Apply the parametric bootstrap function
 # mclapply(exp3_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
