@@ -1,5 +1,4 @@
 # A new test statistic for treelikeness
-***
 ##### February 12 2020
 
 This repository contains code to simulate a series of sequence alignments and estimate a series of treelikeness and introgression metrics, including a new test for treelikeness (tree proportion). 
