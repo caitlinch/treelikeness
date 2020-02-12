@@ -1,5 +1,9 @@
 # R code to import and collate test statistic results, and to process the results
 # Sourcing this file will extract, collect, format the results from the simulations, and perform some additional calculations
+# Final result is four dataframes (three containing experimental results and one containing results from the parametric bootstrap) 
+# that can be used for analysis
+
+
 
 ##### Step 1: Open packages #####
 library(reshape2)
@@ -40,7 +44,7 @@ source(paste0(maindir,"code/func_process_data.R"))
 
 
 ##### Step 4: Collect test statistics from output and collate into a single file #####
-# Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
+# Collate data for the three sets of simulations and output each collated dataframe as a csv file
 collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp1", output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp2", output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp3", output_path = results_folder)
@@ -49,32 +53,28 @@ collate.csv(directory = op_folder, file.name = "p_value", id = "exp3", output_pa
 
 
 ##### Step 5: Calculate additional test statistics and format dataframes #####
-# Calculate the proportion of recombinant triplets and add it onto each set of simulations
+# Will result in one df containing test statistic values for each of 3 experiments, and one df containing p-value results for the third experiment
+# Extract the collated file names 
 id <- c("exp1_","exp2_","exp3_")
 csvs <- list.files(results_folder)
 inds <- lapply(id,grep,csvs)
 csvs <- csvs[unlist(inds)]
 csvs <- c(csvs[grep("testStatistics_collatedSimulationData",csvs)], csvs[grep("p_value_collatedSimulationData",csvs)])
+csvs <- csvs[grep("melted",csvs,invert=TRUE)] # If this is a rerun, take only the collated data files and ignore the "melted" (final result of Part 2) files
 csvs <- paste0(results_folder,csvs)
-for (csv in csvs[1:3]){
-  df <- read.csv(csv, stringsAsFactors = FALSE)
-  # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
-  # To find # of triplets: "In a set of 10 sequences, there are 720 unique parent–parent–child arrangements" - Boni et al (2007)
-  # In other words: 6*choose(10,3) == 720
-  # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
-  df["num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
-  df["proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
-  write.csv(df, file = csv, row.names = FALSE)
-}
-
+# Add columns for calculating 3seq-based test statistic (for exp dfs only) and to detail information about the recombination event (all dfs)
 for (csv in csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
-  # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
-  # To find # of triplets: "In a set of 10 sequences, there are 720 unique parent–parent–child arrangements" - Boni et al (2007)
-  # In other words: 6*choose(10,3) == 720
-  # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
-  df["num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
-  df["proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
+  # Calculate the number of triplets tested by 3seq and use to calculate the proportion of recombinant triplets for the experiment dfs
+  if (csv %in% csvs[1:3]){
+    # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
+    # To find # of triplets: "In a set of 10 sequences, there are 720 unique parent–parent–child arrangements" - Boni et al (2007)
+    # In other words: 6*choose(10,3) == 720
+    # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
+    df["num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
+    df["proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
+  }
+  # Extract information about the type of recombination event from the tree names and add to columns so it can be used for analysis (for all dfs)
   vector <- 1:length(df$tree2)
   close_inds <- grep("close",df$tree2)
   divergent_inds <- grep("divergent",df$tree2)
@@ -125,6 +125,7 @@ for (csv in csvs){
 
 
 ##### Step 6: Reshape the data into long format and write dataframes #####
+# Reshape experiment dfs into melted (long) format
 for (csv in csvs[1:3]){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")

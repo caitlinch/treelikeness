@@ -1,8 +1,15 @@
 # R code to create dataframes with a row for each simulation to run, simulate those alignments and output a csv with results of all test statistics
 # Sourcing this file will run all of the simulations below
+# Final result is a seires of folder, one per simulation, each containing a simulated alignment, an IQ-Tree file tree and log, a csv containing all
+# parameters from the simulation, a csv containing test statistics calculated for that alignment and a number of files generated from the programs used.
+# For the third experiment, a number of parametric bootstrap replicates will also be generated, each nested inside the alignment folder in a separate folder.
+
+
 
 # Remember to have downloaded and tested the following programs: SplitsTree4, IQ-Tree, PhiPack and 3Seq. 
 # 3Seq must have been associated with a P-value table for it to run properly
+
+
 
 ##### Step 1: Open packages #####
 library(parallel)
