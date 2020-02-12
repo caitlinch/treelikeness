@@ -4,7 +4,7 @@
 # Remember to have downloaded and tested the following programs: SplitsTree4, IQ-Tree, PhiPack and 3Seq. 
 # 3Seq must have been associated with a P-value table for it to run properly
 
-##### Step 1: Open packages
+##### Step 1: Open packages #####
 library(parallel)
 library(seqinr)
 library(ape)
@@ -17,7 +17,7 @@ library(reshape2)
 
 
 
-##### Step 2: Set the file paths for output folders, executables, and the identifying name for this run
+##### Step 2: Set the file paths for output folders, executables, and the identifying name for this run #####
 # op_folder <- the folder where simulated alignments and output from analysis (e.g. IQ-Tree output files, 3seq output files) will be placed
 # results_folder <- the folder where the result csvs will be placed
 # maindir <- "treelikeness" repository location
@@ -55,6 +55,9 @@ if (run_location == "single"){
   run_id <- "msTest"
 }
 
+
+
+##### Step 3: Source function files #####
 # Set working directory
 setwd(maindir)
 
@@ -68,7 +71,7 @@ names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
 
 
 
-##### Step 3: Create parameter dataframes for the set of simulations and run them
+##### Step 4: Create parameter dataframes for the set of simulations and run them #####
 ### Create dataframe for the final set of simulations (fixed trees)
 ### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
 
@@ -209,11 +212,11 @@ for (folder in exp3_folders){
   }
 }
 # Apply the parametric bootstrap function
-mclapply(exp3_toRun, phylo.parametric.bootstrap, 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
+mclapply(exp3_toRun, phylo.parametric.bootstrap, 19, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
 
-##### Step 4: Save the parameter dataframes
+##### Step 5: Save the parameter dataframes #####
 op_name <- paste0(results_folder,"exp1_input_parameters_",run_id,".csv")
 write.csv(exp1_df,file=op_name)
 op_name <- paste0(results_folder,"exp2_input_parameters_",run_id,".csv")

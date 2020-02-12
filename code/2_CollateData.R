@@ -1,41 +1,61 @@
 # R code to import and collate test statistic results, and to process the results
 # Sourcing this file will extract, collect, format the results from the simulations, and perform some additional calculations
 
-# Specify which file paths to use
+##### Step 1: Open packages #####
+library(reshape2)
+
+
+
+##### Step 2: Specify file paths #####
+# op_folder <- the folder where simulated alignments and output from analysis (e.g. IQ-Tree output files, 3seq output files, test statistic csvs) 
+#              are placed. MUST be the same folder as in Part 1, as it looks for these files to extract test statistics and other information.
+# results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1 and 2)
+# maindir <- "treelikeness" repository location
+
+# op_folder <- ""
+# results_folder <- ""
+# maindir <- ""
+
+
 run_location = "mac"
 # run_location = "soma"
 
 if (run_location == "mac"){
   # Set file paths etc
-  raw_data_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/"
-  output_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput/"
+  op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
+  results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
 } else if (run_location == "soma") {
   # Set file paths etc
-  raw_data_folder <- "/data/caitlin/treelikeness/output_20190411/"
-  output_folder <- "/data/caitlin/treelikeness/results_20190411/"
+  op_folder <- "/data/caitlin/treelikeness/output_20190411/"
+  results_folder <- "/data/caitlin/treelikeness/results_20190411/"
   maindir <- "/data/caitlin/treelikeness/"
 }
 
-# Source files for functions
+
+
+##### Step 3: Source function files #####
 source(paste0(maindir,"code/func_process_data.R"))
 
-# load required libraries
-library(reshape2)
 
+
+##### Step 4: Collect test statistics from output and collate into a single file #####
 # Collate data for the four plots/sets of simulations and output each collated dataframe as a csv file
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "exp1", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "exp2", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "testStatistics", id = "exp3", output_path = output_folder)
-collate.csv(directory = raw_data_folder, file.name = "p_value", id = "exp3", output_path = output_folder)
+collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp1", output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp2", output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp3", output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "p_value", id = "exp3", output_path = results_folder)
 
+
+
+##### Step 5: Calculate additional test statistics and format dataframes #####
 # Calculate the proportion of recombinant triplets and add it onto each set of simulations
 id <- c("exp1_","exp2_","exp3_")
-csvs <- list.files(output_folder)
+csvs <- list.files(results_folder)
 inds <- lapply(id,grep,csvs)
 csvs <- csvs[unlist(inds)]
 csvs <- c(csvs[grep("testStatistics_collatedSimulationData",csvs)], csvs[grep("p_value_collatedSimulationData",csvs)])
-csvs <- paste0(output_folder,csvs)
+csvs <- paste0(results_folder,csvs)
 for (csv in csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
@@ -91,8 +111,10 @@ for (csv in csvs){
   write.csv(df, file = csv, row.names = FALSE)
 }
 
-# Reshape the data into long format
-for (csv in csvs[1:4]){
+
+
+##### Step 6: Reshape the data into long format and write dataframes #####
+for (csv in csvs[1:3]){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
   measure_vars <- c("PHI_observed","prop_resolved_quartets","proportion_recombinant_triplets","splittable_percentage","pdm_difference","neighbour_net_untrimmed","neighbour_net_trimmed",
@@ -103,11 +125,11 @@ for (csv in csvs[1:4]){
 }
 
 # Reshape p value df into melted (long) format
-df <- read.csv(csvs[5], stringsAsFactors = FALSE)
+df <- read.csv(csvs[4], stringsAsFactors = FALSE)
 id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
 measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value",
                   "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
                   "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
-output_name <- paste0(output_folder,"plot4_p_value_collatedSimulationData_melted.csv")
+output_name <- paste0(results_folder,"plot4_p_value_collatedSimulationData_melted.csv")
 write.csv(melt_df, file = output_name, row.names = FALSE)
