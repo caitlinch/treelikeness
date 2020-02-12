@@ -24,7 +24,7 @@ This repository contains code to simulate a series of sequence alignments and es
     * Create an output folder (to store alignments and other files that are created during the simulations) and a results folder (to store the test statistic and statistical test results and the plots)
     * Open numbered scripts 1-4 in the `code` folder. In each file, go to Step 2 and update the file paths for your own machine
 4. Run Part 1
-    * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will entirely run sequentially. Increasing the number of cores increases the parallelisation.
+    * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will run entirely sequentially. Increasing the number of cores increases the parallelisation.
     * Note that by default the number of parametric bootstrap replicates performed is 199. This can be changed by editing the `n_reps` variable when calling  `phylo.parametric.bootstrap`
     * Run the file `1_simulateAlignmentsRunTestStatistics.R`
         * You have now generated all of the simulation data for all three experiments and applied each test statistic or metric to each alignment. Additionally, a parametric bootstrap has been performed on experiment 3 to determine whether the test statistics perform well as a statistical test.
