@@ -82,8 +82,18 @@ iqtree.pdm <- function(iqpath,path){
 
 # Function to open a maximum likelihood distances file from IQ tree and return a pairwise distance matrix
 mldist.pdm <- function(path){
+  # Check file format
+  suffix <- tail(strsplit(path,"\\.")[[1]],1) # get the file extension from the filename
+  # Path should lead to an mldist file or an alignment file
+  # If path leads to an mldist file, open it. Else, open the mldist file associated with that alignment
+  if (suffix == "mldist"){
+    filename = path
+  } else if (suffix == "nexus"){
+    filename <- paste0(path,".mldist")
+  } else if (suffix == "fasta") {
+    filename <- paste0(path,".mldist")
+  }
   # Open the maximum likelihood distances file output from creating the tree in IQ-tree
-  filename <- paste0(path,".mldist")
   pdm <- read.table(filename,header=FALSE,skip=1) # read in mldist file
   # After opening the mldist matrix, need to sort it so that the taxa are in the right order
   # So that when doing the subtractions, the pairwise distances will be coming from the same location (eg AB and AB, not BF and EH)
