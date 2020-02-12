@@ -43,7 +43,7 @@ source(paste0(maindir,"code/func_process_data.R"))
 
 
 
-##### Step 4: Collect test statistics from output and collate into a single file #####
+##### Step 4: Collect test statistics from output, collate into a single file and write dataframes #####
 # Collate data for the three sets of simulations and output each collated dataframe as a csv file
 collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp1", output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp2", output_path = results_folder)
