@@ -56,6 +56,17 @@ inds <- lapply(id,grep,csvs)
 csvs <- csvs[unlist(inds)]
 csvs <- c(csvs[grep("testStatistics_collatedSimulationData",csvs)], csvs[grep("p_value_collatedSimulationData",csvs)])
 csvs <- paste0(results_folder,csvs)
+for (csv in csvs[1:3]){
+  df <- read.csv(csv, stringsAsFactors = FALSE)
+  # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
+  # To find # of triplets: "In a set of 10 sequences, there are 720 unique parent–parent–child arrangements" - Boni et al (2007)
+  # In other words: 6*choose(10,3) == 720
+  # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
+  df["num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
+  df["proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
+  write.csv(df, file = csv, row.names = FALSE)
+}
+
 for (csv in csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
