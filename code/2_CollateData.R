@@ -27,8 +27,15 @@ run_location = "mac"
 
 if (run_location == "mac"){
   # Set file paths etc
-  op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
-  results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
+  # tests
+  #op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
+  #results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
+  #maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
+  #run_id <- extract.run.id(results_folder)
+  
+  #soma results
+  op_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
+  results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
   run_id <- extract.run.id(results_folder)
 } else if (run_location == "soma") {
@@ -36,6 +43,7 @@ if (run_location == "mac"){
   op_folder <- "/data/caitlin/treelikeness/output_20190411/"
   results_folder <- "/data/caitlin/treelikeness/results_20190411/"
   maindir <- "/data/caitlin/treelikeness/"
+  run_id <- extract.run.id(results_folder)
 }
 
 
@@ -145,5 +153,5 @@ measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_reco
                   "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
                   "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
-output_name <- paste0(results_folder,"exp3_p_value_collatedSimulationData_",run_id,"_melted.csv")
+output_name <- gsub(".csv","_melted.csv",csvs[4])
 write.csv(melt_df, file = output_name, row.names = FALSE)
