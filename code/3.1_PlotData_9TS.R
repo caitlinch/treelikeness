@@ -1,34 +1,40 @@
-# R code to plot simulation results
-# Specify which file paths to use
+# R code to import dataframes of test statistic and statistical test results and create plots to summarise the results
+# Sourcing this file will open four dataframes and output a number of plots
+# Final result is a number of plots displaying test statistic values under perturbation of various simulation factors
 
-run_location = "mac"
-# run_location = "soma"
 
-if (run_location == "mac"){
-  # Set file paths etc
-  input_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput/"
-  output_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/plots/"
-  # Set working directory
-  maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
-} else if (run_location == "soma") {
-  # Set file paths etc
-  input_folder <- "/data/caitlin/treelikeness/results/"
-  
-  # Set working directory
-  maindir <- "/data/caitlin/treelikeness/"
-}
 
-# load required libraries
+##### Step 1: Open packages #####
 library(ggplot2)
 library(gridExtra)
 library(viridis)
 
-# Open dataframes
-plot1_df <- read.csv(paste0(input_folder,"plot1_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-plot2_df <- read.csv(paste0(input_folder,"plot2_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-plot3_df <- read.csv(paste0(input_folder,"plot3_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-plot4_df <- read.csv(paste0(input_folder,"plot4_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-bs_df <-  read.csv(paste0(input_folder,"plot4_p_value_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
+
+
+##### Step 2: Specify file paths #####
+# results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1 - 4.)
+# plots_folder <- the folder where the plots will be stored
+# maindir <- "treelikeness" repository location
+# run_id <- program extracts run_id from input parameter file names
+
+results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
+plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/plots_2020/"
+maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
+run_id <- extract.run.id(results_folder)
+
+
+
+##### Step 3: Source function files #####
+source(paste0(maindir,"code/func_process_data.R"))
+
+
+
+##### Step 4: Open dataframes #####
+plot1_df <- read.csv(paste0(results_folder,"plot1_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
+plot2_df <- read.csv(paste0(results_folder,"plot2_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
+plot3_df <- read.csv(paste0(results_folder,"plot3_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
+plot4_df <- read.csv(paste0(results_folder,"plot4_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
+bs_df <-  read.csv(paste0(results_folder,"plot4_p_value_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
 
 # Code for a simple exploratory plot - grids test statistic and tree age, each small plot is event type against test statistic value
 # d = read.csv("~/Dropbox/Projects_Current/tree_likeness/results/plot1_testStatistics_collatedSimulationData_melted.csv")
@@ -73,7 +79,7 @@ p <- ggplot(e, aes(x = type, y = value)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
 # To get proper test size etc, save with the following dimensions: 4090 x 1938
-ggsave(filename = paste0(output_folder,"plot1_differentEventTypes.png"), plot = p, units = "in", width = 43, height = 43)
+ggsave(filename = paste0(plots_folder,"plot1_differentEventTypes.png"), plot = p, units = "in", width = 43, height = 43)
 
 
 # Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness?
@@ -106,7 +112,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-ggsave(filename = paste0(output_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 43, height = 43)
+ggsave(filename = paste0(plots_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 43, height = 43)
 
 # Plot 3: How does tree age affect detection of treelikeness?
 print("Plot 3")
@@ -143,7 +149,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
         panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
   scale_color_manual(values = colour_list) +
   guides(color = guide_legend(title = "Tree depth"))
-ggsave(filename = paste0(output_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 67.5, height = 46.8, limitsize = FALSE)
+ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 67.5, height = 46.8, limitsize = FALSE)
 
 # Plot 4: How does the number of events impact detection of tree likeness?
 print("Plot 4")
@@ -175,7 +181,7 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
   theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
         axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "grey93"),panel.grid.minor = element_line(colour = "grey98"))
-ggsave(filename = paste0(output_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
+ggsave(filename = paste0(plots_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
 
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
 print("Plot 5")
@@ -208,7 +214,7 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
         panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) + 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("#ca0020","#0571b0"),labels = c("Nonreciprocal", "Reciprocal"))
-ggsave(filename = paste0(output_folder,"plot5_ReciprocialAndNonreciprocalEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
+ggsave(filename = paste0(plots_folder,"plot5_ReciprocialAndNonreciprocalEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
 
 # Plot 6: Are the results statistically significant?
 print("Plot 6")
@@ -243,7 +249,7 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(output_folder,"plot6_StatisticalSignificance.png"), plot = p, units = "in", width = 43, height = 63, limitsize = FALSE)
+ggsave(filename = paste0(plots_folder,"plot6_StatisticalSignificance.png"), plot = p, units = "in", width = 43, height = 63, limitsize = FALSE)
 
 # Plot 7: Are the tree proportion results statistically significant?
 print("Plot 7")
@@ -269,7 +275,7 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
         scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(output_folder,"plot7_StatisticalSignificance_treeProportion.png"), plot = p, units = "in", width = 43, height = 22)
+ggsave(filename = paste0(plots_folder,"plot7_StatisticalSignificance_treeProportion.png"), plot = p, units = "in", width = 43, height = 22)
 
 # Plot 8
 print("Plot 8")
@@ -329,4 +335,4 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   scale_y_continuous(labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(output_folder,"plot8_facetedPValues_fixedAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
+ggsave(filename = paste0(plots_folder,"plot8_facetedPValues_fixedAxes.png"), plot = p, units = "in", width = 40, height = 46.8)

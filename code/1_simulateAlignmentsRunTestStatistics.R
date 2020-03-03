@@ -26,7 +26,7 @@ library(reshape2)
 
 ##### Step 2: Set the file paths for output folders, executables, and the identifying name for this run #####
 # op_folder <- the folder where simulated alignments and output from analysis (e.g. IQ-Tree output files, 3seq output files) will be placed
-# results_folder <- the folder where the result csvs will be placed
+# results_folder <- the folder where the result csvs will be placed. I use same results folder for parts 1-4.
 # maindir <- "treelikeness" repository location
 # exec_paths <- location to each executable within the folder
 # run_id <- the key for this simulation. Will be in the names for outputs and the results csvs. Must NOT contain any underscores ("_")

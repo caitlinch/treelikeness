@@ -13,9 +13,9 @@ library(reshape2)
 ##### Step 2: Specify file paths #####
 # op_folder <- the folder where simulated alignments and output from analysis (e.g. IQ-Tree output files, 3seq output files, test statistic csvs) 
 #              are placed. MUST be the same folder as in Part 1, as it looks for these files to extract test statistics and other information.
-# results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1 and 2)
+# results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1-4)
 # maindir <- "treelikeness" repository location
-# run_id <- "" # set run_id - program extracts run_id from input parameter file names
+# run_id <- program extracts run_id from input parameter file names
 
 # op_folder <- ""
 # results_folder <- ""
