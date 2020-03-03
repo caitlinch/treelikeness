@@ -29,7 +29,7 @@ library(reshape2)
 # results_folder <- the folder where the result csvs will be placed
 # maindir <- "treelikeness" repository location
 # exec_paths <- location to each executable within the folder
-# run_id <- the key for this simulation. Will be in the names for outputs and the results csvs
+# run_id <- the key for this simulation. Will be in the names for outputs and the results csvs. Must NOT contain any underscores ("_")
 # num_cores <- the number of cores to use. 1 for a single core (wholly sequential), or higher if using parallelisation.
 
 # op_folder <- "" 
