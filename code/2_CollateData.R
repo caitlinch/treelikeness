@@ -22,14 +22,6 @@ library(reshape2)
 # maindir <- ""
 # run_id <- extract.run.id(results_folder) 
 
-# If no run_id listed, extract it from a file name parameter csv in the results folder
-if (run_id == ""){
-  fs <- list.files(results_folder) # get names of all files in the folder
-  f <- fs[grep("parameters",fs)][1] # take the first paramaters file from the results folder
-  f_split <- strsplit(f, split = "_")[[1]] # split the filename and take the last piece (the run id and the filetype)
-  run_id <- gsub(".csv","",f_split[length(f_split)]) # replace filetype with "" to get run id
-}
-
 run_location = "mac"
 # run_location = "soma"
 
@@ -38,7 +30,7 @@ if (run_location == "mac"){
   op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
   results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
-  run_id <- "msTest"
+  run_id <- extract.run.id(results_folder)
 } else if (run_location == "soma") {
   # Set file paths etc
   op_folder <- "/data/caitlin/treelikeness/output_20190411/"
@@ -153,5 +145,5 @@ measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_reco
                   "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
                   "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
-output_name <- paste0(results_folder,"exp3_p_value_collatedSimulationData_melted_",run_id,".csv")
+output_name <- paste0(results_folder,"exp3_p_value_collatedSimulationData_",run_id,"_melted.csv")
 write.csv(melt_df, file = output_name, row.names = FALSE)
