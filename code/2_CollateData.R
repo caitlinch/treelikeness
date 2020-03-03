@@ -19,6 +19,7 @@ library(reshape2)
 # op_folder <- ""
 # results_folder <- ""
 # maindir <- ""
+# run_id <- "" # set to same name as in previous script so that all output has the same id 
 
 
 run_location = "mac"
@@ -29,6 +30,7 @@ if (run_location == "mac"){
   op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
   results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
+  run_id <- "msTest"
 } else if (run_location == "soma") {
   # Set file paths etc
   op_folder <- "/data/caitlin/treelikeness/output_20190411/"
@@ -45,10 +47,10 @@ source(paste0(maindir,"code/func_process_data.R"))
 
 ##### Step 4: Collect test statistics from output, collate into a single file and write dataframes #####
 # Collate data for the three sets of simulations and output each collated dataframe as a csv file
-collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp1", output_path = results_folder)
-collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp2", output_path = results_folder)
-collate.csv(directory = op_folder, file.name = "testStatistics", id = "exp3", output_path = results_folder)
-collate.csv(directory = op_folder, file.name = "p_value", id = "exp3", output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp1", run_id = run_id, output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp2", run_id = run_id, output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp3", run_id = run_id, output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "p_value", file_id = "exp3", run_id = run_id, output_path = results_folder)
 
 
 
@@ -143,5 +145,5 @@ measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_reco
                   "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
                   "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
-output_name <- paste0(results_folder,"exp3_p_value_collatedSimulationData_melted.csv")
+output_name <- paste0(results_folder,"exp3_p_value_collatedSimulationData_melted_",run_id,".csv")
 write.csv(melt_df, file = output_name, row.names = FALSE)

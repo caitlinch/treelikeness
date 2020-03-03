@@ -2,11 +2,11 @@
 
 # Function to collect all test statistic csv folders given an id to look for and a directory to look in
 # must have a unique id - will collect all results from any folders with id in their names
-collate.csv <- function(directory,file.name = "testStatistics",id,output_path){
+collate.csv <- function(directory,file.name = "testStatistics",file_id,run_id,output_path){
   # Collect all the folders within the directory
   folder_paths <- list.dirs(directory, full.names = FALSE, recursive = FALSE)
   # Now reduce that to only get folders for the particular id of interest
-  id_inds <- grep(id,folder_paths)
+  id_inds <- grep(file_id,folder_paths)
   id_folder_paths <- folder_paths[id_inds]
   # Make the path to each csv file using the file name
   csv_paths <- paste0(directory, id_folder_paths, "/",file.name,".csv")
@@ -20,11 +20,11 @@ collate.csv <- function(directory,file.name = "testStatistics",id,output_path){
   # Remove the "X" column (row number for smaller csv files)
   output_df <- output_df[,2:ncol(output_df)]
   # save the output dataframe
-  write.csv(output_df,file=paste0(output_path,id,"_",file.name,"_collatedSimulationData.csv"))
+  write.csv(output_df,file=paste0(output_path,file_id,"_",file.name,"_collatedSimulationData_",run_id,".csv"))
   
   # now save the paths that don't have an output
   csv_paths_missing <- csv_paths[file.exists(csv_paths)==FALSE]
-  write.csv(csv_paths_missing,file=paste0(output_path,id,"_",file.name,"_missingSimulations_filePaths.csv"))
+  write.csv(csv_paths_missing,file=paste0(output_path,file_id,"_",file.name,"_missingSimulations_filePaths_",run_id,".csv"))
 }
 
 collate.bootstraps <- function(directory, file.name, id, output.file.name){
