@@ -40,50 +40,61 @@ p3_df <- read.csv(paste0(results_folder,melt_files[grep("exp3_testStatistics",me
 # bootstrap dataframe contains information about the p values (obtained for tree proportion using a parametric bootstrap)
 bs_df <- read.csv(paste0(results_folder,melt_files[grep("exp3_p_value",melt_files)]), stringsAsFactors = FALSE)
 
-# Code for a simple exploratory plot - grids test statistic and tree age, each small plot is event type against test statistic value
-# d = read.csv("~/Dropbox/Projects_Current/tree_likeness/results/plot1_testStatistics_collatedSimulationData_melted.csv")
-# #e = subset(d, tree_age == 0.1)
-# e = subset(d, tree1_tree_shape == 'balanced')
-# e = subset(e, tree2_tree_shape == 'balanced')
-# e$type = paste(e$tree2_event_type, e$tree2_event_position)
-# ggplot(e, aes(x = type, y = value)) +
-#   geom_boxplot() +
-#   facet_grid(variable~tree_age, scales = "free_y") +
-#   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-## Plots for thesis/seminar
+
+##### Step 5: Plot  #####
 # Plot 1: How do different events impact detection of recombination?
-print("Plot 1")
-e = subset(plot1_df, tree1_tree_shape == 'balanced')
+e <- p1_df # take the first experiment results and examine how different events impact detection of recombination
+# Take only simulations that had a balanced tree 1 and tree 2
+e = subset(e, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
+# Fix the substitutions per site rate
 e = subset(e, tree_age == 1 )
-e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
-             variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
-             variable == "mode_delta_q")
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","neighbour_net_trimmed","splittable_percentage"),]
+# Combine event type and position into one column that can be used as an x-axis for the box plots
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-# Have to reorder variables so the gird comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
-                                       "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
-                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
-                    "mode_delta_q" = "Mode delta_q \n (delta plots)")
+# Create group to facet by
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q",
+                                         "neighbour_net_trimmed","splittable_percentage"))
+# Reorder variables so the facet grid comes out desired order - use new factor column
+facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant  \n triplets \n (3SEQ)",
+                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (This paper)", "mean_delta_q" = "Mean \u03B4q \n (delta plots)")
+# Create a function to label facets
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
+# Plot the events for each test statistic with both a fixed and a free y axis
+# Free y plot:
 p <- ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 3) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
-                   labels=c("none none" = "None", "reciprocal close" = "Reciprocal, \n Close", "reciprocal divergent" = "Reciprocal, \n Divergent", "reciprocal ancient" = "Reciprocal, \n Ancient",
-                            "nonreciprocal close" = "Nonreciprocal, \n Close", "nonreciprocal divergent" = "Nonreciprocal, \n Divergent", "nonreciprocal ancient" = "Nonreciprocal, \n Ancient"),
-                   limits=c("none none","reciprocal close","nonreciprocal close","reciprocal divergent","nonreciprocal divergent","reciprocal ancient","nonreciprocal ancient")) +
+                   labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "reciprocal divergent" = "Reciprocal, Divergent",
+                            "reciprocal ancient" = "Reciprocal, Ancient","nonreciprocal close" = "Nonreciprocal, Close", 
+                            "nonreciprocal divergent" = "Nonreciprocal, Divergent", "nonreciprocal ancient" = "Nonreciprocal, Ancient"),
+                   limits=c("none none","reciprocal close","nonreciprocal close","reciprocal divergent","nonreciprocal divergent","reciprocal ancient",
+                            "nonreciprocal ancient")) +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-# To get proper test size etc, save with the following dimensions: 4090 x 1938
-ggsave(filename = paste0(plots_folder,"plot1_differentEventTypes.png"), plot = p, units = "in", width = 43, height = 43)
+  theme(axis.title.x = element_text(size = 35), axis.title.y = element_text(size = 35),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 30), axis.text.y = element_text(size = 30), 
+        strip.text = element_text(size = 30), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")))
+ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plot = p, units = "in", width = 20, height = 20)
+# Fixed y plot
+p <- ggplot(e, aes(x = type, y = value)) +
+  geom_boxplot(outlier.size = 3) +
+  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_discrete(name = "\n Type of introgression event \n",
+                   labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "reciprocal divergent" = "Reciprocal, Divergent",
+                            "reciprocal ancient" = "Reciprocal, Ancient","nonreciprocal close" = "Nonreciprocal, Close", 
+                            "nonreciprocal divergent" = "Nonreciprocal, Divergent", "nonreciprocal ancient" = "Nonreciprocal, Ancient"),
+                   limits=c("none none","reciprocal close","nonreciprocal close","reciprocal divergent","nonreciprocal divergent","reciprocal ancient",
+                            "nonreciprocal ancient")) +
+  ylab("\n Test statistic value \n") +
+  theme(axis.title.x = element_text(size = 35), axis.title.y = element_text(size = 35),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 30), axis.text.y = element_text(size = 30), 
+        strip.text = element_text(size = 30), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")))
+ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.png"), plot = p, units = "in", width = 20, height = 20)
 
 
 # Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness?
