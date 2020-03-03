@@ -143,5 +143,5 @@ measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_reco
                   "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
                   "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
-output_name <- paste0(results_folder,"plot4_p_value_collatedSimulationData_melted.csv")
+output_name <- paste0(results_folder,"exp3_p_value_collatedSimulationData_melted.csv")
 write.csv(melt_df, file = output_name, row.names = FALSE)
