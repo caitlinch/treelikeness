@@ -15,12 +15,20 @@ library(reshape2)
 #              are placed. MUST be the same folder as in Part 1, as it looks for these files to extract test statistics and other information.
 # results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1 and 2)
 # maindir <- "treelikeness" repository location
+# run_id <- "" # set run_id - program extracts run_id from input parameter file names
 
 # op_folder <- ""
 # results_folder <- ""
 # maindir <- ""
-# run_id <- "" # set to same name as in previous script so that all output has the same id 
+# run_id <- extract.run.id(results_folder) 
 
+# If no run_id listed, extract it from a file name parameter csv in the results folder
+if (run_id == ""){
+  fs <- list.files(results_folder) # get names of all files in the folder
+  f <- fs[grep("parameters",fs)][1] # take the first paramaters file from the results folder
+  f_split <- strsplit(f, split = "_")[[1]] # split the filename and take the last piece (the run id and the filetype)
+  run_id <- gsub(".csv","",f_split[length(f_split)]) # replace filetype with "" to get run id
+}
 
 run_location = "mac"
 # run_location = "soma"

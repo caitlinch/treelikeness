@@ -50,6 +50,7 @@ collate.bootstraps <- function(directory, file.name, id, output.file.name){
   }
 }
 
+# Collect all the csv paths that have unfinished simulations
 collate.missing.params <- function(directory,id){
   # Collect all the folders within the directory
   folder_paths <- list.files(directory)
@@ -72,6 +73,15 @@ collate.missing.params <- function(directory,id){
   # Remove the "X" column (row number for smaller csv files)
   output_df <- output_df[,4:33]
   return(output_df)
+}
+
+# Given a folder containing a parameters file, extracts the run_id that was used when making that parameters file
+extract.run.id <- function(folder){
+  fs <- list.files(folder) # get names of all files in the folder
+  f <- fs[grep("parameters",fs)][1] # take the first parameters file from the results folder
+  f_split <- strsplit(f, split = "_")[[1]] # split the filename and take the last piece (the run id and the filetype)
+  run_id <- gsub(".csv","",f_split[length(f_split)]) # replace filetype with "" to get run id
+  return(run_id)
 }
 
 
