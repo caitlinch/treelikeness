@@ -38,6 +38,7 @@ library(reshape2)
 # exec_paths <- c()
 # run_id <- ""
 num_cores <- 1
+num_reps <- 199
 
 run_location <- "single"
 # run_location <- "parallel"
@@ -219,7 +220,7 @@ for (folder in exp3_folders){
   }
 }
 # Apply the parametric bootstrap function
-mclapply(exp3_toRun, phylo.parametric.bootstrap, n_reps = 199, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
+mclapply(exp3_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
 

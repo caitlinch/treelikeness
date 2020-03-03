@@ -1,20 +1,20 @@
 # A new test statistic for treelikeness
-##### February 12 2020
+##### March 3rd 2020
 
 This repository contains code to simulate a series of sequence alignments and estimate a series of treelikeness and introgression metrics, including a new test for treelikeness (tree proportion). 
 
 ***
 ### Instructions to reproduce the simulations and analyses
-1. Clone caitlinch/treelikeness repo
-    * The repo contains 2 folders, `code` and `trees`
+1. Clone the `caitlinch/treelikeness` repo
+    * The repo contains 2 folders: `code` and `trees`
         * `code`: contains all code necessary to run or replicate the analysis.
-            * Numbered files refer to a step in the pipeline. To replicate the analysis, each numbered file will be run sequentially. There are four steps/files:
+            * Numbered files are a step in the pipeline. To replicate the analysis, run each of the four numbered files sequentially:
                 * `1_simulateAlignmentsRunTestStatistics.R`
                 * `2_CollateData.R`
                 * `3_PlotData.R`
                 * `4_Stats.R`
-            * The `func` prefix indicates files contain functions used for simulation and analysis
-        * `trees`: .txt files containing Newick trees used to fix topology in the simulations.
+            * The `func` prefix indicates files that contain functions used for simulation and analysis
+        * `trees`: contains .txt files of the Newick trees used to fix topology in the simulations.
 2. Download necessary software:
     * IQ-Tree (http://www.iqtree.org/)
     * 3SEQ (http://mol.ax/software/3seq/)
@@ -22,16 +22,19 @@ This repository contains code to simulate a series of sequence alignments and es
     * SplitsTree v4 (https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/algorithms-in-bioinformatics/software/splitstree/)
 3. Prepare scripts
     * Create an output folder (to store alignments and other files that are created during the simulations) and a results folder (to store the test statistic and statistical test results and the plots)
-    * Open numbered scripts 1-4 in the `code` folder. In each file, go to Step 2 and update the file paths for your own machine
+    * Open scripts numbered 1-4 in the `code` folder. In each file, go to Step 2 and update the file paths for your own machine
 4. Run Part 1
-    * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will run entirely sequentially. Increasing the number of cores increases the parallelisation.
-    * Note that by default the number of parametric bootstrap replicates performed is 199. This can be changed by editing the `n_reps` variable when calling  `phylo.parametric.bootstrap`
+    * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will run entirely sequentially. Edit this variable to increae the number of cores and therefore the number of simultaneous analyses
+    * By default, the number of parametric bootstrap replicates performed is 199. To change this, edit the `num_reps` variable
     * Run the file `1_simulateAlignmentsRunTestStatistics.R`
-        * You have now generated all of the simulation data for all three experiments and applied each test statistic or metric to each alignment. Additionally, a parametric bootstrap has been performed on experiment 3 to determine whether the test statistics perform well as a statistical test.
+        * This will generate all of the simulation data for all three experiments, and apply each test statistic or metric to each alignment
+        * This will perform a parametric bootstrap on the experiment 3 simulated alignments to determine whether the test statistics perform well as a statistical test.
 5. Run Part 2
     * Run the file `2_CollateData.R`
-        * You have now collated the raw test statistic data into one csv file per experiment, plus one csv for the p values from experiment 3.
-6. Run Part 3: `3_PlotData.R`
+        * The raw test statistic data has been collated into one csv file per experiment, plus one csv for the p values from the parametric bootstrap performed in experiment 3.
+6. Run Part 3
+    * Run the file `3_PlotData.R`
+        * This will generate a number of plots depicting the results of the experiments
 7. _Optional_: Run Part 4: `4_Stats.R`
 
 ***
