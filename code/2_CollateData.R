@@ -27,13 +27,6 @@ run_location = "mac"
 
 if (run_location == "mac"){
   # Set file paths etc
-  # tests
-  #op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/op/"
-  #results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/9_MStests/001_test/results/"
-  #maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
-  #run_id <- extract.run.id(results_folder)
-  
-  #soma results
   op_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
   results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/" # for work computer
