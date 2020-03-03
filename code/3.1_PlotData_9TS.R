@@ -30,11 +30,15 @@ source(paste0(maindir,"code/func_process_data.R"))
 
 
 ##### Step 4: Open dataframes #####
-plot1_df <- read.csv(paste0(results_folder,"plot1_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-plot2_df <- read.csv(paste0(results_folder,"plot2_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-plot3_df <- read.csv(paste0(results_folder,"plot3_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-plot4_df <- read.csv(paste0(results_folder,"plot4_testStatistics_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
-bs_df <-  read.csv(paste0(results_folder,"plot4_p_value_collatedSimulationData_melted.csv"), stringsAsFactors = FALSE)
+# List all the files in the results_folder
+melt_files <- list.files(results_folder)[grep("melted",list.files(results_folder))]
+# Using the list of files in the results_folder, extract the melted csvs for each experiment (they are ready to plot!)
+# p1:p3 are the dataframes for the test statistics calculated and estimated in experiments 1:3 respectively
+p1_df <- read.csv(paste0(results_folder,melt_files[grep("exp1_testStatistics",melt_files)]), stringsAsFactors = FALSE)
+p2_df <- read.csv(paste0(results_folder,melt_files[grep("exp2_testStatistics",melt_files)]), stringsAsFactors = FALSE)
+p3_df <- read.csv(paste0(results_folder,melt_files[grep("exp3_testStatistics",melt_files)]), stringsAsFactors = FALSE)
+# bootstrap dataframe contains information about the p values (obtained for tree proportion using a parametric bootstrap)
+bs_df <- read.csv(paste0(results_folder,melt_files[grep("exp3_p_value",melt_files)]), stringsAsFactors = FALSE)
 
 # Code for a simple exploratory plot - grids test statistic and tree age, each small plot is event type against test statistic value
 # d = read.csv("~/Dropbox/Projects_Current/tree_likeness/results/plot1_testStatistics_collatedSimulationData_melted.csv")
