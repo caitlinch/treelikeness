@@ -8,6 +8,7 @@
 
 # Remember to have downloaded and tested the following programs: SplitsTree4, IQ-Tree, PhiPack and 3Seq. 
 # 3Seq must have been associated with a P-value table for it to run properly
+# IQ-Tree version must be 1.7 or above to run site concordance factors
 
 
 
@@ -52,7 +53,7 @@ maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
 exec_folder <- "/Users/caitlincherryh/Documents/Honours/Executables/"
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
-exec_paths <- c("3seq","iqtree-1.6.12-MacOSX/bin/iqtree","Phi","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
+exec_paths <- c("3seq","iqtree-2.0-rc1-MacOSX/bin/iqtree","Phi","SplitsTree.app/Contents/MacOS/JavaApplicationStub")
 exec_paths <- paste0(exec_folder,exec_paths)
 names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
 run_id <- "msTest"
