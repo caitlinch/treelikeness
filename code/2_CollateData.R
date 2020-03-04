@@ -133,7 +133,7 @@ for (csv in csvs[1:3]){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
   measure_vars <- c("PHI_observed","prop_resolved_quartets","proportion_recombinant_triplets","splittable_percentage","pdm_difference","neighbour_net_untrimmed","neighbour_net_trimmed",
-                    "split_decomposition_untrimmed","split_decomposition_trimmed","mean_delta_q", "median_delta_q", "mode_delta_q")
+                    "split_decomposition_untrimmed","split_decomposition_trimmed","mean_delta_q", "median_delta_q", "mode_delta_q", "mean_scf", "mode_scf")
   melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
   output_name <- gsub(".csv","_melted.csv",csv)
   write.csv(melt_df, file = output_name, row.names = FALSE)
@@ -144,7 +144,7 @@ df <- read.csv(csvs[4], stringsAsFactors = FALSE)
 id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
 measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value",
                   "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
-                  "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value")
+                  "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value", "mean_scf_p_value", "mode_scf_p_value")
 melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
 output_name <- gsub(".csv","_melted.csv",csvs[4])
 write.csv(melt_df, file = output_name, row.names = FALSE)
