@@ -18,8 +18,9 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   
   # Open the ML tree from IQ-Tree
   # extract the name of the file that contains the ML tree calculated by IQ-Tree for the original alignment (the alignment with recombination)
-  all_tree_paths <- paste0(alignment_folder, list.files(alignment_folder)[grep("treefile", list.files(alignment_folder))]) #get all tree files (will be three - one from IQ-Tree, and one for each tree 1 and tree 2)
+  all_tree_paths <- c(paste0(alignment_folder,"tree1.treefile"),paste0(alignment_folder,"tree2.treefile"),paste0(alignment_folder,"alignment.nexus.treefile"))
   ML_tree_path <- all_tree_paths[grep("alignment", all_tree_paths)] # get only the treefile for the alignment
+  print(ML_tree_path)
   ML_tree <- read.tree(ML_tree_path)
   
   # fill out the rep numbers (padded with 0s to get to 4 digits)
@@ -93,7 +94,7 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     # The alignment now definitely exists. Now you can run IQ-tree on the alignment
     n_taxa <- as.numeric(params$parameters[3,2]) # extract the number of taxa from the parameters 
     num_scf_quartets <- choose(n_taxa,4)
-    scf <- calculate.sCF(iq_path, bs_al, n_taxa, num_threads = "1", num_scf_quartets)
+    sCF <- calculate.sCF(iq_path, bs_al, n_taxa, num_threads = "1", num_scf_quartets)
     
     ## Calculate the test statistics
     # check is file is nexus or fasta
