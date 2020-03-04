@@ -51,7 +51,7 @@ library(reshape2)
 ####
 op_folder <- "/data/caitlin/treelikeness/output_20200304/"
 results_folder <- "/data/caitlin/treelikeness/results_20200304/"
-maindir <- "/data/caitlin/treelikeness/code/1_simulateAlignmentsRunTestStatistics.R"
+maindir <- "/data/caitlin/treelikeness/"
 run_id <- "sCF"
 num_cores <- 30
 num_reps <- 199
@@ -121,8 +121,7 @@ for (i in tree_id){
   exp1_df <- rbind(exp1_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-mclapply(1:5, phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-# mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
+mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
 
@@ -169,8 +168,7 @@ for (i in tree_id){
   exp2_df <- rbind(exp2_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-mclapply(1:5, phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-# mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
+mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
 ## For third experiment:
@@ -203,8 +201,7 @@ for (i in tree_id){
   exp3_df <- rbind(exp3_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-mclapply(6, phylo.fixedtrees.wrapper, exp3_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-# mclapply(1:nrow(exp3_df), phylo.fixedtrees.wrapper, exp3_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
+mclapply(1:nrow(exp3_df), phylo.fixedtrees.wrapper, exp3_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 # Collect the folders that contain the alignments for third experiment and run the parametric bootstraps. 
 all_folders <- paste0(op_folder,list.dirs(op_folder, recursive = FALSE, full.names = FALSE)) # get all the directory names in the output folder
@@ -221,8 +218,7 @@ for (folder in exp3_folders){
   }
 }
 # Apply the parametric bootstrap function
-mclapply(exp3_toRun[2:6], phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
-#mclapply(exp3_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
+mclapply(exp3_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
 
