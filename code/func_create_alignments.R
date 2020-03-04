@@ -6,7 +6,7 @@ library(seqinr)
 library(ape)
 library(phangorn)
 
-# Create a function to make phylogenetic alignments (as outlined in simulation scheme)
+# Create a function to simulate phylogenetic alignments using a number of parameters (birth rate, molecular rate, set trees)
 # sites_from_tree_2 is the proportion of the SECOND tree that will be included (provide a single value between 0 and 1)
 phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, sites_from_tree_2, id){
   # Randomly select a death rate using a uniform distribution from 0 to 99% of the birth rate
