@@ -7,8 +7,8 @@ library(ape)
 library(phangorn)
 
 # Create a function to make phylogenetic alignments (as outlined in simulation scheme)
-# K is the proportion of the SECOND tree that will be included (provide a single value)
-phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, K, id){
+# sites_from_tree_2 is the proportion of the SECOND tree that will be included (provide a single value between 0 and 1)
+phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age = 1, mol_rate, mol_rate_sd = 0.1, sites_from_tree_2, id){
   # Randomly select a death rate using a uniform distribution from 0 to 99% of the birth rate
   death_rate = runif(1,min = 0, max = (0.99*birth_rate))
   # 1. Simulate a tree
@@ -29,6 +29,7 @@ phylo.make1 <- function(output_folder, ntaxa, nsites, birth_rate = 0.5, tree_age
   # spr_dist <- sprdist
   
   # Calculate how many sites of each tree will be needed 
+  K <- sites_from_tree_2
   J <- 1 - K # proportion of first tree that will be included
   J_sites <- nsites * J # find number of sites to model from first tree
   K_sites <- nsites * K # find number of sites to model from second tree
