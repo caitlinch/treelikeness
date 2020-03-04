@@ -92,7 +92,8 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
   if (redo == FALSE){
     # The alignment now definitely exists. Now you can run IQ-tree on the alignment
     n_taxa <- as.numeric(params$parameters[3,2]) # extract the number of taxa from the parameters 
-    call.IQTREE.quartet.bootstrap(iq_path,bs_al,n_taxa)
+    num_scf_quartets <- choose(n_taxa,4)
+    scf <- calculate.sCF(iq_path, bs_al, n_taxa, num_threads = "1", num_scf_quartets)
     
     ## Calculate the test statistics
     # check is file is nexus or fasta
@@ -216,6 +217,8 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     params_csv$mean_delta_q <- mean_dq
     params_csv$median_delta_q <- median_dq
     params_csv$mode_delta_q <- mode_dq
+    params_csv$sCF_mean <- sCF$mean_scf
+    params_csv$sCF_median <- sCF$median_scf
     params_csv$bootstrap_id <- paste0("bootstrap_",rep_number)
     
     # Output results as a csv in the bootstrap folder
@@ -423,7 +426,7 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   cols <- c("method", "bootstrap_id", "n_taxa", "n_sites", "tree_age", "tree1", "proportion_tree1", "tree2", "proportion_tree2", "id", "PHI_mean", "PHI_variance",
             "PHI_observed" ,"X3SEQ_num_recombinant_triplets", "X3SEQ_num_distinct_recombinant_sequences", "prop_resolved_quartets", "splittable_percentage",
             "pdm_difference", "pdm_average", "split_decomposition_untrimmed", "neighbour_net_untrimmed","split_decomposition_trimmed","neighbour_net_trimmed",
-            "mean_delta_q","median_delta_q","mode_delta_q")
+            "mean_delta_q","median_delta_q","mode_delta_q", "sCF_mean", "sCF_median")
   alignment_df <- alignment_df[,cols]
   
   # Collate bootstrap csvs
@@ -463,17 +466,19 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   mean_delta_q_sig  <- calculate.p_value(p_value_df$mean_delta_q, p_value_df$bootstrap_id)
   median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
   mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
+  sCF_mean_sig <- calculate.p_value(p_value_df$sCF_mean, p_value_df$bootstrap_id)
+  sCF_median_sig <- calculate.p_value(p_value_df$sCF_median, p_value_df$bootstrap_id)
   
   # Create an output dataframe of just P-values
   op_row <- c(alignment_df[["n_taxa"]],alignment_df[["n_sites"]],alignment_df[["tree_age"]],alignment_df[["tree1"]],alignment_df[["proportion_tree1"]],alignment_df[["tree2"]],
               alignment_df[["proportion_tree2"]], alignment_df[["id"]],PHI_sig, PHI_mean_sig, PHI_observed_sig, seq_sig, x3seq_sig, prop_resolved_quartets_sig, splittable_percentage_sig, pdm_difference_sig, pdm_average_sig, 
-              sd_untrimmed_sig, nn_untrimmed_sig, sd_trimmed_sig, nn_trimmed_sig, mean_delta_q_sig, median_delta_q_sig, mode_delta_q_sig)
+              sd_untrimmed_sig, nn_untrimmed_sig, sd_trimmed_sig, nn_trimmed_sig, mean_delta_q_sig, median_delta_q_sig, mode_delta_q_sig, sCF_mean_sig, sCF_median_sig)
   output_df <- data.frame(matrix(nrow=0,ncol=19)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value","PHI_mean_p_value","PHI_observed_p_value",
                         "3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value","pdm_difference_p_value",
                         "pdm_average_p_value","split_decomposition_untrimmed_p_value","neighbour_net_untrimmed_p_value","split_decomposition_trimmed_p_value",
-                        "neighbour_net_trimmed_p_value","mean_delta_q_p_value","median_delta_q_p_value","mode_delta_q_p_value")
+                        "neighbour_net_trimmed_p_value","mean_delta_q_p_value","median_delta_q_p_value","mode_delta_q_p_value", "mean_sCF_p_value", "median_sCF_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)
   }
