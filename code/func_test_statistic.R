@@ -47,6 +47,35 @@ call.IQTREE.quartet.bootstrap <- function(iqtree_path,alignment_path,nsequences)
   }
 }
 
+# Function to call IQ-tree, and estimate a maximum likelihood tree and corresponding the site concordance factors
+# Site concordance factors (sCF) are the fraction of decisive alignmen sites supporting that branch
+# sCF Citation: Minh B.Q., Hahn M., Lanfear R. (2018) New methods to calculate concordance factors for phylogenomic datasets. https://doi.org/10.1101/487801
+calculate.sCF <- function(iqtree_path,alignment_path, num_threads = "AUTO", num_quartets = 100){
+  # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
+  if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
+    # Given an alignment, estimate the maximum likelihood tree
+    # to estimate: iqtree -s ALN_FILE -p PARTITION_FILE --prefix concat -bb 1000 -nt AUTO
+    call <- paste0(iqtree_path," -s ",alignment_path," -nt ",num_threads," -redo -safe")
+    system(call)
+  }
+  if (file.exists(paste0(alignment_path,".treefile.cf.stat")) == FALSE){
+    # Create the command and call it in the system
+    # for sCF: iqtree -t concat.treefile -s ALN_FILE --scf 100 --prefix concord -nt 10
+    treefile <- paste0(alignment_path,".treefile")
+    call <- paste0(iqtree_path," -t ",treefile," -s ",alignment_path," --scf ",num_quartets," -nt ","1"," -redo -safe")
+    print(call)
+    system(call) # call IQ-tree!
+  }
+  # retrieve the sCF from the output
+  scf_table <- read.table(paste0(alignment_path,".treefile.cf.stat"), header = TRUE, sep = "\t")
+  scfs_val <- scf_table$sCF
+  branch_id_val <- scf_table$ID
+  mean_scf_val <- round(mean(scf_table$sCF), digits = 2)
+  median_scf_val <- round(median(scf_table$sCF), digits = 2)
+  scf_extracts <- list(mean_scf = mean_scf_val, median_scf = median_scf_val, all_scfs = scfs_val, branch_ids = branch_id_val )
+  return(scf_extracts)
+}
+
 # Function get a tree from IQ-tree and return a pairwise distance matrix
 iqtree.pdm <- function(iqpath,path){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
