@@ -45,10 +45,10 @@ num_reps <- 9
 # exec_paths <- c()
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
-names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
+# names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
 
 
-op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/11_scf/op"
+op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/11_scf/op/"
 results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/11_scf/results/"
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
 exec_folder <- "/Users/caitlincherryh/Documents/Honours/Executables/"
@@ -72,7 +72,7 @@ source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
 tree_folder <- paste0(maindir,"trees/")
-names(exec_paths) <- c("3seq","IQTree","Phi","SimBac","SplitsTree")
+names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
 
 
 

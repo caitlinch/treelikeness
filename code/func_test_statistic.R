@@ -57,7 +57,7 @@ calculate.sCF <- function(iqtree_path, alignment_path, nsequences, num_threads =
     # to estimate: iqtree -s ALN_FILE -p PARTITION_FILE --prefix concat -bb 1000 -nt AUTO
     # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
     n_quartet_sampling <- 25*as.numeric(nsequences)
-    system(paste0(iqtree_path," -s ",alignment_path," -nt ", num_threads, " -lmap ", n_quartet_sampling, " -m JC -redo -safe"))
+    call <- paste0(iqtree_path," -s ",alignment_path," -nt ", num_threads, " -lmap ", n_quartet_sampling, " -m JC -redo -safe")
     system(call)
   }
   if (file.exists(paste0(alignment_path,".treefile.cf.stat")) == FALSE){
@@ -65,7 +65,6 @@ calculate.sCF <- function(iqtree_path, alignment_path, nsequences, num_threads =
     # for sCF: iqtree -t concat.treefile -s ALN_FILE --scf 100 --prefix concord -nt 10
     treefile <- paste0(alignment_path,".treefile")
     call <- paste0(iqtree_path," -t ",treefile," -s ",alignment_path," --scf ",num_scf_quartets," -nt ","1"," -redo -safe")
-    print(call)
     system(call) # call IQ-tree!
   }
   # retrieve the sCF from the output
