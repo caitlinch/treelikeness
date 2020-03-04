@@ -53,14 +53,13 @@ op_folder <- "/data/caitlin/treelikeness/output_20200304/"
 results_folder <- "/data/caitlin/treelikeness/results_20200304/"
 maindir <- "/data/caitlin/treelikeness/"
 run_id <- "sCF"
-num_cores <- 30
+num_cores <- 1
 num_reps <- 199
 
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
 exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree-2.0-rc1-Linux/bin/iqtree",
                 "/data/caitlin/linux_executables/PhiPack/Phi","/data/caitlin/splitstree4/SplitsTree")
-exec_paths <- paste0(exec_folder,exec_paths)
 names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
 ####
 
