@@ -50,19 +50,21 @@ call.IQTREE.quartet.bootstrap <- function(iqtree_path,alignment_path,nsequences)
 # Function to call IQ-tree, and estimate a maximum likelihood tree and corresponding the site concordance factors
 # Site concordance factors (sCF) are the fraction of decisive alignmen sites supporting that branch
 # sCF Citation: Minh B.Q., Hahn M., Lanfear R. (2018) New methods to calculate concordance factors for phylogenomic datasets. https://doi.org/10.1101/487801
-calculate.sCF <- function(iqtree_path,alignment_path, num_threads = "AUTO", num_quartets = 100){
+calculate.sCF <- function(iqtree_path, alignment_path, nsequences, num_threads = "AUTO", num_scf_quartets = 100){
   # Check if the tree file already exists and if it doesn't, run IQ-tree and create it
   if (file.exists(paste0(alignment_path,".treefile")) == FALSE){
     # Given an alignment, estimate the maximum likelihood tree
     # to estimate: iqtree -s ALN_FILE -p PARTITION_FILE --prefix concat -bb 1000 -nt AUTO
-    call <- paste0(iqtree_path," -s ",alignment_path," -nt ",num_threads," -redo -safe")
+    # Specify -lmap with 25 times the number of sequences, so that each sequence is covered ~100 times in the quartet sampling
+    n_quartet_sampling <- 25*as.numeric(nsequences)
+    system(paste0(iqtree_path," -s ",alignment_path," -nt ", num_threads, " -lmap ", n_quartet_sampling, " -m JC -redo -safe"))
     system(call)
   }
   if (file.exists(paste0(alignment_path,".treefile.cf.stat")) == FALSE){
     # Create the command and call it in the system
     # for sCF: iqtree -t concat.treefile -s ALN_FILE --scf 100 --prefix concord -nt 10
     treefile <- paste0(alignment_path,".treefile")
-    call <- paste0(iqtree_path," -t ",treefile," -s ",alignment_path," --scf ",num_quartets," -nt ","1"," -redo -safe")
+    call <- paste0(iqtree_path," -t ",treefile," -s ",alignment_path," --scf ",num_scf_quartets," -nt ","1"," -redo -safe")
     print(call)
     system(call) # call IQ-tree!
   }
