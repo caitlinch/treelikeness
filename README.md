@@ -1,5 +1,5 @@
 # A new test statistic for treelikeness
-##### March 3rd 2020
+##### March 6th 2020
 
 This repository contains code to simulate a series of sequence alignments and estimate a series of treelikeness and introgression metrics, including a new test for treelikeness (tree proportion). 
 
@@ -12,7 +12,6 @@ This repository contains code to simulate a series of sequence alignments and es
                 * `1_simulateAlignmentsRunTestStatistics.R`
                 * `2_CollateData.R`
                 * `3_PlotData.R`
-                * `4_Stats.R`
             * The `func` prefix indicates files that contain functions used for simulation and analysis
         * `trees`: contains .txt files of the Newick trees used to fix topology in the simulations.
 2. Download necessary software:
@@ -35,7 +34,6 @@ This repository contains code to simulate a series of sequence alignments and es
 6. Run Part 3
     * Run the file `3_PlotData.R`
         * This will generate a number of plots depicting the results of the experiments
-7. _Optional_: Run Part 4: `4_Stats.R`
 
 ***
 ### Attribution and citations
