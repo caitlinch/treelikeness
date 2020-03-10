@@ -68,6 +68,12 @@ calculate.sCF <- function(iqtree_path, alignment_path, nsequences, num_threads =
     system(call) # call IQ-tree!
   }
   # retrieve the sCF from the output
+  scf_results <- extract.sCF.results(alignment_path)
+  return(scf_results)
+}
+
+# Function to open the sCF table and extract information about it (doesn't require actually running the sCF calculations or running IQ-Tree)
+extract.sCF.results <- function(alignment_path){
   scf_table <- read.table(paste0(alignment_path,".treefile.cf.stat"), header = TRUE, sep = "\t")
   scfs_val <- scf_table$sCF
   branch_id_val <- scf_table$ID
@@ -76,6 +82,8 @@ calculate.sCF <- function(iqtree_path, alignment_path, nsequences, num_threads =
   scf_extracts <- list(mean_scf = mean_scf_val, median_scf = median_scf_val, all_scfs = scfs_val, branch_ids = branch_id_val )
   return(scf_extracts)
 }
+
+
 
 # Function get a tree from IQ-tree and return a pairwise distance matrix
 iqtree.pdm <- function(iqpath,path){

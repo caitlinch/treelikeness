@@ -141,18 +141,20 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment (if it hasn't already been run)
   n_taxa <- length(tree1$tip.label) # get the number of taxa
-  if (file.exists(paste0(al_folder,"alignment.nexus.iqtree")) == FALSE){
+  if (file.exists(paste0(al_file,".iqtree")) == FALSE){
     # Call the scf version of the IQtree function - this will result in scf being run
     num_scf_quartets <- choose(n_taxa,4)
     sCF <- calculate.sCF(program_paths[["IQTree"]], al_file, n_taxa, num_threads = "1", num_scf_quartets)
-  } else if (file.exists(paste0(al_folder,"alignment.nexus.treefile")) == FALSE){
+  } else if (file.exists(paste0(al_file,".treefile")) == FALSE){
     # Call the scf version of the IQtree function - this will result in scf being run
     num_scf_quartets <- choose(n_taxa,4)
     sCF <- calculate.sCF(program_paths[["IQTree"]], al_file, n_taxa, num_threads = "1", num_scf_quartets)
-  } else if (file.exists(paste0(al_folder,"alignment.nexus.treefile.cf.stat")) == FALSE){
+  } else if (file.exists(paste0(al_file,".treefile.cf.stat")) == FALSE){
     # Call the scf version of the IQtree function - this will result in scf being run
     num_scf_quartets <- choose(n_taxa,4)
     sCF <- calculate.sCF(program_paths[["IQTree"]], al_file, n_taxa, num_threads = "1", num_scf_quartets)
+  } else if (file.exists(paste0(al_file,".treefile.cf.stat")) == TRUE){
+    sCF <- extract.sCF.results(al_file)
   }
     
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
