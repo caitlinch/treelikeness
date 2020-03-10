@@ -34,6 +34,10 @@ library(reshape2)
 # num_reps <- the number of of bootstrap replicates to perform
 # exec_paths <- location to each executable within the folder. Attach the names of the executables so the paths can be accessed by name
 
+# The SplitsTree executable path can be tricky to find: 
+#       - in MacOS, the path is "SplitsTree.app/Contents/MacOS/JavaApplicationStub" (assuming you are in the same directory as the application)
+#       - in Linux, after installing and navigating into the folder it's simply "SplitsTree"
+
 # op_folder <- "" 
 # results_folder <- ""
 # maindir <- ""
