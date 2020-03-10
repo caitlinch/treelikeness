@@ -176,21 +176,6 @@ mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_fo
 all_folders <- paste0(op_folder,list.dirs(op_folder, recursive = FALSE, full.names = FALSE)) # get all the directory names in the output folder
 inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders are at 
 exp2_folders <- all_folders[inds] # get the bootstrap folders
-# Only want to run a sample of ten alignments per point for the bootstrap so need to extract those alignments (total of 170 alignments)
-# write a quick function to return either alignment folder (if it's one of the ten reps i.e. the last number is 10 or less) or nothing
-reject.high.reps <- function(alignment_folder){
-  # Extract the rep number for an alignment folder
-  ss <- strsplit(alignment_folder,"_")[[1]]
-  rep <- as.numeric(ss[length(ss)])
-  # If the rep is one of the first ten, return the name for collection
-  if (rep <= 10){
-    # if rep in 1:10, return folder to run bootstraps
-    return(alignment_folder)
-  } else if (rep > 10){
-    # if rep > 10, ignore folder
-    return(NULL)
-  }
-}
 # Extract the exp2 alignments with a replicate number of 10 or less
 exp2_folders_bs <- unlist(lapply(exp2_folders, reject.high.reps))
 # Format the selected alignments so the parametric bootstrap can be carried out

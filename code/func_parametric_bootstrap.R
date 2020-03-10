@@ -33,6 +33,10 @@ phylo.parametric.bootstrap <- function(alignment_folder,n_reps,iq_path,splitstre
   phylo.collate.bootstrap(alignment_folder,exec_paths, tree_folder)
 }
 
+
+
+
+
 # Given the relevant information, run one parametric bootstrap (create the alignment and run the test statistics, output the p-values as a vector)
 do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,splitstree_path, phipack_path, threeseq_path){
   # Create a new folder name to store this alignment and its outputs in
@@ -229,6 +233,9 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
 }
 
 
+
+
+
 # Given a .iqtree file, this function will extract the relevant parameters
 get.simulation.parameters <- function(dotiqtree_file){
   # read in the IQ-TREE file to get substitution model and parameters
@@ -405,6 +412,10 @@ get.simulation.parameters <- function(dotiqtree_file){
   return(params)
 }
 
+
+
+
+
 phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   # set the working directory to the alignment folder
   setwd(alignment_folder)
@@ -484,6 +495,10 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   write.csv(output_df,file = p_value_csv)
   }
 
+
+
+
+
 # Given two vectors (one of test statistic values, and one of ids), calculates the p-value for that alignment
 calculate.p_value <- function(value_vector,id_vector){
   p_value_df <- data.frame(value_vector,id_vector, stringsAsFactors = FALSE)
@@ -547,4 +562,24 @@ calculate.p_value <- function(value_vector,id_vector){
   return(p_value_2tail)
 }
 
+
+
+
+
+# Function to select a subset of alignments from an experiment run to apply the parametric bootstrap to
+# Only want to run a sample of ten alignments per point for the bootstrap so need to extract those alignments (total of 170 alignments)
+# write a quick function to return either alignment folder (if it's one of the ten reps i.e. the last number is 10 or less) or nothing
+reject.high.reps <- function(alignment_folder){
+  # Extract the rep number for an alignment folder
+  ss <- strsplit(alignment_folder,"_")[[1]]
+  rep <- as.numeric(ss[length(ss)])
+  # If the rep is one of the first ten, return the name for collection
+  if (rep <= 10){
+    # if rep in 1:10, return folder to run bootstraps
+    return(alignment_folder)
+  } else if (rep > 10){
+    # if rep > 10, ignore folder
+    return(NULL)
+  }
+}
 
