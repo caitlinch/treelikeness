@@ -53,7 +53,7 @@ op_folder <- "/data/caitlin/treelikeness/output_20200304/"
 results_folder <- "/data/caitlin/treelikeness/results_20200304/"
 maindir <- "/data/caitlin/treelikeness/"
 run_id <- "sCF"
-num_cores <- 1
+num_cores <- 25
 num_reps <- 199
 
 # Create a vector with all of the executable file paths
