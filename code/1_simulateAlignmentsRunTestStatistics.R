@@ -47,10 +47,9 @@ library(reshape2)
 
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
-# exec_folder <-
-# exec_paths <- c()
+# exec_folder <- "/path/to/executables/folder/"
+# exec_paths <- c("3seq_executable","IQ-Tree_executable","PHIpack_executable","SplitsTree_executable")
 # exec_paths <- paste0(exec_folder,exec_paths)
-# names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
 
 ####
 op_folder <- "/data/caitlin/treelikeness/output_20200304/"
@@ -73,13 +72,17 @@ names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
 # Set working directory
 setwd(maindir)
 
+# Attach the names used throughout the code and functions to the exec_paths object
+# Do not edit these names - it will cause internal functions and thus calculations to fail
+names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
+
 # Source files for functions
 source(paste0(maindir,"code/func_test_statistic.R"))
 source(paste0(maindir,"code/func_create_alignments.R"))
 source(paste0(maindir,"code/func_process_data.R"))
 source(paste0(maindir,"code/func_parametric_bootstrap.R"))
 tree_folder <- paste0(maindir,"trees/")
-names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
+
 
 
 
