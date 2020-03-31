@@ -15,7 +15,8 @@ library(reshape2)
 #              are placed. MUST be the same folder as in Part 1, as it looks for these files to extract test statistics and other information.
 # results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1-4)
 # maindir <- "treelikeness" repository location
-# run_id <- program extracts run_id from input parameter file names
+# run_id <- if "run.id  = FALSE", program extracts run_id from input parameter file names 
+#        <- otherwise, run_id will be set to whatever the user inputs here (e.g. "run_id = 'replicateAnalysis' ")
 
 # op_folder <- ""
 # results_folder <- ""
@@ -33,19 +34,23 @@ if (run_location == "mac"){
   results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/11_scf/results/"
   
   maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
-  run_id <- extract.run.id(results_folder)
+  run_id = FALSE
 } else if (run_location == "soma") {
   # Set file paths etc
   op_folder <- "/data/caitlin/treelikeness/output_20200304/"
   results_folder <- "/data/caitlin/treelikeness/results_20200304/"
   maindir <- "/data/caitlin/treelikeness/"
-  run_id <- extract.run.id(results_folder)
+  run_id = FALSE
 }
 
 
 
 ##### Step 3: Source function files #####
 source(paste0(maindir,"code/func_process_data.R"))
+# Extract run.id from the results folder name so the whole analysis has the same run.id
+if (run_id == "FALSE"){
+  run_id <- extract.run.id(results_folder)
+}
 
 
 
