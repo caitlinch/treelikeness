@@ -58,6 +58,7 @@ if (run_id == "FALSE"){
 # Collate data for the three sets of simulations and output each collated dataframe as a csv file
 collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp1", run_id = run_id, output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp2", run_id = run_id, output_path = results_folder)
+collate.csv(directory = op_folder, file.name = "p_value", file_id = "exp2", run_id = run_id, output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp3", run_id = run_id, output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "p_value", file_id = "exp3", run_id = run_id, output_path = results_folder)
 
@@ -77,7 +78,7 @@ csvs <- paste0(results_folder,csvs)
 for (csv in csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   # Calculate the number of triplets tested by 3seq and use to calculate the proportion of recombinant triplets for the experiment dfs
-  if (csv %in% csvs[1:3]){
+  if ("testStatistics" %in% strsplit(csv,"_")[[1]]){
     # divide the number of recombinant triplets detected by 3seq by the number of triplets tested
     # To find # of triplets: "In a set of 10 sequences, there are 720 unique parent–parent–child arrangements" - Boni et al (2007)
     # In other words: 6*choose(10,3) == 720
@@ -137,7 +138,8 @@ for (csv in csvs){
 
 ##### Step 6: Reshape the data into long format and write dataframes #####
 # Reshape experiment dfs into melted (long) format
-for (csv in csvs[1:3]){
+ts_csvs <- csvs[grep("testStatistics",csvs)]
+for (csv in ts_csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
   measure_vars <- c("PHI_observed","prop_resolved_quartets","proportion_recombinant_triplets","splittable_percentage","pdm_difference","neighbour_net_untrimmed","neighbour_net_trimmed",
@@ -147,12 +149,15 @@ for (csv in csvs[1:3]){
   write.csv(melt_df, file = output_name, row.names = FALSE)
 }
 
-# Reshape p value df into melted (long) format
-df <- read.csv(csvs[4], stringsAsFactors = FALSE)
-id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
-measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value",
-                  "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
-                  "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value", "mean_sCF_p_value", "median_sCF_p_value")
-melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
-output_name <- gsub(".csv","_melted.csv",csvs[4])
-write.csv(melt_df, file = output_name, row.names = FALSE)
+# Reshape p value dfs into melted (long) format
+p_csvs <- csvs[grep("p_value",csvs)]
+for (csv in p_csvs){
+  df <- read.csv(csv, stringsAsFactors = FALSE)
+  id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
+  measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value",
+                    "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
+                    "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value", "mean_sCF_p_value", "median_sCF_p_value")
+  melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
+  output_name <- gsub(".csv","_melted.csv",csv)
+  write.csv(melt_df, file = output_name, row.names = FALSE)
+}
