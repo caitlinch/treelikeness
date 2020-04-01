@@ -205,10 +205,11 @@ mclapply(exp2_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[[
 # - Investigating performance of test statistics using a parametric bootstrap
 #       - Fix the number of sites
 #       - Fix the tree as a balanced 8 taxon tree with one close introgression event (either reciprocal or non-reciprocal).
-#       - Vary the proportion of tree 2 from 0 - 50% in 10% increments (meaning initial proportion of tree 1 is 100% and final
+#       - Vary the proportion of tree 2 from 0 - 50% in 1% increments (meaning initial proportion of tree 1 is 100% and final
 #         proportion of tree 1 is 50%)
 #       - Vary the tree depth from 0.05 to 1 substitution per site
 #       - Perform 100 replicates for each set of parameters
+#       - Perform 199 parametric bootstraps for each alignment where proportion of tree 2 = 0%, 10%, 20%, 30%, 40% and 50%
 
 # Make empty dataframe:
 exp3_df <- data.frame((matrix(ncol = 8, nrow = 0)))
@@ -218,7 +219,7 @@ n_sites <- 1300
 tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS")
 tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_LHS")
 tree_age <- c(0.05, 0.1, 0.5, 1)
-proportion_tree2 <- seq(0,0.5,0.1)
+proportion_tree2 <- seq(0,0.5,0.01)
 id <- "exp3"
 rep <- 1:100
 # Expand parameters into dataframe
@@ -238,9 +239,11 @@ all_folders <- paste0(op_folder,list.dirs(op_folder, recursive = FALSE, full.nam
 inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders are at 
 exp3_folders <- all_folders[inds] # get the bootstrap folders
 exp3_folders <- paste0(exp3_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
+# extract all folders you want a bootstrap for (i.e. proportion_tree2 in seq(0,0.5,0.1) e.g. 10%)
+trimmed_exp3_folders <- 
 exp3_toRun <- c() # create an empty list to store the folders that need the bootstrap run
 # Check each simulation from the exp3_df for a p value csv
-for (folder in exp3_folders){
+for (folder in trimmed_exp3_folders){
   p_file <- paste0(folder,"p_value.csv")
   if (file.exists(p_file) == FALSE) {
     # if there's no p value csv, there's no bootstrap: add to the list of bootstraps to run
