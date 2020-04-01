@@ -90,17 +90,9 @@ tree_folder <- paste0(maindir,"trees/")
 ### Create dataframe for the final set of simulations (fixed trees)
 ### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
 
-
 ## For first experiment:
 # - What effect does varying the type of introgression event have on the treelikeness score?
-# - What effect does varying tree depth have on the treelikeness score?
-#       - Fix the number of sites
-#       - Starting with a balanced 8-taxon tree, perform introgression event (events may be reciprocal or non-reciprocal.
-#         Events vary in location in the tree and may be close, divergent or ancient introgression.)
-#       - Vary the proportion of tree 2 from 0 - 50% in 1% increments (meaning initial proportion of tree 1 is 100% and final
-#         proportion of tree 1 is 50%)
-#       - Vary the tree depth from 0.05 to 1 substitution per site
-#       - Perform 100 replicates for each set of parameters
+
 
 # Make empty dataframe:
 exp1_df <- data.frame((matrix(ncol = 8, nrow = 0)))
@@ -130,7 +122,6 @@ for (i in tree_id){
 mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
-
 ## For second experiment:
 # - What effect on the treelikeness score does increasing the number of introgression events have?
 #       - Fix the number of sites
@@ -139,7 +130,6 @@ mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_fo
 #       - Fix the proportion of tree 2 at 50% and the proportion of tree 1 at 50%
 #       - Vary the tree depth from 0.05 to 1 substitution per site
 #       - Perform 100 replicates for each set of parameters
-
 
 # Make empty dataframe:
 exp2_df <- data.frame((matrix(ncol = 8, nrow = 0)))
@@ -200,8 +190,17 @@ for (folder in exp2_folders_bs){
 mclapply(exp2_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
-
 ## For third experiment:
+
+# - What effect does varying tree depth have on the treelikeness score? What effect does increasing the proportion of introgressed DNA have
+#   on the treelikeness score?
+#       - Fix the number of sites
+#       - Starting with a balanced 8-taxon tree, perform introgression event (events may be reciprocal or non-reciprocal.
+#         Events vary in location in the tree and may be close, divergent or ancient introgression.)
+#       - Vary the proportion of tree 2 from 0 - 50% in 1% increments (meaning initial proportion of tree 1 is 100% and final
+#         proportion of tree 1 is 50%)
+#       - Vary the tree depth from 0.05 to 1 substitution per site
+#       - Perform 100 replicates for each set of parameters
 # - Investigating performance of test statistics using a parametric bootstrap
 #       - Fix the number of sites
 #       - Fix the tree as a balanced 8 taxon tree with one close introgression event (either reciprocal or non-reciprocal).
