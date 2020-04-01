@@ -15,17 +15,22 @@ library(viridis)
 # results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1 - 4.)
 # plots_folder <- the folder where the plots will be stored
 # maindir <- "treelikeness" repository location
-# run_id <- program extracts run_id from input parameter file names
+# run_id <- if "run.id  = FALSE", program extracts run_id from input parameter file names 
+#        <- otherwise, run_id will be set to whatever the user inputs here (e.g. "run_id = 'replicateAnalysis' ")
 
-results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
-plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/plots_2020/"
+results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/output/"
+plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/plots/"
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
-run_id <- extract.run.id(results_folder)
+run_id = FALSE
 
 
 
 ##### Step 3: Source function files #####
 source(paste0(maindir,"code/func_process_data.R"))
+# Extract run.id from the results folder name so the whole analysis has the same run.id
+if (run_id == "FALSE"){
+  run_id <- extract.run.id(results_folder)
+}
 
 
 
