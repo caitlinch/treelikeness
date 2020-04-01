@@ -583,3 +583,27 @@ reject.high.reps <- function(alignment_folder){
   }
 }
 
+
+
+
+
+# Function to select a subset of alignments from an experiment run to apply the parametric bootstrap to
+# Only want to run the alignment if the proportion of introgressed DNA is 0%,10%,20%,30%,40% or 50%
+# write a quick function to return either alignment folder (if the proportion of introgressed DNA is a multiple of 10%) or nothing
+reject.exp3.bootstrap.run <- function(alignment_folder){
+  # split the alignment folder by the underscores
+  split_f <- strsplit(alignment_folder, "_")[[1]]
+  # find where the first part of the name is (look for the "FixedTrees" term) and get that bit onwards
+  split_f <- split_f[grep("FixedTrees",split_f):length(split_f)]
+  # the proportion of tree 2 will be after the tree 2 structure
+  K <- as.numeric(split_f[6])
+  # check if this alignment needs a parametric bootstrap
+  if (K %in% seq(0,0.5,0.1)){
+    # if it does, return it 
+    return(alignment_folder)
+  }
+}
+
+
+
+
