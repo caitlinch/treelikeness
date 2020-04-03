@@ -567,18 +567,19 @@ calculate.p_value <- function(value_vector,id_vector){
 
 
 # Function to select a subset of alignments from an experiment run to apply the parametric bootstrap to
-# Only want to run a sample of ten alignments per point for the bootstrap so need to extract those alignments (total of 170 alignments)
+# Only want to run a sample of e.g. ten alignments per point for the bootstrap so need to extract those alignments
 # write a quick function to return either alignment folder (if it's one of the ten reps i.e. the last number is 10 or less) or nothing
-reject.high.reps <- function(alignment_folder){
+reject.high.reps <- function(alignment_folder,max_rep = 20){
+  max_rep <- as.numeric(max_rep) # make sure it's a number
   # Extract the rep number for an alignment folder
   ss <- strsplit(alignment_folder,"_")[[1]]
   rep <- as.numeric(ss[length(ss)])
-  # If the rep is one of the first ten, return the name for collection
-  if (rep <= 10){
-    # if rep in 1:10, return folder to run bootstraps
+  # If the rep is one of the ones you want, return the name for collection
+  if (rep <= max_rep){
+    # if rep in 1:max_rep, return folder to run bootstraps
     return(alignment_folder)
-  } else if (rep > 20){
-    # if rep > 10, ignore folder
+  } else if (rep > max_rep){
+    # if rep > max_rep, ignore folder
     return(NULL)
   }
 }

@@ -174,7 +174,7 @@ all_folders <- paste0(op_folder,list.dirs(op_folder, recursive = FALSE, full.nam
 inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders are at 
 exp2_folders <- all_folders[inds] # get the bootstrap folders
 # Extract the exp2 alignments with a replicate number of 10 or less
-exp2_folders_bs <- unlist(lapply(exp2_folders, reject.high.reps))
+exp2_folders_bs <- unlist(lapply(exp2_folders, reject.high.reps, max_rep = 20))
 # Format the selected alignments so the parametric bootstrap can be carried out
 exp2_folders_bs <- paste0(exp2_folders_bs,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
 exp2_toRun <- c() # create an empty list to store the folders that need the bootstrap run
