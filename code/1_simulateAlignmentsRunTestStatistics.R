@@ -119,7 +119,7 @@ for (i in tree_id){
   exp1_df <- rbind(exp1_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-#mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
+mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 
 ## For second experiment:
@@ -165,7 +165,7 @@ for (i in tree_id){
   exp2_df <- rbind(exp2_df,temp_df, stringsAsFactors = FALSE)
 }
 # Run simulation
-#mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
+mclapply(1:nrow(exp2_df), phylo.fixedtrees.wrapper, exp2_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
 
 # Collect the folders that contain the relevant alignments for second experiment and run the parametric bootstraps.
 # Can't run all 100 alignments with 199 parametric bootstraps so subset this and only run 10 replicates per parameter combination
@@ -187,7 +187,7 @@ for (folder in exp2_folders_bs){
   }
 }
 # Apply the parametric bootstrap function
-#mclapply(exp2_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
+mclapply(exp2_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[["IQTree"]], exec_paths[["SplitsTree"]], exec_paths[["Phi"]], exec_paths[["3seq"]], mc.cores = num_cores) # run all the bootstraps!
 
 
 ## For third experiment:
