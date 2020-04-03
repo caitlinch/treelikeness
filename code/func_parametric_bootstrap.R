@@ -577,7 +577,7 @@ reject.high.reps <- function(alignment_folder){
   if (rep <= 10){
     # if rep in 1:10, return folder to run bootstraps
     return(alignment_folder)
-  } else if (rep > 10){
+  } else if (rep > 20){
     # if rep > 10, ignore folder
     return(NULL)
   }
