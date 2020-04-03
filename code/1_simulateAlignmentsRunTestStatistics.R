@@ -31,7 +31,10 @@ library(reshape2)
 # maindir <- "treelikeness" repository location
 # run_id <- the key for this simulation. Will be in the names for outputs and the results csvs. Must NOT contain any underscores ("_")
 # num_cores <- the number of cores to use. 1 for a single core (wholly sequential), or higher if using parallelisation.
-# num_reps <- the number of of bootstrap replicates to perform
+# num_reps <- the number of of bootstrap replicates to perform (e.g if num_reps = 199, for each alignment 199 new alignments will be
+#             simulated with the same parameters and used to determine whether the treelikeness of the original alignment is expected or not)
+# max_reps <- max_reps is the number of simulated alignments for each set of simulation parameters that will have the parametric bootstrap applied
+#             e.g. if max_reps is 20, 20 alignments for each set of simulation parameters will be fed into the parametric bootstrap calculation function
 # exec_paths <- location to each executable within the folder. Attach the names of the executables so the paths can be accessed by name
 
 # The SplitsTree executable path can be tricky to find: 
@@ -44,6 +47,7 @@ library(reshape2)
 # run_id <- ""
 # num_cores <- 30
 # num_reps <- 199
+# max_reps <- 20
 
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
@@ -58,6 +62,7 @@ maindir <- "/data/caitlin/treelikeness/"
 run_id <- "sCF"
 num_cores <- 20
 num_reps <- 199
+max_reps <- 20
 
 # Create a vector with all of the executable file paths
 # To access a path: exec_paths[["name"]]
@@ -174,7 +179,7 @@ all_folders <- paste0(op_folder,list.dirs(op_folder, recursive = FALSE, full.nam
 inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders are at 
 exp2_folders <- all_folders[inds] # get the bootstrap folders
 # Extract the exp2 alignments with a replicate number of 10 or less
-exp2_folders_bs <- unlist(lapply(exp2_folders, reject.high.reps, max_rep = 20))
+exp2_folders_bs <- unlist(lapply(exp2_folders, reject.high.reps, max_rep))
 # Format the selected alignments so the parametric bootstrap can be carried out
 exp2_folders_bs <- paste0(exp2_folders_bs,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
 exp2_toRun <- c() # create an empty list to store the folders that need the bootstrap run
@@ -239,7 +244,8 @@ inds <- grep(id,all_folders) # find which indexes the exp3 (bootstrap) folders a
 exp3_folders <- all_folders[inds] # get the bootstrap folders
 exp3_folders <- paste0(exp3_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
 # extract all folders you want a bootstrap for (i.e. proportion_tree2 in seq(0,0.5,0.1) e.g. 10%)
-trimmed_exp3_folders <- unlist(lapply(exp3_folders,reject.exp3.bootstrap.run))
+trimmed_exp3_folders <- unlist(lapply(exp3_folders, reject.exp3.bootstrap.run))
+trimmed_exp3_folders <- unlist(lapply(trimmed_exp3_folders, reject.high.reps, max_rep))
 exp3_toRun <- c() # create an empty list to store the folders that need the bootstrap run
 # Check each simulation from the exp3_df for a p value csv
 for (folder in trimmed_exp3_folders){
