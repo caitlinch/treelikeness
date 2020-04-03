@@ -66,8 +66,8 @@ e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_
                                          "mode_delta_q","neighbour_net_trimmed"))
 # Reorder variables so the facet grid comes out desired order - use new factor column
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (This paper)",
-                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4q plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4q plots)")
+                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
+                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
 # Create a function to label facets
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -101,21 +101,21 @@ ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plo
 
 
 ############UPDATE THIS PLOT CAITLIN######################
-# Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness? (use exp3 when it's rerun)
-e = subset(ts1_df, tree1_tree_shape == 'balanced')
+# Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness?
+e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
-# Have to reorder variables so the gird comes out in the right way - do this using a new column that's a factor
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
-                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
+                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -129,9 +129,10 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
 ggsave(filename = paste0(plots_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 43, height = 43)
 
+############UPDATE THIS PLOT CAITLIN######################
 # Plot 3: How does tree age affect detection of treelikeness?
 print("Plot 3")
-e = subset(ts2_df, tree1_tree_shape == 'balanced')
+e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
@@ -139,13 +140,13 @@ e$age = factor(e$tree_age)
 e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
              variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
              variable == "mode_delta_q")
-# Have to reorder variables so the gird comes out in the right way - do this using a new column that's a factor
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
-                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
+                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -166,9 +167,10 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 67.5, height = 46.8, limitsize = FALSE)
 
+############UPDATE THIS PLOT CAITLIN######################
 # Plot 4: How does the number of events impact detection of tree likeness?
 print("Plot 4")
-e = subset(ts3_df, tree1_tree_shape == 'balanced')
+e = subset(ts2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "reciprocal")
@@ -176,13 +178,13 @@ e$event_asfactor <- as.factor(e$number_of_events)
 e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
              variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
              variable == "mode_delta_q")
-# Have to reorder variables so the gird comes out in the right way - do this using a new column that's a factor
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
-                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
+                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -198,6 +200,7 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
         panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "grey93"),panel.grid.minor = element_line(colour = "grey98"))
 ggsave(filename = paste0(plots_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
 
+############UPDATE THIS PLOT CAITLIN######################
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
 print("Plot 5")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
@@ -206,13 +209,13 @@ e = subset(e, tree_age == 1)
 e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
              variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
              variable == "mode_delta_q")
-# Have to reorder variables so the gird comes out in the right way - do this using a new column that's a factor
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
                                        "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (This paper)",
-                    "pdm_difference" = "Distance difference \n (This paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (This paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (This paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
+                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
+                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
+                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
                     "mode_delta_q" = "Mode delta_q \n (delta plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
@@ -231,9 +234,10 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
   scale_colour_manual(values = c("#ca0020","#0571b0"),labels = c("Nonreciprocal", "Reciprocal"))
 ggsave(filename = paste0(plots_folder,"plot5_ReciprocialAndNonreciprocalEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
 
-# Plot 6: Are the results statistically significant?
-print("Plot 6")
-e = subset(bs_df, tree1_tree_shape == 'balanced')
+############UPDATE THIS PLOT CAITLIN######################
+# Plot 6: increasing proportion of introgressed DNA - are the results statistically significant?
+# Histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
+e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
@@ -244,7 +248,7 @@ e = subset(e, variable != "num_recombinant_sequences_p_value")
 e = subset(e, variable == "PHI_p_value" | variable == "splittable_percentage_p_value"  | variable == "pdm_difference_p_value" | variable == "X3Seq_p_value" |
              variable == "neighbour_net_trimmed_p_value" | variable == "neighbour_net_untrimmed_p_value" | variable == "likelihood_mapping_p_value" | variable == "mean_delta_q_p_value" |
              variable == "mode_delta_q_p_value")
-# Have to reorder variables so the gird comes out in the right way - do this using a new column that's a factor
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group = factor(e$variable,levels = c("PHI_p_value","splittable_percentage_p_value","pdm_difference_p_value","X3Seq_p_value","neighbour_net_trimmed_p_value","neighbour_net_untrimmed_p_value",
                    "likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value"))
 facet_names <- list("PHI_p_value" = "PHI \n (PhiPack)","splittable_percentage_p_value" = "Distance \n ratio","pdm_difference_p_value" = "Distance \n difference",
@@ -266,35 +270,10 @@ p <- ggplot(e, aes(x = value)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
 ggsave(filename = paste0(plots_folder,"plot6_StatisticalSignificance.png"), plot = p, units = "in", width = 43, height = 63, limitsize = FALSE)
 
-# Plot 7: Are the tree proportion results statistically significant?
-print("Plot 7")
-e = subset(bs_df, tree1_tree_shape == 'balanced')
-e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
-e = subset(e, tree2_event_type != "none")
-e = subset(e, tree2_event_type != "reciprocal")
-e = subset(e, variable != "PHI_observed_p_value")
-e = subset(e, variable != "num_recombinant_sequences_p_value")
-e = subset(e, variable == "neighbour_net_trimmed_p_value" | variable == "neighbour_net_untrimmed_p_value")
-e$group = factor(e$variable,levels = c("neighbour_net_untrimmed_p_value","neighbour_net_trimmed_p_value"))
-facet_names <- list("neighbour_net_untrimmed_p_value" = "Tree proportion (Untrimmed)","neighbour_net_trimmed_p_value" = "Tree proportion (Trimmed)")
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
-p <- ggplot(e, aes(x = value)) +
-  geom_histogram(breaks = c(seq(0,1,0.05))) +
-  facet_grid(group~proportion_tree2,scales = "free_y", labeller = labeller(group = facet_labeller)) +
-  xlab("\n P value \n") +
-  ylab("\n Count \n") +
-  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
-        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
-        scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(plots_folder,"plot7_StatisticalSignificance_treeProportion.png"), plot = p, units = "in", width = 43, height = 22)
-
-# Plot 8
-print("Plot 8")
-e = subset(bs_df, tree1_tree_shape == 'balanced')
+############UPDATE THIS PLOT CAITLIN######################
+# Plot 7: increasing proportion of introgressed DNA - are the results statistically significant?
+# Line graph for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
+e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
@@ -351,3 +330,90 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 ggsave(filename = paste0(plots_folder,"plot8_facetedPValues_fixedAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
+
+
+# Plot 8: increasing number of introgression events - are the results statistically significant?
+# Histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
+e = subset(bs2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "reciprocal")
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group = factor(e$variable,levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value",
+                                       "mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"))
+facet_names <- list("PHI_p_value" = "PHI \n (PhiPack)","X3Seq_p_value" = "3SEQ",
+                    "neighbour_net_trimmed_p_value" = "Tree \n proportion \n (this paper)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)",
+                    "mean_delta_q_p_value" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q_p_value" = "Mode \u03B4q \n (\u03B4 plots)")
+
+facet_labeller <- function(variable){
+  variable <- facet_names[variable]
+}
+p <- ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~number_of_events, labeller = labeller(group = facet_labeller)) +
+  xlab("\n p  value \n") +
+  ylab("\n Count \n") +
+  theme(axis.text.x = element_text(size = 55), axis.title.x = element_text(size = 90), axis.title.y = element_text(size = 90),
+        axis.text.y = element_text(size = 55), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")),
+        strip.text.y = element_text(margin = margin(1,1,1,1, "cm"))) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) + 
+  scale_y_continuous(breaks = seq(0,10,2), labels = seq(0,10,2))
+ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_hists.png"), plot = p, units = "in", width = 70, height =53, limitsize = FALSE)
+
+
+# Plot 9: increasing number of introgression events - are the results statistically significant?
+# Line graph for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
+e = subset(bs2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "reciprocal")
+# extract values from the dataframe for the new plot
+PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                 nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                 nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                   nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                   nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                          nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                          nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                          nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                          nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+# make a new dataframe for the new plot
+value <- c(PHI_p_value,X3SEQ_p_value,likelihood_mapping_p_value,mean_delta_q_p_value,mode_delta_q_p_value,neighbour_net_trimmed_p_value)
+# get value as a percentage by dividing by 10 (number of sequences per event)
+value <- value/10*100
+ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9),rep("neighbour_net_trimmed_p_value",9))
+num_events <- c(rep(seq(0,8,1),6))
+f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
+f$variable <- factor(ts, levels = c("PHI_p_value", "X3SEQ_p_value", "likelihood_mapping_p_value", "mean_delta_q_p_value", "mode_delta_q_p_value",
+                                    "neighbour_net_trimmed_p_value"))
+facet_names <- list("PHI_p_value" = "PHI \n (PhiPack)", "likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)",
+                    "neighbour_net_trimmed_p_value" = "Tree \n proportion \n (this paper)", "X3SEQ_p_value" = "3SEQ",
+                    "mean_delta_q_p_value" = "Mean  \u03B4q \n (\u03B4 plots)","mode_delta_q_p_value" = "Mode  \u03B4q \n (\u03B4 plots)")
+facet_labeller <- function(variable){
+  variable <- facet_names[variable]
+}
+
+p <- ggplot(f, aes(x = num_events, y = value)) +
+  geom_line(size=3) +
+  facet_wrap(~variable, labeller = labeller(variable = facet_labeller), nrow = 2, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,1), breaks = seq(0,8,1)) +
+  ylab("\n Percent of simulations that reject the null hypothesis \n (p-value < 0.05) \n") +
+  theme(axis.text.x = element_text(size = 40), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
+        axis.text.y = element_text(size = 40), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
+        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
+        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm"),
+        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
+  scale_y_continuous(labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
+ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_line.png"), plot = p, units = "in", width = 40, height = 46.8)
