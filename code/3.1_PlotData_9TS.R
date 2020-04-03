@@ -127,7 +127,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   ylab("\n Test statistic value \n") +
   theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
         axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 43, height = 43)
+ggsave(filename = paste0(plots_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 20, height = 20)
 
 ############UPDATE THIS PLOT CAITLIN######################
 # Plot 3: How does tree age affect detection of treelikeness?
@@ -167,7 +167,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   guides(color = guide_legend(title = "Tree depth"))
 ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 67.5, height = 46.8, limitsize = FALSE)
 
-############UPDATE THIS PLOT CAITLIN######################
+
 # Plot 4: How does the number of events impact detection of tree likeness?
 print("Plot 4")
 e = subset(ts2_df, tree1_tree_shape == 'balanced')
@@ -175,30 +175,27 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
-e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
-             variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
-             variable == "mode_delta_q")
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
-                                       "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
-                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
-                    "mode_delta_q" = "Mode delta_q \n (delta plots)")
+e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q",
+                                       "neighbour_net_trimmed"))
+facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
+                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
+                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
 
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
-  geom_boxplot(outlier.size = 5, lwd = 2) +
+  geom_boxplot(outlier.size = 7, lwd = 2) +
   facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 3) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
-        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "grey93"),panel.grid.minor = element_line(colour = "grey98"))
-ggsave(filename = paste0(plots_folder,"plot4_numberOfEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
+  theme(axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.x = element_text(hjust = 1, size = 50), axis.text.y = element_text(size = 50), 
+        strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.png"), plot = p, units = "in", width = 40, height = 30)
+
 
 ############UPDATE THIS PLOT CAITLIN######################
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
@@ -416,4 +413,4 @@ p <- ggplot(f, aes(x = num_events, y = value)) +
   scale_y_continuous(labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_line.png"), plot = p, units = "in", width = 40, height = 46.8)
+ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_line.png"), plot = p, units = "in", width = 40, height = 30)
