@@ -575,7 +575,7 @@ reject.high.reps <- function(alignment_folder,max_rep = 20){
   ss <- strsplit(alignment_folder,"_")[[1]]
   rep <- as.numeric(ss[length(ss)])
   # If the rep is one of the ones you want, return the name for collection
-  if (is.na(rep) == TRUE){
+  if (is.na(rep) == TRUE || (rep =="") == TRUE){
     # if rep is NA, return NULL
     return(NULL)
   } else if (rep <= max_rep){
