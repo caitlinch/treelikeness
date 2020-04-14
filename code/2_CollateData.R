@@ -10,7 +10,7 @@ library(reshape2)
 
 
 
-##### Step 2: Specify file paths #####
+##### Step 2: Uncomment and set the file paths for output folders, executables, and the identifying name for this run #####
 # op_folder <- the folder where simulated alignments and output from analysis (e.g. IQ-Tree output files, 3seq output files, test statistic csvs) 
 #              are placed. MUST be the same folder as in Part 1, as it looks for these files to extract test statistics and other information.
 # results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1-4)
@@ -23,25 +23,13 @@ library(reshape2)
 # maindir <- ""
 # run_id <- extract.run.id(results_folder) 
 
-# run_location = "mac"
-run_location = "soma"
+#__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
+op_folder <- "/data/caitlin/treelikeness/output_20200304/"
+results_folder <- "/data/caitlin/treelikeness/results_20200304/"
+maindir <- "/data/caitlin/treelikeness/"
+run_id = FALSE
+#____________________________________________________________________________________________________________________________________
 
-if (run_location == "mac"){
-  # Set file paths etc
-  #op_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
-  #results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20190411/collatedOutput_2020/"
-  op_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/11_scf/op/"
-  results_folder <- "/Users/caitlincherryh/Documents/Honours/TestAlignmentResults/11_scf/results/"
-  
-  maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
-  run_id = FALSE
-} else if (run_location == "soma") {
-  # Set file paths etc
-  op_folder <- "/data/caitlin/treelikeness/output_20200304/"
-  results_folder <- "/data/caitlin/treelikeness/results_20200304/"
-  maindir <- "/data/caitlin/treelikeness/"
-  run_id = FALSE
-}
 
 
 

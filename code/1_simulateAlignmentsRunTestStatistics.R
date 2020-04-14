@@ -50,13 +50,16 @@ library(reshape2)
 # max_reps <- 20
 
 # Create a vector with all of the executable file paths
+# The executables must be in the following order: 3seq, IQ-Tree, PHIPack, SplitsTree
+# if executables are in different folders, remove the "exec_folder <- '' " line and the "exec_paths <- paste()" line and provide an individual path to each executable within exec_paths
 # To access a path: exec_paths[["name"]]
-# exec_folder <- "/path/to/executables/folder/"
-# exec_paths <- c("3seq_executable","IQ-Tree_executable","PHIpack_executable","SplitsTree_executable")
-# exec_paths <- paste0(exec_folder,exec_paths)
-# names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree") # Do not edit this line - the program uses these names to look up file paths
 
-####
+# exec_folder <- "/path/to/executables/folder/"
+# exec_paths <- c("3seq_executable","IQ-Tree_executable","PHIpack_executable","SplitsTree_executable") # MUST be in this order
+# exec_paths <- paste0(exec_folder,exec_paths)
+
+
+#__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
 op_folder <- "/data/caitlin/treelikeness/output_20200304/"
 results_folder <- "/data/caitlin/treelikeness/results_20200304/"
 maindir <- "/data/caitlin/treelikeness/"
@@ -69,8 +72,7 @@ max_reps <- 20
 # To access a path: exec_paths[["name"]]
 exec_paths <- c("/data/caitlin/linux_executables/3seq/3seq","/data/caitlin/linux_executables/iqtree-2.0-rc1-Linux/bin/iqtree",
                 "/data/caitlin/linux_executables/PhiPack/Phi","/data/caitlin/splitstree4/SplitsTree")
-names(exec_paths) <- c("3seq","IQTree","Phi","SplitsTree")
-####
+#____________________________________________________________________________________________________________________________________
 
 
 

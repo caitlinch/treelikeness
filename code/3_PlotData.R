@@ -11,17 +11,25 @@ library(viridis)
 
 
 
-##### Step 2: Specify file paths #####
+##### Step 2: Uncomment and set the file paths for output folders, executables, and the identifying name for this run #####
 # results_folder <- the folder where the result csvs will be placed (I use same results_folder in Parts 1 - 4.)
 # plots_folder <- the folder where the plots will be stored
 # maindir <- "treelikeness" repository location
 # run_id <- if "run.id  = FALSE", program extracts run_id from input parameter file names 
 #        <- otherwise, run_id will be set to whatever the user inputs here (e.g. "run_id = 'replicateAnalysis' ")
 
+# results_folder <- ""
+# plots_folder <- ""
+# maindir <- ""
+# run_id = FALSE
+
+
+#__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
 results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/output/"
 plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/plots/"
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
 run_id = FALSE
+#____________________________________________________________________________________________________________________________________
 
 
 
