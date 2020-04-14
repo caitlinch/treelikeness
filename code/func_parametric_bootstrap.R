@@ -575,7 +575,10 @@ reject.high.reps <- function(alignment_folder,max_rep = 20){
   ss <- strsplit(alignment_folder,"_")[[1]]
   rep <- as.numeric(ss[length(ss)])
   # If the rep is one of the ones you want, return the name for collection
-  if (rep <= max_rep){
+  if (is.na(rep) == TRUE){
+    # if rep is NA, return NULL
+    return(NULL)
+  } else if (rep <= max_rep){
     # if rep in 1:max_rep, return folder to run bootstraps
     return(alignment_folder)
   } else if (rep > max_rep){
