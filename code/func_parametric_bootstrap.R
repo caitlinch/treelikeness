@@ -573,7 +573,9 @@ reject.high.reps <- function(alignment_folder,max_rep = 20){
   max_rep <- as.numeric(max_rep) # make sure it's a number
   # Extract the rep number for an alignment folder
   ss <- strsplit(alignment_folder,"_")[[1]]
-  rep <- as.numeric(ss[length(ss)])
+  rep <- ss[length(ss)] # get final object from folder name (this is where the rep number is stored in the folder name)
+  rep <- gsub("/","",rep) # remove the terminal slash from the rep number
+  rep <- as.numeric(rep) # convert rep number to numeric
   # If the rep is one of the ones you want, return the name for collection
   if (is.na(rep) == TRUE || (rep =="") == TRUE){
     # if rep is NA, return NULL
@@ -603,7 +605,7 @@ reject.exp3.bootstrap.run <- function(alignment_folder){
   K <- as.numeric(split_f[6])
   valid_K <- c(0,0.1,0.2,0.3,0.4,0.5)
   # check if this alignment needs a parametric bootstrap
-  if (isTRUE(all.equal(K,0))){
+  if (isTRUE(all.equal(K,0))||isTRUE(all.equal(K,0.1))||isTRUE(all.equal(K,0.2))||isTRUE(all.equal(K,0.3))||isTRUE(all.equal(K,0.4))||isTRUE(all.equal(K,0.5))){
     # if it does, return it 
     return(alignment_folder)
   }
