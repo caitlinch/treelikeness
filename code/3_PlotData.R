@@ -6,8 +6,7 @@
 
 ##### Step 1: Open packages #####
 library(ggplot2)
-library(gridExtra)
-library(viridis)
+
 
 
 
