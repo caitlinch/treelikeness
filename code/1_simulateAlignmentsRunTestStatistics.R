@@ -19,9 +19,6 @@ library(ape)
 library(TreeSim)
 library(phytools)
 library(phangorn)
-library(base)
-library(ggplot2)
-library(reshape2)
 
 
 
