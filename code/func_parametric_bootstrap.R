@@ -601,8 +601,9 @@ reject.exp3.bootstrap.run <- function(alignment_folder){
   split_f <- split_f[grep("FixedTrees",split_f):length(split_f)]
   # the proportion of tree 2 will be after the tree 2 structure
   K <- as.numeric(split_f[6])
+  valid_K <- c(0,0.1,0.2,0.3,0.4,0.5)
   # check if this alignment needs a parametric bootstrap
-  if (K %in% seq(0,0.5,0.1)){
+  if (isTRUE(all.equal(K,0))){
     # if it does, return it 
     return(alignment_folder)
   }
