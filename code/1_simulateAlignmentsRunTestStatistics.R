@@ -244,10 +244,10 @@ exp3_folders <- all_folders[inds] # get the bootstrap folders
 exp3_folders <- paste0(exp3_folders,"/") # add the slash to the end so it's a path to the directory. Bootstrap function just adds "alignment.nex" not the slash.
 # extract all folders you want a bootstrap for (i.e. proportion_tree2 in seq(0,0.5,0.1) e.g. 10%)
 trimmed_exp3_folders <- unlist(lapply(exp3_folders, reject.exp3.bootstrap.run))
-trimmed_exp3_folders <- unlist(lapply(trimmed_exp3_folders, reject.high.reps, max_reps))
+run_exp3_folders <- unlist(lapply(trimmed_exp3_folders, reject.high.reps, max_reps))
 exp3_toRun <- c() # create an empty list to store the folders that need the bootstrap run
 # Check each simulation from the exp3_df for a p value csv
-for (folder in trimmed_exp3_folders){
+for (folder in run_exp3_folders){
   p_file <- paste0(folder,"p_value.csv")
   if (file.exists(p_file) == FALSE) {
     # if there's no p value csv, there's no bootstrap: add to the list of bootstraps to run
