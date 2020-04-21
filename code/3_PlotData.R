@@ -362,7 +362,7 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 55), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")),
         strip.text.y = element_text(margin = margin(1,1,1,1, "cm"))) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) + 
-  scale_y_continuous(breaks = seq(0,10,2), labels = seq(0,10,2))
+  scale_y_continuous(breaks = seq(0,20,4), labels = seq(0,20,4))
 ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_hists.png"), plot = p, units = "in", width = 70, height =53, limitsize = FALSE)
 
 
@@ -382,19 +382,20 @@ X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$nu
 likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                                 nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                                 nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
 mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                           nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                           nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
 mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                           nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                           nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+
 # make a new dataframe for the new plot
 value <- c(PHI_p_value,X3SEQ_p_value,likelihood_mapping_p_value,mean_delta_q_p_value,mode_delta_q_p_value,neighbour_net_trimmed_p_value)
 # get value as a percentage by dividing by 10 (number of sequences per event)
-value <- value/10*100
+value <- value/20*100
 ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9),rep("neighbour_net_trimmed_p_value",9))
 num_events <- c(rep(seq(0,8,1),6))
 f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
