@@ -117,24 +117,54 @@ e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
-                                       "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
-                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
-                    "mode_delta_q" = "Mode delta_q \n (delta plots)")
+e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"))
+
+facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
+                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
+                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
 facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
+
+# Data only
 p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point() +
-  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"plot2_increasingProportionTree2.png"), plot = p, units = "in", width = 20, height = 20)
+  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
+        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_fixedy.png"), plot = p, units = "in", width = 30, height = 20)
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point() +
+  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
+        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_freey.png"), plot = p, units = "in", width = 30, height = 20)
+
+# With regression line
+p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point() +
+  geom_smooth(method = "lm") + 
+  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
+        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.png"), plot = p, units = "in", width = 30, height = 20)
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point() +
+  geom_smooth(method = "lm") + 
+  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
+        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", width = 30, height = 20)
 
 ############UPDATE THIS PLOT CAITLIN######################
 # Plot 3: How does tree age affect detection of treelikeness?
@@ -202,6 +232,16 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
         axis.text.x = element_text(hjust = 1, size = 50), axis.text.y = element_text(size = 50), 
         strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
 ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.png"), plot = p, units = "in", width = 40, height = 30)
+
+p <- ggplot(e, aes(x = event_asfactor, y = value)) +
+  geom_boxplot(outlier.size = 7, lwd = 2) +
+  facet_wrap(~group, labeller = labeller(group = facet_labeller), nrow = 3, ncol = 3) +
+  scale_x_discrete(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme(axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
+        axis.text.x = element_text(hjust = 1, size = 50), axis.text.y = element_text(size = 50), 
+        strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.png"), plot = p, units = "in", width = 40, height = 30)
 
 
 ############UPDATE THIS PLOT CAITLIN######################
