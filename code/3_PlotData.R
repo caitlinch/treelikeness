@@ -2,10 +2,11 @@
 # Sourcing this file will open five dataframes and output a number of plots
 # Final result is a number of plots displaying test statistic values under perturbation of various simulation factors
 
-
+# completed plots: 1,2
 
 ##### Step 1: Open packages #####
 library(ggplot2)
+library(ggpmisc)
 
 
 
@@ -82,32 +83,60 @@ facet_labeller <- function(variable){
 # Plot the events for each test statistic with both a fixed and a free y axis
 # Fixed y plot:
 p <- ggplot(e, aes(x = type, y = value)) +
-  geom_boxplot(outlier.size = 3) +
+  geom_boxplot(outlier.size = 1) +
   facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
                    limits=c("none none","reciprocal close","nonreciprocal close")) +
-  ylab("\n Test statistic value \n") +
-  theme(axis.title.x = element_text(size = 35), axis.title.y = element_text(size = 35),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 30), axis.text.y = element_text(size = 30), 
-        strip.text = element_text(size = 30), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")))
-ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.png"), plot = p, units = "in", width = 16, height = 20)
+  ylab("\n Test statistic value \n") + theme_bw() + 
+  theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
+        strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.png"), plot = p, units = "in", width = 7, height = 7)
+
+
+cairo_pdf(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.pdf"), height = 7, width = 7, fallback_resolution = 300)
+ggplot(e, aes(x = type, y = value)) +
+  geom_boxplot(outlier.size = 1) +
+  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_discrete(name = "\n Type of introgression event \n",
+                   labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
+                   limits=c("none none","reciprocal close","nonreciprocal close")) +
+  ylab("\n Test statistic value \n") + theme_bw() + 
+  theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
+        strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+dev.off()
 
 # Free y plot:
 p <- ggplot(e, aes(x = type, y = value)) +
-  geom_boxplot(outlier.size = 3) +
+  geom_boxplot(outlier.size = 1) +
   facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
                    limits=c("none none","reciprocal close","nonreciprocal close")) +
-  ylab("\n Test statistic value \n") +
-  theme(axis.title.x = element_text(size = 35), axis.title.y = element_text(size = 35),
-        axis.text.x = element_text(angle = 45, hjust = 1, size = 30), axis.text.y = element_text(size = 30), 
-        strip.text = element_text(size = 30), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")))
-ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plot = p, units = "in", width = 17, height = 20)
+  ylab("\n Test statistic value \n") + theme_bw() + 
+  theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
+        strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plot = p, units = "in", height = 7, width = 7)
+
+cairo_pdf(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = type, y = value)) +
+  geom_boxplot(outlier.size = 1) +
+  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_discrete(name = "\n Type of introgression event \n",
+                   labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
+                   limits=c("none none","reciprocal close","nonreciprocal close")) +
+  ylab("\n Test statistic value \n") + theme_bw() + 
+  theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
+        strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+dev.off()
 
 
-############UPDATE THIS PLOT CAITLIN######################
+
+
 # Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness?
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
@@ -126,47 +155,86 @@ facet_labeller <- function(variable){
   variable <- facet_names[variable]
 }
 
-# Data only
+# create a vector of the r^2 values from each variable
+r2_raw <- c()
+var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+for (var in var_list){
+  # get only entries with this variable
+  var_df <- e[(e$variable == var),]
+  # insert into regression model
+  m <- lm(value ~ proportion_tree2, var_df)
+  r2_var <- summary(m)$r.squared
+  r2_raw <- c(r2_raw, r2_var)
+}
+
+# Quick function to reformat r^2 values the way I like
+reformat.r2 <- function(number){
+  number <- round(number, digits = 3)
+}
+
+# Apply function to r^2 values
+r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+
+# Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
+e_eq <- data.frame(variable = var_list, x_pos = rep(0.0,6) , y_pos = rep(1,6), rsq = r2_plot, rsquare = paste0("R^2 == ", r2_plot))
+e_eq$group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"))
+
+
+# Plot points with regression line and r^2 value
 p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
-  geom_point() +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_fixedy.png"), plot = p, units = "in", width = 30, height = 20)
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.png"), plot = p, units = "in", height = 6.57, width = 9)
 
-p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
-  geom_point() +
-  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
-  ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_freey.png"), plot = p, units = "in", width = 30, height = 20)
-
-# With regression line
-p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
-  geom_point() +
-  geom_smooth(method = "lm") + 
+cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.png"), plot = p, units = "in", width = 30, height = 20)
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+dev.off()
 
 p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
-  geom_point() +
-  geom_smooth(method = "lm") + 
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 35), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 35), strip.text = element_text(size = 35), strip.text.x = element_text(margin = margin(0.5,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", width = 30, height = 20)
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6.57, width = 9)
 
-############UPDATE THIS PLOT CAITLIN######################
+cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+dev.off()
+
+
+
+
+ ############UPDATE THIS PLOT CAITLIN######################
 # Plot 3: How does tree age affect detection of treelikeness?
 print("Plot 3")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
@@ -244,6 +312,8 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
 ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.png"), plot = p, units = "in", width = 40, height = 30)
 
 
+
+
 ############UPDATE THIS PLOT CAITLIN######################
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
 print("Plot 5")
@@ -277,6 +347,9 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("#ca0020","#0571b0"),labels = c("Nonreciprocal", "Reciprocal"))
 ggsave(filename = paste0(plots_folder,"plot5_ReciprocialAndNonreciprocalEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
+
+
+
 
 ############UPDATE THIS PLOT CAITLIN######################
 # Plot 6: increasing proportion of introgressed DNA - are the results statistically significant?
@@ -313,6 +386,9 @@ p <- ggplot(e, aes(x = value)) +
         strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
 ggsave(filename = paste0(plots_folder,"plot6_StatisticalSignificance.png"), plot = p, units = "in", width = 43, height = 63, limitsize = FALSE)
+
+
+
 
 ############UPDATE THIS PLOT CAITLIN######################
 # Plot 7: increasing proportion of introgressed DNA - are the results statistically significant?
@@ -376,6 +452,8 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
 ggsave(filename = paste0(plots_folder,"plot8_facetedPValues_fixedAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
 
 
+
+
 # Plot 8: increasing number of introgression events - are the results statistically significant?
 # Histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
 e = subset(bs2_df, tree1_tree_shape == 'balanced')
@@ -404,6 +482,8 @@ p <- ggplot(e, aes(x = value)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) + 
   scale_y_continuous(breaks = seq(0,20,4), labels = seq(0,20,4))
 ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_hists.png"), plot = p, units = "in", width = 70, height =53, limitsize = FALSE)
+
+
 
 
 # Plot 9: increasing number of introgression events - are the results statistically significant?
