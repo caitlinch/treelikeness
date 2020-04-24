@@ -176,7 +176,7 @@ reformat.r2 <- function(number){
 r2_plot <- unlist(lapply(r2_raw,reformat.r2))
 
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
-e_eq <- data.frame(variable = var_list, x_pos = rep(0.0,6) , y_pos = c(1,6), rsq = r2_plot, rsquare = paste0("R^2 == ", r2_plot))
+e_eq <- data.frame(variable = var_list, x_pos = rep(0.0,6) , y1_pos = rep(1,6), y2_pos = c(0.525, 0.08, 1, 0.4, 0.5, 1), rsq = r2_plot, rsquare = paste0("R^2 == ", r2_plot))
 e_eq$group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"))
 
 
@@ -190,7 +190,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+  geom_text(data = e_eq, aes(x = x_pos, y = y1_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
 ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.png"), plot = p, units = "in", height = 6.57, width = 9)
 
 cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
@@ -203,7 +203,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+  geom_text(data = e_eq, aes(x = x_pos, y = y1_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
 dev.off()
 
 p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
@@ -215,7 +215,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
 ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6.57, width = 9)
 
 cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
@@ -228,7 +228,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
 dev.off()
 
 
