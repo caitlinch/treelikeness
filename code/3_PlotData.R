@@ -231,7 +231,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3)
 dev.off()
 
-
+  
 
 
  ############UPDATE THIS PLOT CAITLIN######################
