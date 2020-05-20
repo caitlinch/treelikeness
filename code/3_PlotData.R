@@ -70,21 +70,16 @@ e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_r
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e = e[e$type %in% c("none none","nonreciprocal close","reciprocal close"),]
 # Create group to facet by
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q",
-                                         "mode_delta_q","neighbour_net_trimmed"))
-# Reorder variables so the facet grid comes out desired order - use new factor column
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
-                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
-# Create a function to label facets
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
 # Plot the events for each test statistic with both a fixed and a free y axis
 # Fixed y plot:
 p <- ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
-  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, labeller = label_parsed, ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
                    limits=c("none none","reciprocal close","nonreciprocal close")) +
@@ -98,7 +93,7 @@ ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.png"), pl
 cairo_pdf(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.pdf"), height = 7, width = 7, fallback_resolution = 300)
 ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
-  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, labeller = label_parsed, ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
                    limits=c("none none","reciprocal close","nonreciprocal close")) +
@@ -111,7 +106,7 @@ dev.off()
 # Free y plot:
 p <- ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
-  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
                    limits=c("none none","reciprocal close","nonreciprocal close")) +
@@ -119,12 +114,12 @@ p <- ggplot(e, aes(x = type, y = value)) +
   theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
         axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
         strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plot = p, units = "in", height = 7, width = 7)
+ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plot = p, units = "in", height = 7, width = 9)
 
 cairo_pdf(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
-  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
   scale_x_discrete(name = "\n Type of introgression event \n",
                    labels=c("none none" = "None", "reciprocal close" = "Reciprocal, Close", "nonreciprocal close" = "Nonreciprocal, Close"),
                    limits=c("none none","reciprocal close","nonreciprocal close")) +
@@ -146,7 +141,10 @@ e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"))
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
                     "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
@@ -174,18 +172,24 @@ reformat.r2 <- function(number){
 
 # Apply function to r^2 values
 r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+r2_plot <- as.character(r2_plot)
+r2_plot[5] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
+r2_plot <- paste0(" = ", r2_plot)
 
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
 e_eq <- data.frame(variable = var_list, x_pos = rep(0.0, 6) , y1_pos = rep(1,6), y2_pos = c(0.525, 0.08, 1, 0.4, 0.5, 1),
-                   r2_x_pos = rep(0.035, 6), rsq = paste0("= ", r2_plot), rsquare = paste0("R^2"),
-                   group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")))
-
+                   r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2 ",
+                   group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                                  ordered = TRUE, 
+                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) ) ) 
 
 # Plot points with regression line and r^2 value
 p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
-  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, labeller = label_parsed, ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
@@ -199,7 +203,7 @@ cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regress
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
-  facet_wrap(~group, labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, labeller = label_parsed, ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
@@ -212,7 +216,7 @@ dev.off()
 p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
-  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
@@ -226,7 +230,7 @@ cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regress
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
-  facet_wrap(~group, scale = "free_y", labeller = labeller(group = facet_labeller), ncol=3) +
+  facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
