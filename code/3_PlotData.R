@@ -58,6 +58,16 @@ bs3_df <- read.csv(paste0(results_folder,melt_files[grep("exp3_p_value",melt_fil
 
 
 ##### Step 5: Plot  #####
+# Old facet_names and labeller in case it's needed later on:
+# facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
+#                     "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
+#                     "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
+# facet_labeller <- function(variable){
+#   variable <- facet_names[variable]
+# }
+# Panel colour elements: panel.background = element_rect(fill="white"), panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")
+
+
 # Plot 1: How do different events impact detection of recombination?
 e <- ts1_df # take the first experiment results and examine how different events impact detection of recombination
 # Take only simulations that had a balanced tree 1 and tree 2
@@ -145,13 +155,6 @@ e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
                              expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
-
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
-                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
 
 # create a vector of the r^2 values from each variable
 r2_raw <- c()
@@ -244,42 +247,77 @@ dev.off()
 
 
  ############UPDATE THIS PLOT CAITLIN######################
+# Panel colour elements: panel.background = element_rect(fill="white"), panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")
+
 # Plot 3: How does tree age affect detection of treelikeness?
 print("Plot 3")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
-e$age = factor(e$tree_age)
-e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
-             variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
-             variable == "mode_delta_q")
+e$age = factor(e$tree_age, ordered = TRUE)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
-                                       "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
-                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
-                    "mode_delta_q" = "Mode delta_q \n (delta plots)")
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
-colour_list <- c("1" = "#000000", "0.5" = "#E69F00", "0.1" = "#56B4E9", "0.05" = "#CC79A7")
 p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
-  geom_smooth(size = 3) +
-  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 3) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
+  facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 50),
-        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"),
-        strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")), panel.background = element_rect(fill="white"),
-        panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
-  scale_color_manual(values = colour_list) +
-  guides(color = guide_legend(title = "Tree depth"))
-ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2.png"), plot = p, units = "in", width = 67.5, height = 46.8, limitsize = FALSE)
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
+  facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+dev.off()
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
+  facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
+  facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+dev.off()
+
+
 
 
 # Plot 4: How does the number of events impact detection of tree likeness?
