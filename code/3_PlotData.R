@@ -246,9 +246,6 @@ dev.off()
   
 
 
- ############UPDATE THIS PLOT CAITLIN######################
-# Panel colour elements: panel.background = element_rect(fill="white"), panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")
-
 # Plot 3: How does tree age affect detection of treelikeness?
 print("Plot 3")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
@@ -274,9 +271,9 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
         legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
   scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
   scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
-ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
   facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -301,13 +298,78 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
         legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
   scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
   scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
-ggsave(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"plot3_treeAgeWithIncreasingTree2_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
   facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+dev.off()
+
+e = subset(ts2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree2_event_type != "reciprocal")
+e$age = factor(e$tree_age, ordered = TRUE)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
+p <- ggplot(e, aes(x = number_of_events, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "loess") +
+  facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+ggsave(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingTree2_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingTree2_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = number_of_events, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "loess") +
+  facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+dev.off()
+
+p <- ggplot(e, aes(x = number_of_events, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "loess") +
+  facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+ggsave(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingTree2_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingTree2_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = number_of_events, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "loess") +
+  facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
@@ -329,122 +391,328 @@ e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q",
-                                       "neighbour_net_trimmed"))
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of \n recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved \n quartets \n (IQ-Tree)","neighbour_net_trimmed" = "Tree proportion \n (this paper)",
-                    "mean_delta_q" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q" = "Mode \u03B4q \n (\u03B4 plots)")
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
-  geom_boxplot(outlier.size = 7, lwd = 2) +
-  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 3) +
+  geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.x = element_text(hjust = 1, size = 50), axis.text.y = element_text(size = 50), 
-        strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.png"), plot = p, units = "in", width = 40, height = 30)
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = event_asfactor, y = value)) +
+  geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
+  scale_x_discrete(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+dev.off()
 
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
-  geom_boxplot(outlier.size = 7, lwd = 2) +
-  facet_wrap(~group, labeller = labeller(group = facet_labeller), nrow = 3, ncol = 3) +
+  geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
+  facet_wrap(~group, labeller = label_parsed, ncol = 3) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.x = element_text(hjust = 1, size = 50), axis.text.y = element_text(size = 50), 
-        strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.png"), plot = p, units = "in", width = 40, height = 30)
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = event_asfactor, y = value)) +
+  geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
+  facet_wrap(~group, labeller = label_parsed, ncol = 3) +
+  scale_x_discrete(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+dev.off()
 
 
 
 
-############UPDATE THIS PLOT CAITLIN######################
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
 print("Plot 5")
+e = subset(ts2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree_age == 1)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
+p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "loess") +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+ggsave(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "loess") +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+dev.off()
+
+p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "loess") +
+  facet_wrap(~group, labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+ggsave(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "loess") +
+  facet_wrap(~group, labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+dev.off()
+
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
-e = subset(e, variable == "PHI_observed" | variable == "splittable_percentage"  | variable == "pdm_difference" | variable == "proportion_recombinant_triplets" |
-             variable == "neighbour_net_untrimmed" | variable == "neighbour_net_trimmed" | variable == "prop_resolved_quartets" | variable == "mean_delta_q" |
-             variable == "mode_delta_q")
+e = subset(e, tree2_event_type != "none")
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_observed","splittable_percentage","pdm_difference","proportion_recombinant_triplets","neighbour_net_untrimmed",
-                                       "neighbour_net_trimmed","prop_resolved_quartets","mean_delta_q","mode_delta_q"))
-facet_names <- list("PHI_observed" = "PHI \n (PhiPack)","proportion_recombinant_triplets" = "Proportion of recombinant triplets \n (3SEQ)",
-                    "prop_resolved_quartets" = "Proportion of resolved quartets \n (IQ-Tree)", "splittable_percentage" = "Distance ratio \n (this paper)",
-                    "pdm_difference" = "Distance difference \n (this paper)","neighbour_net_untrimmed" = "Tree proportion \n (Untrimmed) \n (this paper)",
-                    "neighbour_net_trimmed" = "Tree proportion \n (Trimmed) \n (this paper)", "mean_delta_q" = "Mean delta_q \n (delta plots)",
-                    "mode_delta_q" = "Mode delta_q \n (delta plots)")
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recombinant triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
-p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
-  geom_smooth(size = 3) +
-  facet_wrap(~group,scales = "free_y", labeller = labeller(group = facet_labeller), nrow = 3, ncol = 3) +
-  scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
+p <- ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "gam") +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
-  theme(axis.text.x = element_text(size = 45), axis.title.x = element_text(size = 60), axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 45), strip.text = element_text(size = 60), legend.text = element_text(size = 45),
-        legend.title = element_text(size = 60), legend.key.width = unit(4,"cm"), legend.key.height = unit(2, "cm"), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
-        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
   guides(color = guide_legend(title = "Event type")) +
-  scale_colour_manual(values = c("#ca0020","#0571b0"),labels = c("Nonreciprocal", "Reciprocal"))
-ggsave(filename = paste0(plots_folder,"plot5_ReciprocialAndNonreciprocalEvents.png"), plot = p, units = "in", width = 60, height = 46.8, limitsize = FALSE)
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+ggsave(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "gam") +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+dev.off()
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "gam") +
+  facet_wrap(~group, labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+ggsave(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
+  geom_smooth(method = "gam") +
+  facet_wrap(~group, labeller = label_parsed, ncol = 3) +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
+  guides(color = guide_legend(title = "Event type")) +
+  scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
+dev.off()
 
 
 
 
-############UPDATE THIS PLOT CAITLIN######################
-# Plot 6: increasing proportion of introgressed DNA - are the results statistically significant?
-# Histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
+# Plot 6: increasing proportion of introgressed DNA/increasing number of events - are the results statistically significant?
+# exp 3: histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
-e = subset(e, variable != "PHI_observed_p_value")
-e = subset(e, variable != "num_recombinant_sequences_p_value")
-
-e = subset(e, variable == "PHI_p_value" | variable == "splittable_percentage_p_value"  | variable == "pdm_difference_p_value" | variable == "X3Seq_p_value" |
-             variable == "neighbour_net_trimmed_p_value" | variable == "neighbour_net_untrimmed_p_value" | variable == "likelihood_mapping_p_value" | variable == "mean_delta_q_p_value" |
-             variable == "mode_delta_q_p_value")
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_p_value","splittable_percentage_p_value","pdm_difference_p_value","X3Seq_p_value","neighbour_net_trimmed_p_value","neighbour_net_untrimmed_p_value",
-                   "likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value"))
-facet_names <- list("PHI_p_value" = "PHI \n (PhiPack)","splittable_percentage_p_value" = "Distance \n ratio","pdm_difference_p_value" = "Distance \n difference",
-                   "X3Seq_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)","neighbour_net_trimmed_p_value" = "Tree \n proportion \n (Trimmed)",
-                   "neighbour_net_untrimmed_p_value" = "Tree \n proportion \n (Untrimmed)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)",
-                   "mean_delta_q_p_value" = "Mean delta q","mode_delta_q_p_value" = "Mode delta q")
+e$group <- factor(e$variable, levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
 p <- ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
-  facet_grid(group~proportion_tree2,scales = "free_y", labeller = labeller(group = facet_labeller)) +
+  facet_grid(group~proportion_tree2,scales = "free_y", labeller = label_parsed) +
   xlab("\n P value \n") +
-  ylab("\n Count \n") +
-  theme(axis.text.x = element_text(size = 30), axis.title.x = element_text(size = 40), axis.title.y = element_text(size = 40),
-        axis.text.y = element_text(size = 30), strip.text = element_text(size = 40), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
-        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm"))) +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
+ggsave(filename = paste0(plots_folder,"exp3_StatisticalSignificance_freey.png"), plot = p, units = "in", height = 9, width = 9)
+
+
+cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~proportion_tree2,scales = "free_y", labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
+dev.off()
+
+p <- ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~proportion_tree2, labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
+ggsave(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~proportion_tree2, labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
+dev.off()
+
+# exp 2: histograms for p-values, for 0-8 events increasing by 1 event each time, for all test statistics
+e = subset(bs2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_tree_shape == 'balanced')
+e = subset(e, tree_age == 1)
+e = subset(e, tree2_event_type != "reciprocal")
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
+p <- ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~number_of_events,scales = "free_y", labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(plots_folder,"plot6_StatisticalSignificance.png"), plot = p, units = "in", width = 43, height = 63, limitsize = FALSE)
+ggsave(filename = paste0(plots_folder,"exp2_StatisticalSignificance_freey.png"), plot = p, units = "in", height = 9, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~number_of_events,scales = "free_y", labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
+dev.off()
+
+p <- ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~number_of_events, labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
+ggsave(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = value)) +
+  geom_histogram(breaks = c(seq(0,1,0.05))) +
+  facet_grid(group~number_of_events, labeller = label_parsed) +
+  xlab("\n P value \n") +
+  ylab("\n Count \n") + 
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
+dev.off()
 
 
 
 
-############UPDATE THIS PLOT CAITLIN######################
 # Plot 7: increasing proportion of introgressed DNA - are the results statistically significant?
 # Line graph for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == 1)
-e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
+e = subset(e, tree2_event_type != "none")
 e = subset(e, variable != "PHI_observed_p_value")
 e = subset(e, variable != "num_recombinant_sequences_p_value")
 # to make new df for the plot
@@ -454,81 +722,37 @@ X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$pr
                    nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                                 nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-splittable_percentage_p_value <- c(nrow(e[e$variable == "splittable_percentage_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "splittable_percentage_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "splittable_percentage_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                   nrow(e[e$variable == "splittable_percentage_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "splittable_percentage_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "splittable_percentage_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-pdm_difference_p_value <- c(nrow(e[e$variable == "pdm_difference_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "pdm_difference_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "pdm_difference_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                             nrow(e[e$variable == "pdm_difference_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "pdm_difference_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "pdm_difference_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                  nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-neighbour_net_untrimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_untrimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_untrimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_untrimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                     nrow(e[e$variable == "neighbour_net_untrimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_untrimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_untrimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                           nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                           nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 
 
-value <- c(PHI_p_value,X3SEQ_p_value,likelihood_mapping_p_value,splittable_percentage_p_value,pdm_difference_p_value,neighbour_net_untrimmed_p_value,neighbour_net_trimmed_p_value,mean_delta_q_p_value,mode_delta_q_p_value)
-ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("splittable_percentage_p_value",6), rep("pdm_difference_p_value",6), rep("neighbour_net_untrimmed_p_value",6), rep("neighbour_net_trimmed_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6))
-proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),9))
+value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
+ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("neighbour_net_trimmed_p_value",6))
+proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
 f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
-f$variable <- factor(ts, levels = c("PHI_p_value","splittable_percentage_p_value","pdm_difference_p_value","X3SEQ_p_value","neighbour_net_untrimmed_p_value",
-                                    "neighbour_net_trimmed_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value"))
-facet_names <- list("PHI_p_value" = "PHI \n (PhiPack)","splittable_percentage_p_value" = "Distance \n ratio","pdm_difference_p_value" = "Distance \n difference",
-                    "X3SEQ_p_value" = "Proportion of \n recombinant triplets \n (3SEQ)","neighbour_net_trimmed_p_value" = "Tree \n proportion \n (Trimmed)",
-                    "neighbour_net_untrimmed_p_value" = "Tree \n proportion \n (Untrimmed)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)",
-                    "mean_delta_q_p_value" = "Mean delta q","mode_delta_q_p_value" = "Mode delta q")
-
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
+f$variable <- factor(ts, levels = c("PHI_p_value","3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
-  geom_line(size=3) +
-  facet_wrap(~variable, labeller = labeller(variable = facet_labeller), nrow = 3, ncol = 3) +
+  geom_line(size=0.5) +
+  facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
   ylab("\n Percent of simulations that reject the null hypothesis \n (p-value < 0.05) \n") +
-  theme(axis.text.x = element_text(size = 40), axis.title.x = element_text(size = 50), axis.title.y = element_text(size = 50),
-        axis.text.y = element_text(size = 40), strip.text = element_text(size = 50), strip.text.x = element_text(margin = margin(1,0,0.5,0, "cm")),
-        strip.text.y = element_text(margin = margin(1,0,0.5,0, "cm")), legend.text = element_text(size = 40),
-        legend.title = element_text(size = 50), legend.key.width = unit(5,"cm"), legend.key.height = unit(5, "cm"),
-        panel.background = element_rect(fill="white"),panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  scale_x_continuous(breaks = c(0,0.25,0.5,0.75,1),labels = c(0,0.25,0.5,0.75,1)) + 
   scale_y_continuous(labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
-  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 1.5) + 
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(plots_folder,"plot8_facetedPValues_fixedAxes.png"), plot = p, units = "in", width = 40, height = 46.8)
-
-
-
-
-# Plot 8: increasing number of introgression events - are the results statistically significant?
-# Histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
-e = subset(bs2_df, tree1_tree_shape == 'balanced')
-e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
-e = subset(e, tree2_event_type != "reciprocal")
-e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
-# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group = factor(e$variable,levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value",
-                                       "mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"))
-facet_names <- list("PHI_p_value" = "PHI \n (PhiPack)","X3Seq_p_value" = "3SEQ",
-                    "neighbour_net_trimmed_p_value" = "Tree \n proportion \n (this paper)","likelihood_mapping_p_value" = "Proportion of \n resolved quartets \n (IQ-Tree)",
-                    "mean_delta_q_p_value" = "Mean \u03B4q \n (\u03B4 plots)","mode_delta_q_p_value" = "Mode \u03B4q \n (\u03B4 plots)")
-
-facet_labeller <- function(variable){
-  variable <- facet_names[variable]
-}
-p <- ggplot(e, aes(x = value)) +
-  geom_histogram(breaks = c(seq(0,1,0.05))) +
-  facet_grid(group~number_of_events, labeller = labeller(group = facet_labeller)) +
-  xlab("\n p  value \n") +
-  ylab("\n Count \n") +
-  theme(axis.text.x = element_text(size = 55), axis.title.x = element_text(size = 90), axis.title.y = element_text(size = 90),
-        axis.text.y = element_text(size = 55), strip.text = element_text(size = 60), strip.text.x = element_text(margin = margin(1,1,1,1, "cm")),
-        strip.text.y = element_text(margin = margin(1,1,1,1, "cm"))) +
-  scale_x_continuous(labels = c(0,0.25,0.5,0.75,1)) + 
-  scale_y_continuous(breaks = seq(0,20,4), labels = seq(0,20,4))
-ggsave(filename = paste0(plots_folder,"exp2_IncNumEvents_StatisticalSignificance_hists.png"), plot = p, units = "in", width = 70, height =53, limitsize = FALSE)
+ggsave(filename = paste0(plots_folder,"plot8_facetedPValues_fixedAxes.png"), plot = p, units = "in", width = 9, height = 6)
 
 
 
