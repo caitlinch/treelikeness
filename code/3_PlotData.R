@@ -628,11 +628,18 @@ p <- ggplot(e, aes(x = value)) +
   xlab("\n P value \n") +
   ylab("\n Count \n") + 
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+  theme(axis.text.x = element_text(size = 7), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 7), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
 ggsave(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
+
+patchwork <- p
+cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+patchwork + 
+  plot_annotation(title = "Proportion of introgressed DNA (%)",
+                  theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
+dev.off()
 
 cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = value)) +
@@ -641,8 +648,8 @@ ggplot(e, aes(x = value)) +
   xlab("\n P value \n") +
   ylab("\n Count \n") + 
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+  theme(axis.text.x = element_text(size = 7), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 7), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
 dev.off()
@@ -690,11 +697,19 @@ p <- ggplot(e, aes(x = value)) +
   xlab("\n P value \n") +
   ylab("\n Count \n") + 
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+  theme(axis.text.x = element_text(size = 7), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 7), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
 ggsave(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
+
+patchwork <- p
+cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+patchwork + 
+  plot_annotation(title = "Number of introgression events",
+                  theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
+dev.off()
+
 
 cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = value)) +
@@ -703,8 +718,8 @@ ggplot(e, aes(x = value)) +
   xlab("\n P value \n") +
   ylab("\n Count \n") + 
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
+  theme(axis.text.x = element_text(size = 7), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 7), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
 dev.off()
@@ -851,5 +866,3 @@ ggplot(f, aes(x = num_events, y = value)) +
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 dev.off()
-
-
