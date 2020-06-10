@@ -23,6 +23,8 @@ library(patchwork)
 # plots_folder <- ""
 # maindir <- ""
 # run_id = FALSE
+# tree_length = 0.5  # choose a value for total tree depth: 0.05, 0.10, 0.5, or 1
+                     # this value will be used as tree depth in all plots EXCEPT the plots that contain all 4 tree depths for comparison
 
 
 #__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
@@ -30,6 +32,7 @@ results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_2
 plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/plots/"
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
 run_id = FALSE
+tree_length = 0.5
 #____________________________________________________________________________________________________________________________________
 
 
@@ -76,7 +79,7 @@ e <- ts1_df # take the first experiment results and examine how different events
 e = subset(e, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 # Fix the substitutions per site rate
-e = subset(e, tree_age == 1 )
+e = subset(e, tree_age == tree_length)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Combine event type and position into one column that can be used as an x-axis for the box plots
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
@@ -99,10 +102,10 @@ p <- ggplot(e, aes(x = type, y = value)) +
   theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
         axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
         strip.text = element_text(size = 9), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.png"), plot = p, units = "in", width = 7, height = 7)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_fixedy.png"), plot = p, units = "in", width = 7, height = 7)
 
 
-cairo_pdf(filename = paste0(plots_folder,"exp1_differentEventTypes_fixedy.pdf"), height = 7, width = 7, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_fixedy.pdf"), height = 7, width = 7, fallback_resolution = 300)
 ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
   facet_wrap(~group, labeller = label_parsed, ncol=3) +
@@ -126,9 +129,9 @@ p <- ggplot(e, aes(x = type, y = value)) +
   theme(axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
         axis.text.x = element_text(angle = 45, hjust = 1, size = 10), axis.text.y = element_text(size = 10), 
         strip.text = element_text(size = 9), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
-ggsave(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.png"), plot = p, units = "in", height = 8, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_freey.png"), plot = p, units = "in", height = 8, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp1_differentEventTypes_freey.pdf"), height = 8, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_freey.pdf"), height = 8, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
   facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
@@ -148,7 +151,7 @@ dev.off()
 print("Plot 2")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
@@ -178,12 +181,13 @@ reformat.r2 <- function(number){
 
 # Apply function to r^2 values
 r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+replace_inds <- which(r2_plot == 0)
 r2_plot <- as.character(r2_plot)
-r2_plot[5] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
+r2_plot[replace_inds] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
 r2_plot <- paste0(" = ", r2_plot)
 
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
-e_eq <- data.frame(variable = var_list, x_pos = rep(0.0, 6) , y1_pos = rep(1,6), y2_pos = c(0.525, 0.08, 1, 0.4, 0.5, 1),
+e_eq <- data.frame(variable = var_list, x_pos = rep(0.0, 6) , y1_pos = rep(1.1,6), y2_pos = c(0.525, 0.0875, 1.01, 0.4, 0.5, 1),
                    r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2 ",
                    group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
                                   ordered = TRUE, 
@@ -203,9 +207,9 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
   geom_text(data = e_eq, aes(x = x_pos, y = y1_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y1_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
-ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_fixedy.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_fixedy.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -230,9 +234,9 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
-ggsave(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6.57, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6.57, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -246,7 +250,181 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
 dev.off()
 
+# Continuation of plot 2, but includes all four tree lengths
+e = subset(ts3_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree2_event_type != "reciprocal")
+e$age = factor(e$tree_age, ordered = TRUE)
+e$type = paste(e$tree2_event_type, e$tree2_event_position)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
+r2_raw <- c()
+var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+eq_var_list <- rep(var_list, each = 4)
+age_list <- c(0.05, 0.1, 0.5, 1)
+for (var in var_list){
+  var_df <- e[(e$variable == var),]
+  for (t_age in age_list){
+    # get only entries with this variable
+    # insert into regression model
+    age_df <- var_df[(var_df$age == t_age),]
+    m <- lm(value ~ proportion_tree2, age_df)
+    r2_var <- summary(m)$r.squared
+    print(paste0("Variable: ",var," - tree depth: ",t_age," - R^2 : ",round(r2_var, digits = 3)))
+    r2_raw <- c(r2_raw, r2_var) 
+  }
+}
+
+# Quick function to reformat r^2 values the way I like
+reformat.r2 <- function(number){
+  number <- round(number, digits = 3)
+}
+
+# Apply function to r^2 values
+r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+replace_inds <- which(r2_plot == 0)
+r2_plot <- as.character(r2_plot)
+r2_plot[replace_inds] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
+r2_plot <- paste0(" = ", r2_plot)
+
+# Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
+e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 24) , y1_pos = rep(1.1,24), y2_pos = rep(c(0.6, 0.11, 1.05, 0.45, 0.5, 1), each = 4), age = rep(c(0.05, 0.1, 0.5, 1.0), 6),
+                   r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2 ",
+                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                                  ordered = TRUE, 
+                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) ) ) 
+                                  
+p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group~age, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.y = element_text(size = 10), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey.png"), plot = p, units = "in", height = 9, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group~age, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.y = element_text(size = 10), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+dev.off()
   
+patchwork <- p
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+patchwork + 
+  plot_annotation(title = "Total tree depth (substitutions per site)",
+                  theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
+dev.off()
+
+# Continuation of plot 2, but includes both event types
+e = subset(ts3_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree_age == tree_length)
+e$tree2_event_type = factor(e$tree2_event_type, ordered = TRUE)
+e$type = paste(e$tree2_event_type, e$tree2_event_position)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
+r2_raw <- c()
+var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+eq_var_list <- rep(var_list, each = 2)
+event_list <- c("nonreciprocal","reciprocal")
+for (var in var_list){
+  var_df <- e[(e$variable == var),]
+  for (ev in event_list){
+    # get only entries with this variable
+    # insert into regression model
+    age_df <- var_df[(var_df$tree2_event_type == ev),]
+    m <- lm(value ~ proportion_tree2, age_df)
+    r2_var <- summary(m)$r.squared
+    print(paste0("Variable: ",var," - event type: ",ev," - R^2 : ", round(r2_var, digits = 3) ))
+    r2_raw <- c(r2_raw, r2_var) 
+  }
+}
+
+# Quick function to reformat r^2 values the way I like
+reformat.r2 <- function(number){
+  number <- round(number, digits = 3)
+}
+
+# Apply function to r^2 values
+r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+replace_inds <- which(r2_plot == 0)
+r2_plot <- as.character(r2_plot)
+r2_plot[replace_inds] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
+r2_plot <- paste0(" = ", r2_plot)
+
+
+# Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
+e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 12) , y1_pos = rep(1.1,12), 
+                   y2_pos = rep(c(0.3875, 0.0875, 1.02, 0.28, 0.12, 1.05), each = 2),
+                   r2_x_pos = rep(0.05, 6), rsq = r2_plot, rsquare = "R^2 ", tree2_event_type = rep(c("nonreciprocal","reciprocal"),6),
+                   fac_event_type = factor(rep(event_list,6), ordered = TRUE, labels = c("Nonreciprocal","Reciprocal")),
+                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                                  ordered = TRUE, 
+                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) ) ) 
+# Change e$tree2_event_type to a new factor with pretty formatting for output
+e$fac_event_type <- factor(e$tree2_event_type, ordered = TRUE, labels = c("Nonreciprocal","Reciprocal"))
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey.png"), plot = p, units = "in", height = 7, width = 6)
+
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey.pdf"), height = 7, width = 6, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+dev.off()
+
+patchwork <- p
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingProportionTree2_RecipNonrecip_regression_freey_withTitle.pdf"), height = 8, width = 6, fallback_resolution = 300)
+patchwork + 
+  plot_annotation(title = "Type of introgression event",
+                  theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
+dev.off()
+
 
 
 # Plot 3: How does tree age affect detection of treelikeness?
@@ -264,6 +442,33 @@ e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "lm") +
+  facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_treeAgeWithIncreasingTree2_lm_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_treeAgeWithIncreasingTree2_lm_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
+  geom_smooth(size = 0.5, aes(linetype = age), method = "lm") +
+  facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")),
+        legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
+  scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
+  scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
+dev.off()
+
+p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
   facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
   scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
@@ -274,9 +479,9 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
         legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
   scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
   scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
-ggsave(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_treeAgeWithIncreasingTree2_gam_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_treeAgeWithIncreasingTree2_gam_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
   facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -301,9 +506,9 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
         legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
   scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
   scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
-ggsave(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_treeAgeWithIncreasingTree2_gam_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_treeAgeWithIncreasingTree2_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_treeAgeWithIncreasingTree2_gam_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "gam") +
   facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -340,9 +545,9 @@ p <- ggplot(e, aes(x = number_of_events, y = value, color = age )) +
         legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
   scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
   scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
-ggsave(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingNumEvents_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_treeAgeWithIncreasingNumEvents_loess_freey.png"),plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingNumEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_treeAgeWithIncreasingNumEvents_loess_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = number_of_events, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "loess") +
   facet_wrap(~group,scales = "free_y", labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -367,9 +572,9 @@ p <- ggplot(e, aes(x = number_of_events, y = value, color = age )) +
         legend.text = element_text(size = 8), legend.title = element_text(size = 8), legend.background = element_rect(linetype = 1, size = 0.2, colour = 1)) + 
   scale_color_manual(values = c("#a6611a","#dfc27d","#80cdc1","#018571"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00")) +
   scale_linetype_manual(values = c("longdash","longdash","solid","solid"), name = expression(atop("Tree depth","(substitutions/site)")), labels = c("0.05","0.10","0.50","1.00"))
-ggsave(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingNumEvents_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_treeAgeWithIncreasingNumEvents_loess_fixedy.png"),plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_treeAgeWithIncreasingNumEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_treeAgeWithIncreasingNumEvents_loess_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = number_of_events, y = value, color = age )) +
   geom_smooth(size = 0.5, aes(linetype = age), method = "loess") +
   facet_wrap(~group, labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -390,7 +595,7 @@ dev.off()
 print("Plot 4")
 e = subset(ts2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
@@ -408,10 +613,10 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
-ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
 
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_numberOfEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = event_asfactor, y = value)) +
   geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
   facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
@@ -430,9 +635,9 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
-ggsave(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_numberOfEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = event_asfactor, y = value)) +
   geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
   facet_wrap(~group, labeller = label_parsed, ncol = 3) +
@@ -443,14 +648,194 @@ ggplot(e, aes(x = event_asfactor, y = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
 dev.off()
 
+# Continuation of plot 4, but includes all four tree lengths
+e = subset(ts2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_event_type != "reciprocal")
+e$age = factor(e$tree_age, ordered = TRUE)
+e$type = paste(e$tree2_event_type, e$tree2_event_position)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
+r2_raw <- c()
+var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+eq_var_list <- rep(var_list, each = 4)
+age_list <- c(0.05, 0.1, 0.5, 1)
+for (var in var_list){
+  var_df <- e[(e$variable == var),]
+  for (t_age in age_list){
+    # get only entries with this variable
+    # insert into regression model
+    age_df <- var_df[(var_df$age == t_age),]
+    age_df$age <- as.numeric(age_df$age)
+    age_df$number_of_events <- as.numeric(age_df$number_of_events)
+    m <- lm(value ~ number_of_events, age_df)
+    r2_var <- summary(m)$r.squared
+    print(paste0("Variable: ",var," - tree depth: ",t_age," - R^2 : ",round(r2_var, digits = 3)))
+    r2_raw <- c(r2_raw, r2_var) 
+  }
+}
+
+# Quick function to reformat r^2 values the way I like
+reformat.r2 <- function(number){
+  number <- round(number, digits = 3)
+}
+
+# Apply function to r^2 values
+r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+replace_inds <- which(r2_plot == 0)
+replace_inds2 <- which(r2_plot == 0.01)
+replace_inds3 <- which(r2_plot == 0.98)
+r2_plot <- as.character(r2_plot)
+r2_plot[replace_inds] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
+r2_plot[replace_inds2] <- "0.010" # add terminal 0
+r2_plot[replace_inds3] <- "0.980" # add terminal 0
+r2_plot <- paste0(" = ", r2_plot)
+
+# Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
+e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 24) , y1_pos = rep(1.1,24), y2_pos = rep(c(4.2, 0.1, 1.05, 0.45, 0.5, 1), each = 4), age = rep(c(0.05, 0.1, 0.5, 1.0), 6),
+                   r2_x_pos = rep(0.6, 24), rsq = r2_plot, rsquare = "R^2 ",
+                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                                  ordered = TRUE, 
+                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) ) ) 
+
+p <- ggplot(e, aes(x = number_of_events, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group~age, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.y = element_text(size = 10), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.png"), plot = p, units = "in", height = 9, width = 9)
+
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+ggplot(e, aes(x = number_of_events, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group~age, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
+        axis.text.y = element_text(size = 10), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+dev.off()
+
+patchwork <- p
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+patchwork + 
+  plot_annotation(title = "Total tree depth (substitutions per site)",
+                  theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
+dev.off()
+
+# Continuation of plot 4, but includes both event types
+e = subset(ts2_df, tree1_tree_shape == 'balanced')
+e = subset(e, tree2_event_type != "none")
+e = subset(e, tree_age == tree_length)
+e$tree2_event_type = factor(e$tree2_event_type, ordered = TRUE)
+e$type = paste(e$tree2_event_type, e$tree2_event_position)
+e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+# Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
+e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
+
+r2_raw <- c()
+var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+eq_var_list <- rep(var_list, each = 2)
+event_list <- c("nonreciprocal","reciprocal")
+for (var in var_list){
+  var_df <- e[(e$variable == var),]
+  for (ev in event_list){
+    # get only entries with this variable
+    # insert into regression model
+    age_df <- var_df[(var_df$tree2_event_type == ev),]
+    m <- lm(value ~ number_of_events, age_df)
+    r2_var <- summary(m)$r.squared
+    print(paste0("Variable: ",var," - event type: ",ev," - R^2 : ", round(r2_var, digits = 3) ))
+    r2_raw <- c(r2_raw, r2_var) 
+  }
+}
+
+# Quick function to reformat r^2 values the way I like
+reformat.r2 <- function(number){
+  number <- round(number, digits = 3)
+}
+
+# Apply function to r^2 values
+r2_plot <- unlist(lapply(r2_raw,reformat.r2))
+replace_inds <- which(r2_plot == 0)
+replace_inds2 <- which(r2_plot == 0.98)
+r2_plot <- as.character(r2_plot)
+r2_plot[replace_inds] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
+r2_plot[replace_inds2] <- "0.980" # pad the 0.98 out with a 0 so it's to 3dp
+r2_plot <- paste0(" = ", r2_plot)
+
+
+# Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
+e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 12) , y1_pos = rep(1.1,12), 
+                   y2_pos = rep(c(1.67, 0.003, 1.02, 0.28, 0.28, 1.05), each = 2),
+                   r2_x_pos = rep(0.5, 12), rsq = r2_plot, rsquare = "R^2 ", tree2_event_type = rep(c("nonreciprocal","reciprocal"),6),
+                   fac_event_type = factor(rep(event_list,6), ordered = TRUE, labels = c("Nonreciprocal","Reciprocal")),
+                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                                  ordered = TRUE, 
+                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
+                                             expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                                             expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) ) ) 
+# Change e$tree2_event_type to a new factor with pretty formatting for output
+e$fac_event_type <- factor(e$tree2_event_type, ordered = TRUE, labels = c("Nonreciprocal","Reciprocal"))
+
+p <- ggplot(e, aes(x = number_of_events, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingNumEvents_RecipNonrecip_regression_freey.png"), plot = p, units = "in", height = 7, width = 5)
+
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingNumEvents_RecipNonrecip_regression_freey.pdf"), height = 7, width = 5, fallback_resolution = 300)
+ggplot(e, aes(x = number_of_events, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
+  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  ylab("\n Test statistic value \n") +
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
+        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
+dev.off()
+
+patchwork <- p
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingNumEvents_RecipNonrecip_regression_freey_withTitle.pdf"), height = 7, width = 5, fallback_resolution = 300)
+patchwork + 
+  plot_annotation(title = "Type of introgression event",
+                  theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
+dev.off()
 
 
 # Plot 5: How does reciprocity of events influence detection of treelikeness?
 print("Plot 5")
 e = subset(ts2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "none")
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
@@ -460,7 +845,7 @@ e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "loess") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
   ylab("\n Test statistic value \n") +
@@ -470,11 +855,11 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
         legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
-ggsave(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_ReciprocialAndNonreciprocalEvents_lm_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_ReciprocialAndNonreciprocalEvents_lm_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "loess") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
   ylab("\n Test statistic value \n") +
@@ -487,7 +872,7 @@ ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
 dev.off()
 
 p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "loess") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
   ylab("\n Test statistic value \n") +
@@ -497,11 +882,11 @@ p <- ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) 
         legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
-ggsave(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_ReciprocialAndNonreciprocalEvents_lm_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_ReciprocialAndNonreciprocalEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_ReciprocialAndNonreciprocalEvents_lm_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = number_of_events, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "loess") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n", breaks = c(0:8), labels = c(0:8)) +
   ylab("\n Test statistic value \n") +
@@ -515,7 +900,7 @@ dev.off()
 
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "none")
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
@@ -525,7 +910,7 @@ e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "gam") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
@@ -535,11 +920,11 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) 
         legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
-ggsave(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_ReciprocialAndNonreciprocalEvents_lm_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_ReciprocialAndNonreciprocalEvents_lm_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "gam") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
@@ -552,7 +937,7 @@ ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
 dev.off()
 
 p <- ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "gam") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
@@ -562,11 +947,11 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) 
         legend.text = element_text(size = 8), legend.title = element_text(size = 10)) + 
   guides(color = guide_legend(title = "Event type")) +
   scale_colour_manual(values = c("gray60","black"),labels = c("Nonreciprocal", "Reciprocal"))
-ggsave(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_ReciprocialAndNonreciprocalEvents_lm_fixedy.png"), plot = p, units = "in", height = 6.6, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_ReciprocialAndNonreciprocalEvents_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_ReciprocialAndNonreciprocalEvents_lm_fixedy.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = proportion_tree2, y = value, colour = tree2_event_type)) +
-  geom_smooth(method = "gam") +
+  geom_smooth(method = "lm") +
   facet_wrap(~group, labeller = label_parsed, ncol = 3) +
   scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
@@ -586,7 +971,7 @@ dev.off()
 print("Plot 6")
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
@@ -606,10 +991,10 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
-ggsave(filename = paste0(plots_folder,"exp3_StatisticalSignificance_freey.png"), plot = p, units = "in", height = 9, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_freey.png"), plot = p, units = "in", height = 9, width = 9)
 
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~proportion_tree2,scales = "free_y", labeller = label_parsed) +
@@ -632,16 +1017,16 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 7), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1) )
-ggsave(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
 patchwork + 
   plot_annotation(title = "Proportion of introgressed DNA (%)",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
 dev.off()
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~proportion_tree2, labeller = label_parsed) +
@@ -657,7 +1042,7 @@ dev.off()
 # exp 2: histograms for p-values, for 0-8 events increasing by 1 event each time, for all test statistics
 e = subset(bs2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "reciprocal")
 e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
@@ -676,9 +1061,9 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(plots_folder,"exp2_StatisticalSignificance_freey.png"), plot = p, units = "in", height = 9, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_freey.png"), plot = p, units = "in", height = 9, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~number_of_events,scales = "free_y", labeller = label_parsed) +
@@ -701,17 +1086,17 @@ p <- ggplot(e, aes(x = value)) +
         axis.text.y = element_text(size = 7), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
   scale_x_continuous(labels = c(0,0.25,0.5,0.75,1))
-ggsave(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
 patchwork + 
   plot_annotation(title = "Number of introgression events",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
 dev.off()
 
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
 ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~number_of_events, labeller = label_parsed) +
@@ -732,7 +1117,7 @@ dev.off()
 print("Plot 7")
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "reciprocal")
 e = subset(e, tree2_event_type != "none")
 e = subset(e, variable != "PHI_observed_p_value")
@@ -775,9 +1160,9 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
                      labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(plots_folder,"exp3_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
 
-cairo_pdf(filename = paste0(plots_folder,"exp3_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6, fallback_resolution = 300)
 ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -795,7 +1180,7 @@ dev.off()
 # and for exp2
 e = subset(bs2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
-e = subset(e, tree_age == 1)
+e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "reciprocal")
 e = subset(e, tree2_event_type != "none")
 e = subset(e, variable != "PHI_observed_p_value")
@@ -804,7 +1189,7 @@ e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_valu
 
 e_none = subset(bs2_df, tree1_tree_shape == 'balanced')
 e_none = subset(e_none, tree2_tree_shape == 'balanced')
-e_none = subset(e_none, tree_age == 1)
+e_none = subset(e_none, tree_age == tree_length)
 e_none = subset(e_none, tree2_event_type == "none")
 e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
 
@@ -850,9 +1235,9 @@ p <- ggplot(f, aes(x = num_events, y = value)) +
                      labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(plots_folder,"exp2_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
 
-cairo_pdf(filename = paste0(plots_folder,"exp2_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6, fallback_resolution = 300)
 ggplot(f, aes(x = num_events, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
