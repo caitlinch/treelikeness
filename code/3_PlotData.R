@@ -72,7 +72,7 @@ bs3_df <- read.csv(paste0(results_folder,melt_files[grep("exp3_p_value",melt_fil
 # Panel colour elements: panel.background = element_rect(fill="white"), panel.grid.major = element_line(colour = "#999999"),panel.grid.minor = element_line(colour = "grey78")
 
 
-# Plot 1: How do different events impact detection of recombination?
+# Plot 1: How do different events impact detection of recombination? ####
 print("Plot 1")
 e <- ts1_df # take the first experiment results and examine how different events impact detection of recombination
 # Take only simulations that had a balanced tree 1 and tree 2
@@ -147,7 +147,7 @@ dev.off()
 
 
 
-# Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness?
+# Plot 2: How does increasing the proportion of the recombinant sequence affect detection of treelikeness? ####
 print("Plot 2")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
@@ -427,7 +427,7 @@ dev.off()
 
 
 
-# Plot 3: How does tree age affect detection of treelikeness?
+# Plot 3: How does tree age affect detection of treelikeness? ####
 print("Plot 3")
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
@@ -591,7 +591,7 @@ dev.off()
 
 
 
-# Plot 4: How does the number of events impact detection of tree likeness?
+# Plot 4: How does the number of events impact detection of tree likeness? ####
 print("Plot 4")
 e = subset(ts2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
@@ -831,7 +831,7 @@ patchwork +
 dev.off()
 
 
-# Plot 5: How does reciprocity of events influence detection of treelikeness?
+# Plot 5: How does reciprocity of events influence detection of treelikeness? ####
 print("Plot 5")
 e = subset(ts2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
@@ -966,7 +966,7 @@ dev.off()
 
 
 
-# Plot 6: increasing proportion of introgressed DNA/increasing number of events - are the results statistically significant?
+# Plot 6: increasing proportion of introgressed DNA/increasing number of events - are the results statistically significant? ####
 # exp 3: histograms for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
 print("Plot 6")
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
@@ -1112,7 +1112,7 @@ dev.off()
 
 
 
-# Plot 7: increasing proportion of introgressed DNA - are the results statistically significant?
+# Plot 7: increasing proportion of introgressed DNA - are the results statistically significant? ####
 # for exp 3: Line graph for p-values, for 0% - 50% introgression in 10% increments, for all test statistics
 print("Plot 7")
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
