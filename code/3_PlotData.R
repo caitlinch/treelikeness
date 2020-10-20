@@ -2,8 +2,6 @@
 # Sourcing this file will open five dataframes and output a number of plots
 # Final result is a number of plots displaying test statistic values under perturbation of various simulation factors
 
-# completed plots: 1,2
-
 ##### Step 1: Open packages #####
 library(ggplot2)
 library(ggpmisc)
