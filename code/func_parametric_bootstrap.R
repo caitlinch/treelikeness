@@ -372,39 +372,72 @@ get.simulation.parameters <- function(dotiqtree_file){
     mrh1      <- strsplit(iq_file[[grep("Model of rate heterogeneity:",iq_file)]],":")[[1]][2] # Extract model of rate heterogeneity 
     mrh2      <- as.numeric(strsplit(iq_file[[(grep("Model of rate heterogeneity:",iq_file)+1)]],":")[[1]][2]) # Line after the "model of rate heterogeneity" varies - extract it regardless of what it is 
     mrh2_name <- strsplit(iq_file[[(grep("Model of rate heterogeneity:",iq_file)+1)]],":")[[1]][1] # As the line varies, extract the name for the output dataframe
-    mrh2_name <- gsub(" ","_",mrh2_name) # change the name to be easy to parse
     # Extract state frequencies
     sf1      <- strsplit(iq_file[[grep("State frequencies:",iq_file)]],":")[[1]][2]
     
     # make a list of the rows for the output dataframe
-    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model","model_of_rate_heterogeneity",mrh2_name,"state_frequencies")
+    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model","model_of_rate_heterogeneity","model_of_rate_heterogeneity_line2_name","model_of_rate_heterogeneity_line2_value","state_frequencies")
     # Make a list of the output rows for the first output dataframe
-    op <- c(op1,"amino-acid",op2,op3,op4,mrh1,mrh2,sf1)
+    op <- c(op1,"amino-acid",op2,op3,op4,mrh1,mrh2_name,mrh2,sf1)
     op_df <- data.frame(names,op)
     names(op_df) <- c("parameter","value")
     
-    #Create the matrix for discrete gamma categories
-    g_start <- grep(" Category",iq_file)+1 # get the index for the first line of the gamma categories matrix
-    empty   <- which(iq_file=="") # get indexes of all empty lines
-    empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
-    g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
-    g1 <- c() # initialise columns to store data in
-    g2 <- c()
-    g3 <- c()
-    # Iterate through rows in gamma matrix
-    for (i in g_start:g_end){
-      row <- strsplit(iq_file[[i]],"        ") # split the rows on the long strong of 0's in the middle
-      g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
-      g2 <- c(g2,as.numeric(row[[1]][2]))
-      g3 <- c(g3,as.numeric(row[[1]][3]))
+    # Check whether a gamma matrix is needed
+    mrh1_check <- gsub(" ","",mrh1)
+    if (mrh1_check=="Uniform"){
+      # If the model for rate heterogeneity is uniform, don't need to create a matrix for discrete gamma rate categories
+      g_df <- "Uniform"
+    } else {
+      #Create the matrix for discrete gamma categories
+      g_start <- grep(" Category",iq_file)+1 # get the index for the first line of the gamma categories matrix
+      empty   <- which(iq_file=="") # get indexes of all empty lines
+      empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
+      g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
+      g1 <- c() # initialise columns to store data in
+      g2 <- c()
+      g3 <- c()
+      # Iterate through rows in gamma matrix
+      for (i in g_start:g_end){
+        row <- strsplit(iq_file[[i]],"        ") # split the rows on the long strong of 0's in the middle
+        g1 <- c(g1,as.numeric(row[[1]][1])) # add the values to the columns
+        g2 <- c(g2,as.numeric(row[[1]][2]))
+        g3 <- c(g3,as.numeric(row[[1]][3]))
+      }
+      g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
+      names(g_df) <- c("category","relative_rate","proportion") # name the columns 
     }
-    g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
-    names(g_df) <- c("category","relative_rate","proportion") # name the columns
+    
+    # Check whether state frequencies are needed
+    sf1_squashed <- gsub(" ","",sf1)
+    if (sf1_squashed == "(empiricalcountsfromalignment)"){
+      # Get starting line for frequencies
+      start_ind <- grep("State frequencies:",iq_file) + 2
+      # Take the 20 lines containing AA frequencies
+      freq_lines <- iq_file[start_ind:(start_ind+19)]
+      # Split up the frequency lines into the label and the frequency
+      freq_split <- unlist(strsplit(freq_lines,"="))
+      # Get the frequency
+      freq_nums <- freq_split[c(FALSE,TRUE)]
+      # Remove any spaces (from IQTree formatting)
+      freq_nums <- gsub(" ","",freq_nums)
+      # Get corresponding AA letter
+      freq_names <- freq_split[c(TRUE,FALSE)]
+      # Remove IQTree formatting
+      freq_names <- gsub("pi\\(","",freq_names)
+      freq_names <- gsub("\\)","",freq_names)
+      freq_names <- gsub(" ","", freq_names)
+      # Create a nice dataframe
+      f_df <- data.frame("amino_acid" = freq_names,
+                         "frequency" = freq_nums,
+                         stringsAsFactors = FALSE)
+    } else {
+      f_df <- "State frequencies from model"
+    }
     
     # Create a list of the dataframes - this will be the output
-    params <- list(op_df,g_df)
+    params <- list(op_df,g_df,f_df)
     # Name the parameters so they're easy to access once you've outputted the data
-    names(params) <- c("parameters","gamma_categories")
+    names(params) <- c("parameters","gamma_categories", "frequency")
   }
   
   # Now the information has been collected, create an output dataframe
