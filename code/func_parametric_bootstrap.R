@@ -254,6 +254,15 @@ get.simulation.parameters <- function(dotiqtree_file){
   sub_str     <- iq_file[[ind]] # get the line that contains this info
   sub_ls      <- strsplit(sub_str," ")
   op4         <- sub_ls[[1]][4]
+  # Extract information about the sequence alignment
+  ind <- grep("Number of constant sites:",iq_file)
+  num_lines <- iq_file[c(ind:(ind+3))] # take the four lines listing the number of different kinds of sites
+  num_split <- unlist(strsplit(num_lines,":")) # Split the lines at the colon
+  num_names <- num_split[c(TRUE,FALSE)] # before the colon = name
+  num_vals <- num_split[c(FALSE,TRUE)] # after the colon = value
+  num_vals_regx <- regmatches(num_vals, gregexpr("[[:digit:]]+", num_vals)) # extract all the numbers after the colon
+  # four strings = four lists of numbers: take first value from each list to get number of sites
+  num_vals <- c(num_vals_regx[[1]][1],num_vals_regx[[2]][1],num_vals_regx[[3]][1],num_vals_regx[[4]][1]) 
   
   # check the type of sites - amino acid or DNA
   # if the input is DNA (nucleotide sites), gather that information
@@ -289,10 +298,10 @@ get.simulation.parameters <- function(dotiqtree_file){
     mrh2_name <- gsub(" ","_",mrh2_name) # change the name to be easy to parse
     
     # make a list of the rows for the output dataframe
-    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model", "A-C_rate","A-G_rate","A-T_rate","C-G_rate","C-T_rate","G-T_rate","A_freq","C_freq",
-               "G_freq","T_freq","model_of_rate_heterogeneity",mrh2_name)
+    names <- c("file_name","sequence_type","n_taxa","n_sites",num_names,"substitution_model", "A-C_rate","A-G_rate","A-T_rate","C-G_rate","C-T_rate","G-T_rate","A_freq","C_freq",
+               "G_freq","T_freq","model_of_rate_heterogeneity","model_of_rate_heterogeneity_line2_name","model_of_rate_heterogeneity_line2_value")
     # Make a list of the output rows for the output dataframe
-    op <- c(op1,"DNA",op2,op3,op4,rate1,rate2,rate3,rate4,rate5,rate6,sf1,sf2,sf3,sf4,mrh1,mrh2)
+    op <- c(op1,"DNA",op2,op3,num_vals,op4,rate1,rate2,rate3,rate4,rate5,rate6,sf1,sf2,sf3,sf4,mrh1,mrh2_name,mrh2)
     # Create the output dataframe
     op_df <- data.frame(names,op, stringsAsFactors = FALSE)
     # Name the columns
@@ -376,9 +385,10 @@ get.simulation.parameters <- function(dotiqtree_file){
     sf1      <- strsplit(iq_file[[grep("State frequencies:",iq_file)]],":")[[1]][2]
     
     # make a list of the rows for the output dataframe
-    names <- c("file_name","sequence_type","n_taxa","n_sites","substitution_model","model_of_rate_heterogeneity","model_of_rate_heterogeneity_line2_name","model_of_rate_heterogeneity_line2_value","state_frequencies")
+    names <- c("file_name","sequence_type","n_taxa","n_sites",num_names,"substitution_model","model_of_rate_heterogeneity","model_of_rate_heterogeneity_line2_name",
+               "model_of_rate_heterogeneity_line2_value","state_frequencies")
     # Make a list of the output rows for the first output dataframe
-    op <- c(op1,"amino-acid",op2,op3,op4,mrh1,mrh2_name,mrh2,sf1)
+    op <- c(op1,"amino-acid",op2,op3,num_vals,op4,mrh1,mrh2_name,mrh2,sf1)
     op_df <- data.frame(names,op)
     names(op_df) <- c("parameter","value")
     
