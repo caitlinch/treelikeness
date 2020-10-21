@@ -389,7 +389,7 @@ get.simulation.parameters <- function(dotiqtree_file){
                "model_of_rate_heterogeneity_line2_value","state_frequencies")
     # Make a list of the output rows for the first output dataframe
     op <- c(op1,"amino-acid",op2,op3,num_vals,op4,mrh1,mrh2_name,mrh2,sf1)
-    op_df <- data.frame(names,op)
+    op_df <- data.frame(names,op, stringsAsFactors = FALSE)
     names(op_df) <- c("parameter","value")
     
     # Check whether a gamma matrix is needed
@@ -413,7 +413,7 @@ get.simulation.parameters <- function(dotiqtree_file){
         g2 <- c(g2,as.numeric(row[[1]][2]))
         g3 <- c(g3,as.numeric(row[[1]][3]))
       }
-      g_df <- data.frame(g1,g2,g3) # create a dataframe of the information
+      g_df <- data.frame(g1,g2,g3, stringsAsFactors = FALSE) # create a dataframe of the information
       names(g_df) <- c("category","relative_rate","proportion") # name the columns 
     }
     
