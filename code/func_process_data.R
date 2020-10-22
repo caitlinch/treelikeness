@@ -34,6 +34,9 @@ collate.bootstraps <- function(directory, file.name, id, output.file.name){
   id_files <- all_files[grep(id,all_files)]
   # Get the files of interest and their full file paths
   csv_paths <- id_files[grep(file.name,id_files)]
+  # Remove collated test statistic file from the list of csvs
+  collated_name <- basename(output.file.name)
+  csv_paths <- csv_paths[!grepl(collated_name,csv_paths)]
   if (length(csv_paths) > 0){
     csv_paths <- paste0(dirname(directory),"/",basename(directory),"/",csv_paths)
     # Set the number of rows in the dataframe (will equal the number of csv files: one per simulation + one for the original empirical alignment)
