@@ -160,7 +160,7 @@ r2_plot[replace_inds3] <- "0.980" # add terminal 0
 
 r2_plot <- paste0(" = ", r2_plot)
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
-e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 24) , y1_pos = rep(1.1,24), y2_pos = rep(c(4.2, 0.1, 1.05, 0.45, 0.5, 1), each = 4), age = rep(c(0.05, 0.1, 0.5, 1.0), 6),
+e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 24) , y1_pos = rep(1.1,24), y2_pos = rep(c(4.3, 0.003, 1.05, 0.45, 0.45, 1), each = 4), age = rep(c(0.05, 0.1, 0.5, 1.0), 6),
                    r2_x_pos = rep(0.6, 24), rsq = r2_plot, rsquare = "R^2 ",
                    group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
                                   ordered = TRUE, 
@@ -177,8 +177,8 @@ p <- ggplot(e, aes(x = number_of_events, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
         axis.text.y = element_text(size = 10), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
-  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 4) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 4)
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.png"), plot = p, units = "in", height = 9, width = 9)
 
 cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
@@ -191,8 +191,8 @@ ggplot(e, aes(x = number_of_events, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
         axis.text.y = element_text(size = 10), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
-  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 4) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 4)
 dev.off()
 
 patchwork <- p
