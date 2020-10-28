@@ -31,7 +31,7 @@ library(patchwork)
 
 #__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
 results_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/output/"
-plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/simulations_20200304/plots/"
+plots_folder <- "/Users/caitlincherryh/Documents/Honours/Results/publication_plots_20201028/"
 maindir <- "/Users/caitlincherryh/Documents/Repositories/treelikeness/"
 run_id = FALSE
 tree_length = 0.5 # To reproduce figures from the publication, use tree_length = 0.5
@@ -138,7 +138,7 @@ for (var in var_list){
     age_df$number_of_events <- as.numeric(age_df$number_of_events)
     m <- lm(value ~ number_of_events, age_df)
     r2_var <- summary(m)$r.squared
-    print(paste0("Variable: ",var," - tree depth: ",t_age," - R^2 : ",round(r2_var, digits = 3)))
+    #print(paste0("Variable: ",var," - tree depth: ",t_age," - R^2 : ",round(r2_var, digits = 3)))
     r2_raw <- c(r2_raw, r2_var) 
   }
 }
@@ -230,7 +230,7 @@ for (var in var_list){
     age_df <- var_df[(var_df$tree2_event_type == ev),]
     m <- lm(value ~ number_of_events, age_df)
     r2_var <- summary(m)$r.squared
-    print(paste0("Variable: ",var," - event type: ",ev," - R^2 : ", round(r2_var, digits = 3) ))
+    #print(paste0("Variable: ",var," - event type: ",ev," - R^2 : ", round(r2_var, digits = 3) ))
     r2_raw <- c(r2_raw, r2_var) 
   }
 }
@@ -488,7 +488,7 @@ for (var in var_list){
     age_df <- var_df[(var_df$age == t_age),]
     m <- lm(value ~ proportion_tree2, age_df)
     r2_var <- summary(m)$r.squared
-    print(paste0("Variable: ",var," - tree depth: ",t_age," - R^2 : ",round(r2_var, digits = 3)))
+    #print(paste0("Variable: ",var," - tree depth: ",t_age," - R^2 : ",round(r2_var, digits = 3)))
     r2_raw <- c(r2_raw, r2_var) 
   }
 }
@@ -576,7 +576,7 @@ for (var in var_list){
     age_df <- var_df[(var_df$tree2_event_type == ev),]
     m <- lm(value ~ proportion_tree2, age_df)
     r2_var <- summary(m)$r.squared
-    print(paste0("Variable: ",var," - event type: ",ev," - R^2 : ", round(r2_var, digits = 3) ))
+    #print(paste0("Variable: ",var," - event type: ",ev," - R^2 : ", round(r2_var, digits = 3) ))
     r2_raw <- c(r2_raw, r2_var) 
   }
 }
