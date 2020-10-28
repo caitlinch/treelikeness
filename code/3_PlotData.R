@@ -417,7 +417,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
 dev.off()
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingProportionTree2_RecipNonrecip_regression_freey_withTitle.pdf"), height = 8, width = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey_withTitle.pdf"), height = 8, width = 6, fallback_resolution = 300)
 patchwork + 
   plot_annotation(title = "Type of introgression event",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
@@ -798,7 +798,7 @@ p <- ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
@@ -812,7 +812,7 @@ ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +

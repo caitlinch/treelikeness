@@ -266,7 +266,7 @@ p <- ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
@@ -280,7 +280,7 @@ ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
