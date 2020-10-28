@@ -551,7 +551,7 @@ dev.off()
 
 
 
-#### Plot 8: Plot the test statistic values for both reciprocal and non-reciprocal events, for increasing proportion of introgressed DNA ####
+#### Plot 8: Plot the test statistic values for both reciprocal and non-reciprocal events, for increasing proportion of DNA introgressed ####
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree_age == tree_length)
@@ -645,7 +645,7 @@ dev.off()
 
 
 
-#### Plot 9: one tree depth, test statistic value for increasing proportion of introgressed DNA ####
+#### Plot 9: one tree depth, test statistic value for increasing proportion of DNA introgressed ####
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -724,7 +724,7 @@ dev.off()
 
 
 
-#### Plot 10: Statistical significance for increasing proportion of introgressed DNA, as histogram ####
+#### Plot 10: Statistical significance for increasing proportion of DNA introgressed, as histogram ####
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -752,7 +752,7 @@ ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_Statistica
 patchwork <- p
 cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
 patchwork + 
-  plot_annotation(title = "Proportion of introgressed DNA (%)",
+  plot_annotation(title = "Proportion of DNA introgressed (%)",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
 dev.off()
 
@@ -772,7 +772,7 @@ dev.off()
 
 
 
-#### Plot 11: Statistical significance for increasing proportion of introgressed DNA, as histogram ####
+#### Plot 11: Statistical significance for increasing proportion of DNA introgressed, as histogram ####
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -813,7 +813,7 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 8),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 10), legend.title = element_text(size = 10)) +
-  scale_x_continuous(name = "\n Proportion of introgressed DNA (%) \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
+  scale_x_continuous(name = "\n Proportion of DNA introgressed (%) \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
                      labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
@@ -828,7 +828,7 @@ ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 8),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 10), legend.title = element_text(size = 10)) +
-  scale_x_continuous(name = "\n Proportion of introgressed DNA (%) \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
+  scale_x_continuous(name = "\n Proportion of DNA introgressed (%) \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
                      labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
