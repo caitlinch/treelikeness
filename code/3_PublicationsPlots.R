@@ -95,7 +95,7 @@ p <- ggplot(e, aes(x = type, y = value)) +
         strip.text = element_text(size = 9), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_freey.png"), plot = p, units = "in", height = 8, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_freey.pdf"), height = 8, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp1_differentEventTypes_freey.pdf"), height = 8, width = 9)
 ggplot(e, aes(x = type, y = value)) +
   geom_boxplot(outlier.size = 1) +
   facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
@@ -181,7 +181,7 @@ p <- ggplot(e, aes(x = number_of_events, y = value)) +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 4)
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.png"), plot = p, units = "in", height = 9, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey.pdf"), height = 9, width = 9)
 ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -196,7 +196,7 @@ ggplot(e, aes(x = number_of_events, y = value)) +
 dev.off()
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_allTreeDepths_regression_freey_withTitle.pdf"), height = 9, width = 9)
 patchwork + 
   plot_annotation(title = "Total tree depth (substitutions per site)",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
@@ -275,7 +275,7 @@ p <- ggplot(e, aes(x = number_of_events, y = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey.png"), plot = p, units = "in", height = 7, width = 5)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey.pdf"), height = 7, width = 5, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey.pdf"), height = 7, width = 5)
 ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -290,7 +290,7 @@ ggplot(e, aes(x = number_of_events, y = value)) +
 dev.off()
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey_withTitle.pdf"), height = 7, width = 5, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey_withTitle.pdf"), height = 7, width = 5)
 patchwork + 
   plot_annotation(title = "Type of introgression event",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
@@ -323,7 +323,7 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
 
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.pdf"), height = 6.6, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.pdf"), height = 6.6, width = 9)
 ggplot(e, aes(x = event_asfactor, y = value)) +
   geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
   facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
@@ -363,13 +363,13 @@ p <- ggplot(e, aes(x = value)) +
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9)
 patchwork + 
   plot_annotation(title = "Number of introgression events",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
 dev.off()
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9)
 ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~number_of_events, labeller = label_parsed) +
@@ -445,7 +445,7 @@ p <- ggplot(f, aes(x = num_events, y = value)) +
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6)
 ggplot(f, aes(x = num_events, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -527,7 +527,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey.png"), plot = p, units = "in", height = 9, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey.pdf"), height = 9, width = 9)
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -542,7 +542,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
 dev.off()
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_allTreeDepths_regression_freey_withTitle.pdf"), height = 9, width = 9)
 patchwork + 
   plot_annotation(title = "Total tree depth (substitutions per site)",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
@@ -620,7 +620,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey.png"), plot = p, units = "in", height = 7, width = 6)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey.pdf"), height = 7, width = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey.pdf"), height = 7, width = 6)
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -635,7 +635,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
 dev.off()
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey_withTitle.pdf"), height = 8, width = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_RecipNonrecip_regression_freey_withTitle.pdf"), height = 8, width = 6)
 patchwork + 
   plot_annotation(title = "Type of introgression event",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
@@ -706,7 +706,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6.57, width = 9)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9)
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -750,13 +750,13 @@ p <- ggplot(e, aes(x = value)) +
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy.png"), plot = p, units = "in", height = 9, width = 9)
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9)
 patchwork + 
   plot_annotation(title = "Proportion of DNA introgressed (%)",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
 dev.off()
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy.pdf"), height = 9, width = 9)
 ggplot(e, aes(x = value)) +
   geom_histogram(breaks = c(seq(0,1,0.05))) +
   facet_grid(group~proportion_tree2, labeller = label_parsed) +
@@ -772,7 +772,7 @@ dev.off()
 
 
 
-#### Plot 11: Statistical significance for increasing proportion of DNA introgressed, as histogram ####
+#### Plot 11: Statistical significance for increasing proportion of DNA introgressed, as plot ####
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -820,7 +820,7 @@ p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6)
 ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
@@ -835,3 +835,132 @@ ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 dev.off()
 
+
+
+
+#### Plots 12 and 13: p-value lines for all 4 tree depths ####
+# for experiment 1 (increasing proportion of DNA)
+datalist <- list(1,2,3,4)
+tree_lengths = c(0.05,0.10,0.50,1.00)
+for (tl in tree_lengths){
+  ind = which(tree_lengths == tl)
+  e = subset(bs3_df, tree1_tree_shape == 'balanced')
+  e = subset(e, tree2_tree_shape == 'balanced')
+  e = subset(e, tree_age == tl)
+  e = subset(e, tree2_event_type != "reciprocal")
+  e = subset(e, tree2_event_type != "none")
+  e = subset(e, variable != "PHI_observed_p_value")
+  e = subset(e, variable != "num_recombinant_sequences_p_value")
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  
+  # to make new df for the plot
+  PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                   nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                     nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                            nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                            nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  
+  
+  value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
+  ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("neighbour_net_trimmed_p_value",6))
+  proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
+  f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                       labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
+  f$tree_age <- tl
+  datalist[[ind]] <- f
+}
+df <- do.call(rbind,datalist)
+
+p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ tree_age, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Tree age")
+
+ggsave(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines.png"), plot = p, units = "in", height = 10.9, width = 9.51)
+
+
+## For experiment 2 (increasing number of events)
+tree_lengths = c(0.05,0.10,0.50,1.00)
+datalist <- list(1,2,3,4)
+for (tl in tree_lengths){
+  ind = which(tree_lengths == tl)
+  e = subset(bs2_df, tree1_tree_shape == 'balanced')
+  e = subset(e, tree2_tree_shape == 'balanced')
+  e = subset(e, tree_age == tl)
+  e = subset(e, tree2_event_type != "reciprocal")
+  e = subset(e, tree2_event_type != "none")
+  e = subset(e, variable != "PHI_observed_p_value")
+  e = subset(e, variable != "num_recombinant_sequences_p_value")
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  
+  e_none = subset(bs2_df, tree1_tree_shape == 'balanced')
+  e_none = subset(e_none, tree2_tree_shape == 'balanced')
+  e_none = subset(e_none, tree_age == tree_length)
+  e_none = subset(e_none, tree2_event_type == "none")
+  e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  
+  # to make new df for the plot
+  PHI_p_value <- c(nrow(e_none[e_none$variable == "PHI_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                   nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                   nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  X3SEQ_p_value <- c(nrow(e_none[e_none$variable == "X3Seq_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                     nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                     nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "likelihood_mapping_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  mean_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mean_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                            nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                            nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  mode_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mode_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                            nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                            nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "neighbour_net_trimmed_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  
+  value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
+  value = value/20*100 # 20 replicates performed for each event - divide by 20 to get percentage
+  ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("neighbour_net_trimmed_p_value",9))
+  num_events <- c(rep(seq(0,8,1),6))
+  f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                       labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
+  f$tree_age <- tl
+  datalist[[ind]] <- f
+}
+df <- do.call(rbind,datalist)
+
+p <- ggplot(df, aes(x = num_events, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ tree_age, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,2), breaks = seq(0,8,2), limits = c(0,8), minor_breaks = seq(0,8,1)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Tree age")
+
+
+ggsave(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines.png"), plot = p, units = "in", height = 10.9, width = 9.51)
