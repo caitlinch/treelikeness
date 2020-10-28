@@ -273,9 +273,9 @@ p <- ggplot(e, aes(x = number_of_events, y = value)) +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
         axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm")))
-ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingNumEvents_RecipNonrecip_regression_freey.png"), plot = p, units = "in", height = 7, width = 5)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey.png"), plot = p, units = "in", height = 7, width = 5)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingNumEvents_RecipNonrecip_regression_freey.pdf"), height = 7, width = 5, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey.pdf"), height = 7, width = 5, fallback_resolution = 300)
 ggplot(e, aes(x = number_of_events, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
@@ -290,7 +290,7 @@ ggplot(e, aes(x = number_of_events, y = value)) +
 dev.off()
 
 patchwork <- p
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingNumEvents_RecipNonrecip_regression_freey_withTitle.pdf"), height = 7, width = 5, fallback_resolution = 300)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_increasingNumEvents_RecipNonrecip_regression_freey_withTitle.pdf"), height = 7, width = 5, fallback_resolution = 300)
 patchwork + 
   plot_annotation(title = "Type of introgression event",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
