@@ -891,7 +891,7 @@ p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) +
                      labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
-  labs(subtitle = "Tree age")
+  labs(subtitle = "Total tree depth (substitutions per site)")
 
 ggsave(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines.png"), plot = p, units = "in", height = 10.9, width = 9.51)
 
@@ -960,7 +960,135 @@ p <- ggplot(df, aes(x = num_events, y = value)) +
                      labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
-  labs(subtitle = "Tree age")
+  labs(subtitle = "Total tree depth (substitutions per site)")
 
 
 ggsave(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines.png"), plot = p, units = "in", height = 10.9, width = 9.51)
+
+#### Plots 14 and 15: p-value lines both event types ####
+# for experiment 1 (increasing proportion of DNA)
+datalist <- list(1,2)
+event_types = c("nonreciprocal","reciprocal")
+for (et in event_types){
+  ind <- which(event_types == et)
+  e = subset(bs3_df, tree1_tree_shape == 'balanced')
+  e = subset(e, tree2_tree_shape == 'balanced')
+  e = subset(e, tree_age == 0.5)
+  e = subset(e, tree2_event_type != "none")
+  e = subset(e, tree2_event_type == et)
+  e = subset(e, variable != "PHI_observed_p_value")
+  e = subset(e, variable != "num_recombinant_sequences_p_value")
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  
+  # to make new df for the plot
+  PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                   nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                     nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                            nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                            nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  
+  
+  value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
+  ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("neighbour_net_trimmed_p_value",6))
+  proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
+  f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                       labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
+  f$event_type <- et
+  datalist[[ind]] <- f
+}
+df <- do.call(rbind,datalist)
+df$et_factor <- factor(df$event_type, levels = c("nonreciprocal","reciprocal"), labels = c("Nonreciprocal","Reciprocal"), ordered = TRUE)
+
+p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ et_factor, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Type of introgression event")
+
+ggsave(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines_eventType.png"), plot = p, units = "in")
+
+# for experiment 2 (increasing number of events)
+datalist <- list(1,2)
+event_types = c("nonreciprocal","reciprocal")
+for (et in event_types){
+  ind <- which(event_types == et)
+  e = subset(bs2_df, tree1_tree_shape == 'balanced')
+  e = subset(e, tree2_tree_shape == 'balanced')
+  e = subset(e, tree_age == 0.5)
+  e = subset(e, tree2_event_type != "none")
+  e = subset(e, tree2_event_type == et)
+  e = subset(e, variable != "PHI_observed_p_value")
+  e = subset(e, variable != "num_recombinant_sequences_p_value")
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  
+  e_none = subset(bs2_df, tree1_tree_shape == 'balanced')
+  e_none = subset(e_none, tree2_tree_shape == 'balanced')
+  e_none = subset(e_none, tree_age == tree_length)
+  e_none = subset(e_none, tree2_event_type == "none")
+  e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  
+  # to make new df for the plot
+  PHI_p_value <- c(nrow(e_none[e_none$variable == "PHI_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                   nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                   nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  X3SEQ_p_value <- c(nrow(e_none[e_none$variable == "X3Seq_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                     nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                     nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "likelihood_mapping_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  mean_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mean_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                            nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                            nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  mode_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mode_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                            nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                            nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "neighbour_net_trimmed_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  
+  value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
+  value = value/20*100 # 20 replicates performed for each event - divide by 20 to get percentage
+  ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("neighbour_net_trimmed_p_value",9))
+  num_events <- c(rep(seq(0,8,1),6))
+  f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+                       labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
+  f$event_type <- et
+  datalist[[ind]] <- f
+}
+df <- do.call(rbind,datalist)
+df$et_factor <- factor(df$event_type, levels = c("nonreciprocal","reciprocal"), labels = c("Nonreciprocal","Reciprocal"), ordered = TRUE)
+
+p <- ggplot(df, aes(x = num_events, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ et_factor, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,2), breaks = seq(0,8,2), limits = c(0,8), minor_breaks = seq(0,8,1)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Type of introgression event")
+
+ggsave(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines_eventType.png"), plot = p, units = "in")
+
