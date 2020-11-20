@@ -403,7 +403,19 @@ get.simulation.parameters <- function(dotiqtree_file){
       empty   <- which(iq_file=="") # get indexes of all empty lines
       empty   <- empty[empty>g_start] # get empty lines above gamma categories matrix
       g_end   <- empty[1]-1 # get end index for gamma categories matrix (one less than next empty line)
-      g1 <- c() # initialise columns to store data in
+      end_line <- iq_file[g_end]
+      # if the end isn't an empty line, subtract one from the end count 
+      # to exclude lines like "Relative rates are computed as MEAN of the portion of the Gamma distribution falling in the category."
+      # to see if this is what's happening, check whether the line starts with a numeric section (i.e. a category for the gamma rate)
+      check_line <- length(strsplit(strsplit(end_line, "        " )[[1]][1]," ")[[1]])
+      if (check_line > 3){
+        # If the check_line is longer than 3 objects, it won't be a group for the gamma categories but an instruction
+        # Eg. the relative rates line has 17 objects, because each word in the sentence is an object
+        # Instructions can be excluded from the gamma matrix (but categories can't)
+        g_end = g_end - 1
+      }
+      # initialise columns to store data in
+      g1 <- c()
       g2 <- c()
       g3 <- c()
       # Iterate through rows in gamma matrix
