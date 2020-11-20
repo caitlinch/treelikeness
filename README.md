@@ -21,7 +21,7 @@ This repository contains code to simulate a series of sequence alignments and es
     * SplitsTree v4 (https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/algorithms-in-bioinformatics/software/splitstree/)
 3. Prepare scripts
     * Create an output folder (to store alignments and other files that are created during the simulations) and a results folder (to store the test statistic and statistical test results and the plots)
-    * Open scripts numbered 1-4 in the `code` folder. In each file, go to Step 2 and update the file paths for your own machine
+    * Open scripts numbered 1-4 in the `code` folder. Open each file, go to `Step 2` and update the file paths for your own machine
 4. Run Part 1
     * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will run entirely sequentially. Edit this variable to increae the number of cores and therefore the number of simultaneous analyses
     * By default, the number of parametric bootstrap replicates performed is 199. To change this, edit the `num_reps` variable
@@ -32,7 +32,7 @@ This repository contains code to simulate a series of sequence alignments and es
     * Run the file `2_CollateData.R`
         * The raw test statistic data has been collated into one csv file per experiment, plus one csv for the p values from the parametric bootstrap performed in experiment 3.
 6. Run Part 3
-    * Run the file `3_PlotData.R`
+    * Run the file `3_PublicationPlots.R`
         * This will generate a number of plots depicting the results of the experiments
 
 ***
