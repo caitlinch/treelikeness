@@ -40,14 +40,14 @@ This repository contains code to simulate a series of sequence alignments and es
 If you use this method, please reference:
 
 1. This repository (http://github.com/caitlinch/treelikeness)
-2. The programs used within this analysis
+2. The programs and methods used within this analysis
     * IQ-Tree
         * If using IQ-Tree 1:
-            * Nguyen L-T, Schmidt HA, von Haeseler A, Minh BQ. 2015. IQ-TREE: A fast and effective stochastic algorithm for estimating maximum likelihood phylogenies, _Mol. Biol. Evol._, 32(1):268-274. https://doi.org/10.1093/molbev/msu300
-        * If using IQ-Tree 2 and when using likelihood mapping implementation in IQ-Tree:
+            * Nguyen L-T, Schmidt HA, von Haeseler A, Minh BQ. 2015. IQ-TREE: A fast and effective stochastic algorithm for estimating maximum likelihood phylogenies, _Mol. Biol. Evol._, 32(1):268-274.
+        * If using IQ-Tree 2:
             * Minh BQ, Schmidt HA, Chernomor O, Schrempf D, Woodhams MD, von Haeseler A, Lanfear R. 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference in the genomic era, _Mol. Biol. Evol._, 37(5):1530-1534
         * __Additionally__, cite ModelFinder (used for model selection) 
-            * Kalyaanamoorthy S, Minh BQ, Wong TKF, von Haeseler A, Jermiin LS. 2017. ModelFinder: Fast model selection for accurate phylogenetic estimates. _Nat. Methods_, 14:587-589. https://doi.org/10.1038/nmeth.4285
+            * Kalyaanamoorthy S, Minh BQ, Wong TKF, von Haeseler A, Jermiin LS. 2017. ModelFinder: Fast model selection for accurate phylogenetic estimates. _Nat. Methods_, 14:587-589.
     * δ plots
         * When using δ plots:
             * Holland BR , Huber KT, Dress A, Moulton V. 2002. δ Plots: A Tool for Analyzing Phylogenetic Distance Data, _Mol Biol Evol_, 19(12):2051–2059
@@ -58,6 +58,11 @@ If you use this method, please reference:
             * Lam HM, Ratmann O, Boni MF. 2018. Improved algorithmic complexity for the 3SEQ recombination detection algorithm.  _Mol Biol Evol_, 35(1):247-251
         * When referring to core parts of the statistic:
             * Boni MF, Posada D, Feldman MW. 2007. An exact nonparametric method for inferring mosaic structure in sequence triplets.  _Genetics_, 176(2):1035-1047
+    * Likelihood mapping
+        * When using likelihood mapping:
+            * Strimmer K, von Haeseler A. 1997. Likelihood-mapping: a simple method to visualize phylogenetic content of a sequence alignment. _Proc Natl Acad Sci U S A_, 94(13):6815-6819.
+        * When using the IQTree 2 implementation of likelihood mapping:
+            * Minh BQ, Schmidt HA, Chernomor O, Schrempf D, Woodhams MD, von Haeseler A, Lanfear R. 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference in the genomic era, _Mol. Biol. Evol._, 37(5):1530-1534
     * PhiPack
         * When using PhiPack:
             * Bruen T, Phillipe H and Bryant D. 2006. A quick and robust statistical test to detect the presence of recombination. _Genetics_ 172(4):2665-2681
