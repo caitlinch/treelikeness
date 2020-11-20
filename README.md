@@ -43,23 +43,43 @@ If you use this method, please reference:
 2. The programs used within this analysis
     * IQ-Tree
         * If using IQ-Tree 1:
-            * L.-T. Nguyen, H.A. Schmidt, A. von Haeseler, B.Q. Minh (2015) IQ-TREE: A fast and effective stochastic algorithm for estimating maximum likelihood phylogenies, _Mol. Biol. Evol._, 32:268-274. https://doi.org/10.1093/molbev/msu300
-        * If using IQ-Tree 2:
-            * B.Q. Minh, H.A. Schmidt, O. Chernomor, D. Schrempf, M.D. Woodhams, A. von Haeseler, R. Lanfear (2019) IQ-TREE 2: New models and efficient methods for phylogenetic inference in the genomic era, _Mol. Biol. Evol._, in press:. https://doi.org/10.1093/molbev/msaa015
+            * Nguyen L-T, Schmidt HA, von Haeseler A, Minh BQ. 2015. IQ-TREE: A fast and effective stochastic algorithm for estimating maximum likelihood phylogenies, _Mol. Biol. Evol._, 32(1):268-274. https://doi.org/10.1093/molbev/msu300
+        * If using IQ-Tree 2 and when using likelihood mapping implementation in IQ-Tree:
+            * Minh BQ, Schmidt HA, Chernomor O, Schrempf D, Woodhams MD, von Haeseler A, Lanfear R. 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference in the genomic era, _Mol. Biol. Evol._, 37(5):1530-1534
         * __Additionally__, cite ModelFinder (used for model selection) 
-            * S. Kalyaanamoorthy, B.Q. Minh, T.K.F. Wong, A. von Haeseler, L.S. Jermiin (2017) ModelFinder: Fast model selection for accurate phylogenetic estimates. _Nat. Methods_, 14:587-589. https://doi.org/10.1038/nmeth.4285
+            * Kalyaanamoorthy S, Minh BQ, Wong TKF, von Haeseler A, Jermiin LS. 2017. ModelFinder: Fast model selection for accurate phylogenetic estimates. _Nat. Methods_, 14:587-589. https://doi.org/10.1038/nmeth.4285
+    * δ plots
+        * When using δ plots:
+            * Holland BR , Huber KT, Dress A, Moulton V. 2002. δ Plots: A Tool for Analyzing Phylogenetic Distance Data, _Mol Biol Evol_, 19(12):2051–2059
+        * When using the delta.plot function from the R package "ape"
+            * Paradis E, Claude J, Strimmer K. 2004. APE: analyses of phylogenetics and evolution in R language. _Bioinformatics_ 20(2):289-290.
     * 3SEQ
         * When using 3SEQ: 
-            * Lam HM, Ratmann O, Boni MF.  Improved algorithmic complexity for the 3SEQ recombination detection algorithm.  _Mol Biol Evol_, 35(1):247-251, 2018.
+            * Lam HM, Ratmann O, Boni MF. 2018. Improved algorithmic complexity for the 3SEQ recombination detection algorithm.  _Mol Biol Evol_, 35(1):247-251
         * When referring to core parts of the statistic:
-            * Boni MF, Posada D, Feldman MW.  An exact nonparametric method for inferring mosaic structure in sequence triplets.  _Genetics_, 176:1035-1047, 2007.
+            * Boni MF, Posada D, Feldman MW. 2007. An exact nonparametric method for inferring mosaic structure in sequence triplets.  _Genetics_, 176(2):1035-1047
     * PhiPack
         * When using PhiPack:
-            * Bruen, T., Phillipe, H. and Bryant, D. 2006. A quick and robust statistical test to detect the presence of recombination. _Genetics_ 172, 2665--2681
+            * Bruen T, Phillipe H and Bryant D. 2006. A quick and robust statistical test to detect the presence of recombination. _Genetics_ 172(4):2665-2681
     * SplitsTree
         * When using SplitsTree:
-            * D. H. Huson and D. Bryant. Application of phylogenetic networks in evolutionary studies.
-_Molecular Biology and Evolution_, 23:254–267, 2006.
+            * Huson DH and Bryant D. 2006. Application of phylogenetic networks in evolutionary studies. _Mol Biol Evol_, 23(2):254–267
+3. The R packages used for this analysis
+    * ape
+        * Paradis E, Claude J, Strimmer K. 2004. APE: analyses of phylogenetics and evolution in R language. _Bioinformatics_ 20(2):289-290.
+    * ggplot2
+        * Wickham H. 2016. ggplot2: Elegant Graphics for Data Analysis. New York: Springer-Verlag.
+    * phangorn
+        * Schliep KP. 2011. phangorn: phylogenetic analysis in R. _Bioinformatics_ 27(4):592-592.
+    * phytools
+        * Revell LJ. 2012. phytools: An R package for phylogenetic comparative biology (and other things). _Methods in Ecology and Evolution_ 3:217-223.
+    * seqinr
+        * Charif D, Lobry JR. 2007. SeqinR 1.0-2: a contributed package to the R project for statistical computing devoted to biological sequences retrieval and analysis. In: Bastolla U, Porto M, Roman HE, Vendruscolo M, editors. Structural approaches to sequence evolution: Molecules, networks, populations. New York: Springer Verlag. p. 207-232.
+    * stringR
+        * Wickham H. 2019. stringr: Simple, Consistent Wrappers for Common String Operations. R package version 1.4.0. https://CRAN.R-project.org/package=stringr.
+    * TreeSim
+        * Stadler T. 2017. TreeSim: simulating phylogenetic trees. R package version 2.4. http://CRAN.R-project.org/package=TreeSim 
+
 
 
 
