@@ -548,7 +548,7 @@ sum.all.ii <- function(splits){
 # Run split decomposition using SplitsTree
 call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm){
   suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
-  if (suffix == "fasta"){
+  if (suffix == "fasta" |suffix == "fa" | suffix == "fna" | suffix == "ffn" | suffix == "faa" | suffix == "frn" | suffix == "fas"){
     # If the file is a fasta file, convert it to nexus file format
     data <- read.fasta(alignment_path) # read in the fasta data
     alignment_path_converted <- paste0(alignment_path,".nexus") # create a name for the nexus alignment (just the fasta alignment with a .nexus tacked on)
@@ -581,18 +581,6 @@ call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm){
 # Function to create a file name for the SplitsTree output
 splits.filename <- function(alignment_path){
   suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
-  # Create a identifiable name for the output file from splitstree
-  if (suffix == "fasta"){
-    # Add "_splits" into the filename (so can find file later)
-    output_path <- gsub(".fasta","_splits.nexus",alignment_path)
-  }
-  if (suffix == "nexus"){
-    # Add "_splits" into the filename (so can find file later)
-    output_path <- gsub(".nexus","_splits.nexus",alignment_path)
-  }
-  if (suffix == "nex"){
-    # Add "_splits" into the filename (so can find file later)
-    output_path <- gsub(".nex","_splits.nex",alignment_path)
-  }
+  output_path <- gsub(paste0(".",suffix), "_splits.nex",alignment_path)
   return(output_path)
 }
