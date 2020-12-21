@@ -142,19 +142,13 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   # The alignment now definitely exists. Now you can run IQ-tree on the alignment (if it hasn't already been run)
   n_taxa <- length(tree1$tip.label) # get the number of taxa
   if (file.exists(paste0(al_file,".iqtree")) == FALSE){
-    # Call the scf version of the IQtree function - this will result in scf being run
-    num_scf_quartets <- choose(n_taxa,4)
-    sCF <- calculate.sCF(program_paths[["IQTree"]], al_file, n_taxa, num_threads = "1", num_scf_quartets)
+    # Check if a .iqtree file exists
+    # If not, call the lmap version of the IQtree function - this will result in IQTREE running with likelihood mapping
+    call.IQTREE.quartet.bootstrap(program_paths[["IQTree"]], al_file, n_taxa)
   } else if (file.exists(paste0(al_file,".treefile")) == FALSE){
-    # Call the scf version of the IQtree function - this will result in scf being run
-    num_scf_quartets <- choose(n_taxa,4)
-    sCF <- calculate.sCF(program_paths[["IQTree"]], al_file, n_taxa, num_threads = "1", num_scf_quartets)
-  } else if (file.exists(paste0(al_file,".treefile.cf.stat")) == FALSE){
-    # Call the scf version of the IQtree function - this will result in scf being run
-    num_scf_quartets <- choose(n_taxa,4)
-    sCF <- calculate.sCF(program_paths[["IQTree"]], al_file, n_taxa, num_threads = "1", num_scf_quartets)
-  } else if (file.exists(paste0(al_file,".treefile.cf.stat")) == TRUE){
-    sCF <- extract.sCF.results(al_file)
+    # Check if a .treefile exists (did IQTree estimate a tree?)
+    # If not, call the lmap version of the IQtree function - this will result in IQTREE running with likelihood mapping
+    call.IQTREE.quartet.bootstrap(program_paths[["IQTree"]], al_file, n_taxa)
   }
     
   # Set wd to alignment folder - means that 3seq and Phi files will be saved into the folder with their alignment
@@ -246,15 +240,6 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   
   # Run my test statistics
   # run pdm ratio (TS1) (modified splittable percentage)
-  splittable_percentage <- pdm.ratio(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run normalised.pdm.difference.sum (TS2a) (sum of difference of normalised matrix)
-  npds <- normalised.pdm.diff.sum(iqpath = program_paths[["IQTree"]], path = al_file)
-  # run normalised pdm difference average (TS2b) (mean of difference of normalised matrix)
-  npdm <- normalised.pdm.diff.mean(iqpath = program_paths[["IQTree"]], path = al_file)
-  # Run trimmed and untrimmed versions of the split decomposition and NeighborNet tree proportion
-  sd_untrimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file, network_algorithm = "split decomposition", trimmed = FALSE)
-  nn_untrimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file, network_algorithm = "neighbournet", trimmed = FALSE)
-  sd_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file, network_algorithm = "split decomposition", trimmed = TRUE)
   nn_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file, network_algorithm = "neighbournet", trimmed = TRUE)
   
   # Collect results
@@ -266,15 +251,14 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   # Make somewhere to store the results
   df_names <- c("alignment","method","n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id",
                 "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets",
-                "num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets", "splittable_percentage","pdm_difference",
-                "pdm_average","split_decomposition_untrimmed", "neighbour_net_untrimmed", "split_decomposition_trimmed","neighbour_net_trimmed","mean_delta_q","median_delta_q",
-                "mode_delta_q", "sCF_mean", "sCF_median")
+                "num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets","neighbour_net_trimmed","mean_delta_q","median_delta_q",
+                "mode_delta_q")
   df <- data.frame(matrix(nrow=0,ncol=length(df_names))) # create an empty dataframe of the correct size
   # collect all the variables
   op_row <- c(al_file, "phylogenetic_fixedTrees" ,n_taxa,row[["n_sites"]], row[["tree_age"]], tree1_name,proportion_tree_1,
               tree2_name, row[["proportion_tree2"]], paste0(row[["id"]],"_",row[["rep"]]), phi_mean, phi_var, phi_obs, phi_sig, 
-              num_trips, num_dis, seq_sig, total_q, resolved_q, prop_resolved, partly_resolved_q, unresolved_q, splittable_percentage, 
-              npds, npdm, sd_untrimmed, nn_untrimmed, sd_trimmed, nn_trimmed, mean_dq, median_dq, mode_dq, sCF$mean_scf, sCF$median_scf)
+              num_trips, num_dis, seq_sig, total_q, resolved_q, prop_resolved, partly_resolved_q, unresolved_q, nn_trimmed, 
+              mean_dq, median_dq, mode_dq)
   df <- rbind(df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(df) <- df_names # add names to the df so you know what's what
   write.csv(df,file = results_file)
