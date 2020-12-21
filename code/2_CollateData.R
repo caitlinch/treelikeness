@@ -44,7 +44,6 @@ if (run_id == "FALSE"){
 
 ##### Step 4: Collect test statistics from output, collate into a single file and write dataframes #####
 # Collate data for the three sets of simulations and output each collated dataframe as a csv file
-collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp1", run_id = run_id, output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp2", run_id = run_id, output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "p_value", file_id = "exp2", run_id = run_id, output_path = results_folder)
 collate.csv(directory = op_folder, file.name = "testStatistics", file_id = "exp3", run_id = run_id, output_path = results_folder)
@@ -55,7 +54,7 @@ collate.csv(directory = op_folder, file.name = "p_value", file_id = "exp3", run_
 ##### Step 5: Calculate additional test statistics and format dataframes #####
 # Will result in one df containing test statistic values for each of 3 experiments, and one df containing p-value results for the third experiment
 # Extract the collated file names 
-id <- c("exp1_","exp2_","exp3_")
+id <- c("exp2_","exp3_")
 csvs <- list.files(results_folder)
 inds <- lapply(id,grep,csvs)
 csvs <- csvs[unlist(inds)]
