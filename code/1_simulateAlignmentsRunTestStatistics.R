@@ -95,37 +95,6 @@ tree_folder <- paste0(maindir,"trees/")
 ### Create dataframe for the final set of simulations (fixed trees)
 ### Each row needs to include: output_folder, n_sites, tree_age, mean_molecular_rate, sd_molecular_rate, tree1, tree2, proportion_tree2,id,rep
 
-## For first experiment:
-# - What effect does varying the type of introgression event have on the treelikeness score?
-
-# Make empty dataframe:
-exp1_df <- data.frame((matrix(ncol = 8, nrow = 0)))
-names(exp1_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-# Parameters that are the same for each set of trees:
-output_folder <- op_folder
-n_sites <- 1300
-tree_age <- c(0.05, 0.1, 0.5, 1)
-proportion_tree2 <- 0.5
-id <- "exp1"
-rep <- 1:100
-tree1_vector <- c("08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS","08taxa_balanced_LHS",
-                  "08taxa_balanced_LHS")
-tree2_vector <- c("08taxa_balanced_RHS_reciprocal_close_1event","08taxa_balanced_RHS_reciprocal_divergent_1event","08taxa_balanced_RHS_reciprocal_ancient_1event",
-                  "08taxa_balanced_RHS_nonreciprocal_close_1event","08taxa_balanced_RHS_nonreciprocal_divergent_1event","08taxa_balanced_RHS_nonreciprocal_ancient_1event",
-                  "08taxa_balanced_LHS")
-# Expand parameters into dataframe
-tree_id <- 1:7
-for (i in tree_id){
-  tree1_temp <- tree1_vector[[i]]
-  tree2_temp <- tree2_vector[[i]]
-  temp_df <- expand.grid(op_folder,n_sites,tree_age,tree1_temp,tree2_temp,proportion_tree2,id,rep, stringsAsFactors = FALSE)
-  names(temp_df) <- c("output_folder", "n_sites", "tree_age", "tree1", "tree2", "proportion_tree2", "id", "rep")
-  exp1_df <- rbind(exp1_df,temp_df, stringsAsFactors = FALSE)
-}
-# Run simulation
-mclapply(1:nrow(exp1_df), phylo.fixedtrees.wrapper, exp1_df, exec_paths, tree_folder, mc.cores = num_cores) # mclapply for phylo with fixed trees
-
-
 ## For second experiment:
 # - What effect on the treelikeness score does increasing the number of introgression events have?
 #       - Fix the number of sites
@@ -260,8 +229,6 @@ mclapply(exp3_toRun, phylo.parametric.bootstrap, n_reps = num_reps, exec_paths[[
 
 
 ##### Step 5: Save the parameter dataframes #####
-op_name <- paste0(results_folder,"exp1_input_parameters_",run_id,".csv")
-write.csv(exp1_df,file=op_name)
 op_name <- paste0(results_folder,"exp2_input_parameters_",run_id,".csv")
 write.csv(exp2_df,file=op_name)
 op_name <- paste0(results_folder,"exp3_input_parameters_",run_id,".csv")
