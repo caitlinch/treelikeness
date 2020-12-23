@@ -536,9 +536,8 @@ calculate.p_value <- function(value_vector,id_vector){
     # Exclude NA rows
     p_value_df <-  p_value_df[!is.na(p_value_df$value),]
     # Find the number of bootstrap replicates and where the actual alignment value is located
-    num_rows <- nrow(p_value_df) # number of bootstrap replicates + alignment value 
-    # For left tail probability: want to find the number of observations less than or equal to the alignment value, then divide by the number of bootstrap observations
-    p_value_df <- p_value_df[order(p_value_df$value),] # order values from largest to smallest
+    num_rows <- nrow(p_value_df) # number of bootstrap replicates + alignment value
+    p_value_df <- p_value_df[order(p_value_df$value),] # order values from smallest to largest
     alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
     alignment_value <- p_value_df[alignment_row,1] # find the alignment's test statistic value
     # check whether there are other values that are the same as the alignment value
@@ -549,33 +548,20 @@ calculate.p_value <- function(value_vector,id_vector){
       identical_inds <- grep(alignment_value,p_value_df$value)
       # pick an ind at random
       random_identical_row <- sample(identical_inds,1)
+      # For left tail probability: want to find the number of observations less than or equal to the alignment value, then divide by the number of bootstrap observations
+      # If there are 8 rows and the alignment is the 5th row, then there will be 5 alignments less than or equal to the alignment value
       p_value_left <- random_identical_row/num_rows
-      if (p_value_left > 0.5){
-        p_value_left = p_value_left-0.5
-      }
+      # For right tail probability: want to find the number of observations greater than or equal to the alignment value, then divide by the number of bootstrap observations
+      # If there are 8 rows and the alignment is the 5th row, then there will be (8-5)=3 alignments greater than or equal to the alignment value
+      p_value_right <- (num_rows - random_identical_row)/num_rows
     } else if (nrow(identical_df) == 1){
       # else, simply calculate the p value using the formula 
+      # For left tail probability: want to find the number of observations less than or equal to the alignment value, then divide by the number of bootstrap observations
+      # If there are 8 rows and the alignment is the 5th row, then there will be 5/8 alignments less than or equal to the alignment value
       p_value_left <- alignment_row/num_rows
-    }
-    # For right tail probability: want to find the number of observations greater than or equal to the alignment value, then divide by the number of bootstrap observations
-    p_value_df <- p_value_df[order(p_value_df$value, decreasing = TRUE),] # order values from smallest to largest
-    alignment_row <- which(p_value_df$id == "alignment") # find the ranking of the alignment value
-    alignment_value <- p_value_df[alignment_row,1] # find the alignment's test statistic value
-    # check whether there are other values that are the same as the alignment value
-    identical_df <- subset(p_value_df,value == alignment_value)
-    # if there are identical values, you don't know where the alignment actually falls within that list
-    if (nrow(identical_df)>1){
-      # get all the indexes of identical values
-      identical_inds <- grep(alignment_value,p_value_df$value)
-      # pick an ind at random
-      random_identical_row <- sample(identical_inds,1)
-      p_value_right <- random_identical_row/num_rows
-      if (p_value_right > 0.5){
-        p_value_right = p_value_right-0.5
-      }
-    } else if (nrow(identical_df) == 1){
-      # else, simply calculate the p value using the formula 
-      p_value_right <- alignment_row/num_rows
+      # For right tail probability: want to find the number of observations greater than or equal to the alignment value, then divide by the number of bootstrap observations
+      # If there are 8 rows and the alignment is the 5th row, then there will be (8-5)=3 alignments greater than or equal to the alignment value
+      p_value_right <- (num_rows-alignment_row)/num_rows
     }
     # To find two tailed probability, multiply the lower of those values by 2
     p_value_2tail <- 2*min(p_value_left,p_value_right) 
