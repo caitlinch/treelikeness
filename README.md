@@ -11,7 +11,7 @@ This repository contains code to simulate a series of sequence alignments and es
             * Numbered files are a step in the pipeline. To replicate the analysis, run each of the four numbered files sequentially:
                 * `1_simulateAlignmentsRunTestStatistics.R`
                 * `2_CollateData.R`
-                * `3_PlotData.R`
+                * `3_PublicationsPlots.R`
             * The `func` prefix indicates files that contain functions used for simulation and analysis
         * `trees`: contains .txt files of the Newick trees used to fix topology in the simulations.
 2. Download necessary software:
