@@ -550,45 +550,55 @@ call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm, se
   suffix <- tail(strsplit(alignment_path,"\\.")[[1]],1) # get the file extension from the filename
   if (suffix == "fasta" |suffix == "fa" | suffix == "fna" | suffix == "ffn" | suffix == "faa" | suffix == "frn" | suffix == "fas"){
     # If the file is a fasta file, convert it to nexus file format
-    data <- read.fasta(alignment_path) # read in the fasta data
-    alignment_path_converted <- paste0(alignment_path,".nexus") # create a name for the nexus alignment (just the fasta alignment with a .nexus tacked on)
+    alignment_path_converted <- paste0(alignment_path,"_blocks.nexus") # create a name for the nexus alignment (just the fasta alignment with a .nexus tacked on)
     if (file.exists(alignment_path_converted) == FALSE){
+      data <- read.fasta(alignment_path) # read in the fasta data
       write.nexus.data(data, file = alignment_path_converted,format = seq_type,interleaved = FALSE, datablock = FALSE) # write the output as a nexus file)
       # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
       nexus <- readLines(alignment_path_converted) # open the new nexus file
       ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
       if (seq_type == "dna"){
-        nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+        nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=-;" # replace the line
       } else if (seq_type == "protein"){
-        nexus[ind] <- "  FORMAT MISSING=? GAP=- DATATYPE=PROTEIN INTERLEAVE;" # replace the line
+        nexus[ind] <- "  FORMAT MISSING=? GAP=- DATATYPE=PROTEIN;" # replace the line
       }
       writeLines(nexus,alignment_path_converted) # output the edited nexus file
     }
     plot_path <- gsub(".fasta.nexus","",alignment_path_converted)
   } else if (suffix == "phy"){
     # If the file is a phy file, convert it to nexus file format
-    data <- read.phy(alignment_path)
-    alignment_path_converted <- paste0(alignment_path,".nexus")
+    alignment_path_converted <- paste0(alignment_path,"_blocks.nexus")
     if (file.exists(alignment_path_converted) == FALSE){
+      data <- read.phy(alignment_path)
       write.nexus.data(data, file = alignment_path_converted,format = seq_type,interleaved = FALSE, datablock = FALSE) # write the output as a nexus file)
       # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
       nexus <- readLines(alignment_path_converted) # open the new nexus file
       ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
       if (seq_type == "dna"){
-        nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE;" # replace the line
+        nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=-;" # replace the line
       } else if (seq_type == "protein"){
-        nexus[ind] <- "  FORMAT MISSING=? GAP=- DATATYPE=PROTEIN INTERLEAVE;" # replace the line
+        nexus[ind] <- "  FORMAT MISSING=? GAP=- DATATYPE=PROTEIN;" # replace the line
       }
       writeLines(nexus,alignment_path_converted) # output the edited nexus file
     }
     plot_path <- gsub(".fasta.nexus","",alignment_path_converted)
-  } else if (suffix == "nexus"){
-    alignment_path_converted <- alignment_path
-    plot_path <- gsub(".nexus","",alignment_path_converted)
-  } else if (suffix == "nex"){
-    alignment_path_converted <- alignment_path
-    plot_path <- gsub(".nex","",alignment_path_converted)
-  }
+  } else if (suffix == "nexus" | suffix == "nex"){
+    alignment_path_converted <- paste0(alignment_path,"_blocks.",suffix)
+    if (file.exists(alignment_path_converted) == FALSE){
+      data <- read.nexus.data(alignment_path)
+      write.nexus.data(data, file = alignment_path_converted,format = seq_type,interleaved = FALSE, datablock = FALSE) # write the output as a nexus file)
+      # open the nexus file and delete the interleave = YES or INTERLEAVE = NO part so IQ-TREE can read it
+      nexus <- readLines(alignment_path_converted) # open the new nexus file
+      ind <- grep("BEGIN CHARACTERS",nexus)+2 # find which line
+      if (seq_type == "dna"){
+        nexus[ind] <- "  FORMAT DATATYPE=DNA MISSING=? GAP=-;" # replace the line
+      } else if (seq_type == "protein"){
+        nexus[ind] <- "  FORMAT MISSING=? GAP=- DATATYPE=PROTEIN;" # replace the line
+      }
+      writeLines(nexus,alignment_path_converted) # output the edited nexus file
+    }
+    plot_path <- gsub(suffix,"",alignment_path_converted)
+  } 
   output_path <- splits.filename(alignment_path) # create an output path
   if (network_algorithm == "split decomposition"){
     # Create the splitstree command
