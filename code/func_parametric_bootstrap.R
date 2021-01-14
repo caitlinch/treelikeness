@@ -182,7 +182,7 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     # Run my test statistics
     # Want the path to be the path to the alignment you're testing - here that's the bootstrap alignment (bs_al)
     # run pdm ratio (TS1) (modified splittable percentage)
-    nn_trimmed <- tree.proportion(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "neighbournet", trimmed = TRUE)
+    nn_trimmed <- tree.proportion(iqpath = iq_path, splitstree_path = splitstree_path, path = bs_al, network_algorithm = "neighbournet", trimmed = TRUE, seq_type = "dna")
     
     # Extract params csv from alignment folder
     all_files <- list.files(alignment_folder) # get a list of all the files

@@ -182,7 +182,7 @@ open.tree <- function(path){
 }
 
 # Get numerators and denominators for the test statistics you invented
-get.TS.fractions <- function(path, iqpath, splitstree_path){
+get.TS.fractions <- function(path, iqpath, splitstree_path, seq_type){
   # in case you forget: numerator goes on the top, denominator goes on the bottom
   # Get numbers from TS1
   tree_pdm <- iqtree.pdm(iqpath,path)
@@ -193,7 +193,7 @@ get.TS.fractions <- function(path, iqpath, splitstree_path){
   # Get fraction from TS4
   call.IQTREE(iqpath,path) # path = path to alignment
   # Calculate the split decomposition
-  call.SplitsTree(splitstree_path,path,"split decomposition")
+  call.SplitsTree(splitstree_path,path,"split decomposition", seq_type)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
   # Extract the splits 
@@ -217,7 +217,7 @@ get.TS.fractions <- function(path, iqpath, splitstree_path){
   
   call.IQTREE(iqpath,path) # path = path to alignment
   # Calculate the split decomposition
-  call.SplitsTree(splitstree_path,path,"neighbournet")
+  call.SplitsTree(splitstree_path,path,"neighbournet", seq_type)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
   # Extract the splits 
@@ -359,11 +359,11 @@ split.decomposition.manual.statistic <- function(iq_path,path){
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
 # network_algorithm - either "split decomposition" or "neighbournet" - defines which transformation will be applied
 #       to the alignment to turn it into a network in SplitsTree
-SplitsTree.decomposition.statistic <- function(iqpath, splitstree_path, path,network_algorithm){
+SplitsTree.decomposition.statistic <- function(iqpath, splitstree_path, path,network_algorithm, seq_type){
   # Run IQ-tree if it hasn't already been run
   call.IQTREE(iqpath,path) # path = path to alignment
   # Calculate the split decomposition
-  call.SplitsTree(splitstree_path,path,network_algorithm)
+  call.SplitsTree(splitstree_path,path,network_algorithm, seq_type)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
   # Extract the splits 
@@ -411,7 +411,7 @@ test.monophyly <- function(split, tree){
 
 # Tree proportion
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
-tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = FALSE, tree_path = FALSE, run_IQTREE = FALSE){
+tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = FALSE, tree_path = FALSE, run_IQTREE = FALSE, seq_type){
   # network_algorithm takes values "split decomposition" or "neighbournet", default is "neighbournet"
   # trimmed takes values TRUE or FALSE, default is FALSE (all branches in network included in tree)
   
@@ -423,7 +423,7 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
   }
   
   # Calculate the split decomposition
-  call.SplitsTree(splitstree_path,path,network_algorithm)
+  call.SplitsTree(splitstree_path,path,network_algorithm, seq_type)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
   

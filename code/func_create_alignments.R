@@ -240,7 +240,8 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   
   # Run my test statistics
   # run pdm ratio (TS1) (modified splittable percentage)
-  nn_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file, network_algorithm = "neighbournet", trimmed = TRUE)
+  nn_trimmed <- tree.proportion(iqpath = program_paths[["IQTree"]], splitstree_path = program_paths[["SplitsTree"]], path = al_file, 
+                                network_algorithm = "neighbournet", trimmed = TRUE, seq_type = "dna")
   
   # Collect results
   all_files <- list.files(al_folder) # get a list of all the files
