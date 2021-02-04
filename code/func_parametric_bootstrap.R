@@ -196,12 +196,12 @@ do.1.bootstrap <- function(rep_number,params,tree,alignment_folder,iq_path,split
     params_csv$PHI_observed <- phi_obs
     params_csv$X3SEQ_num_recombinant_triplets <- num_trips
     params_csv$X3SEQ_num_distinct_recombinant_sequences <- num_dis
-    params_csv$num_quartets <- total_q
-    params_csv$num_resolved_quartets <- resolved_q
-    params_csv$prop_resolved_quartets <- prop_resolved
-    params_csv$num_partially_resolved_quartets <- partly_resolved_q
-    params_csv$num_unresolved_quartets <- unresolved_q
-    params_csv$neighbour_net_trimmed <- nn_trimmed
+    params_csv$LM_num_quartets <- total_q
+    params_csv$LM_num_resolved_quartets <- resolved_q
+    params_csv$LM_prop_resolved_quartets <- prop_resolved
+    params_csv$LM_num_partially_resolved_quartets <- partly_resolved_q
+    params_csv$LM_num_unresolved_quartets <- unresolved_q
+    params_csv$tree_proportion <- nn_trimmed
     params_csv$mean_delta_q <- mean_dq
     params_csv$median_delta_q <- median_dq
     params_csv$mode_delta_q <- mode_dq
@@ -472,7 +472,7 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   seq_sig <- alignment_df$X3SEQ_p_value[1]
   # Extract only the columns you want
   cols <- c("method", "bootstrap_id", "n_taxa", "n_sites", "tree_age", "tree1", "proportion_tree1", "tree2", "proportion_tree2", "id", "PHI_mean", "PHI_variance",
-            "PHI_observed" ,"X3SEQ_num_recombinant_triplets", "X3SEQ_num_distinct_recombinant_sequences", "prop_resolved_quartets","neighbour_net_trimmed",
+            "PHI_observed" ,"X3SEQ_num_recombinant_triplets", "X3SEQ_num_distinct_recombinant_sequences", "LM_prop_resolved_quartets","tree_proportion",
             "mean_delta_q","median_delta_q","mode_delta_q")
   alignment_df <- alignment_df[,cols]
   
@@ -499,8 +499,8 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   write.csv(p_value_df,file = bs_collated_csv)
   
   # Calculate the p-values for each test statistic
-  prop_resolved_quartets_sig <- calculate.p_value(p_value_df$prop_resolved_quartets, p_value_df$bootstrap_id)
-  nn_trimmed_sig <- calculate.p_value(p_value_df$neighbour_net_trimmed, p_value_df$bootstrap_id)
+  prop_resolved_quartets_sig <- calculate.p_value(p_value_df$LM_prop_resolved_quartets, p_value_df$bootstrap_id)
+  nn_trimmed_sig <- calculate.p_value(p_value_df$tree_proportion, p_value_df$bootstrap_id)
   mean_delta_q_sig  <- calculate.p_value(p_value_df$mean_delta_q, p_value_df$bootstrap_id)
   median_delta_q_sig <- calculate.p_value(p_value_df$median_delta_q, p_value_df$bootstrap_id)
   mode_delta_q_sig <- calculate.p_value(p_value_df$mode_delta_q, p_value_df$bootstrap_id)
@@ -512,7 +512,7 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   output_df <- data.frame(matrix(nrow=0,ncol=19)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value",
-                        "3Seq_p_value","likelihood_mapping_p_value","neighbour_net_trimmed_p_value","mean_delta_q_p_value",
+                        "3Seq_p_value","likelihood_mapping_p_value","tree_proportion_p_value","mean_delta_q_p_value",
                         "median_delta_q_p_value","mode_delta_q_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)

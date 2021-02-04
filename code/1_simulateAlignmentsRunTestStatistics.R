@@ -38,6 +38,7 @@ library(phangorn)
 #       - in MacOS, the path is "SplitsTree.app/Contents/MacOS/JavaApplicationStub" (assuming you are in the same directory as the application)
 #       - in Linux, after installing and navigating into the folder it's simply "SplitsTree"
 
+#__________________________________________File paths/parameters: update these for your own machine______________________________________
 # op_folder <- "" 
 # results_folder <- ""
 # maindir <- ""
@@ -54,13 +55,13 @@ library(phangorn)
 # exec_folder <- "/path/to/executables/folder/"
 # exec_paths <- c("3seq_executable","IQ-Tree_executable","PHIpack_executable","SplitsTree_executable") # MUST be in this order
 # exec_paths <- paste0(exec_folder,exec_paths)
-
+#____________________________________________________________________________________________________________________________________
 
 #__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
 op_folder <- "/data/caitlin/treelikeness/output_20200304/"
 results_folder <- "/data/caitlin/treelikeness/results_20200304/"
 maindir <- "/data/caitlin/treelikeness/"
-run_id <- "sCF"
+run_id <- "finaltest"
 num_cores <- 20
 num_reps <- 199
 max_reps <- 20

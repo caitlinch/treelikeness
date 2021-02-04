@@ -18,10 +18,12 @@ library(reshape2)
 # run_id <- if "run.id  = FALSE", program extracts run_id from input parameter file names 
 #        <- otherwise, run_id will be set to whatever the user inputs here (e.g. "run_id = 'replicateAnalysis' ")
 
+#__________________________________________File paths/parameters: update these for your own machine______________________________________
 # op_folder <- ""
 # results_folder <- ""
 # maindir <- ""
 # run_id <- extract.run.id(results_folder) 
+#____________________________________________________________________________________________________________________________________
 
 #__________________________________________Caitlin's paths (delete these if you're not Caitlin)______________________________________
 op_folder <- "/data/caitlin/treelikeness/output_20200304/"
@@ -70,8 +72,8 @@ for (csv in csvs){
     # To find # of triplets: "In a set of 10 sequences, there are 720 unique parent–parent–child arrangements" - Boni et al (2007)
     # In other words: 6*choose(10,3) == 720
     # number of triplets tested will be 6* n choose k (if have a,b,c: a and b can be parents, b and c can be parents and a and c can be parents BUT each parent can be either P or Q)
-    df["num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
-    df["proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
+    df["X3SEQ_num_3seq_triplets"] <- 6 * choose(df$n_taxa, 3)
+    df["X3SEQ_proportion_recombinant_triplets"] <- df$X3SEQ_num_recombinant_triplets / df$num_3seq_triplets
   }
   # Extract information about the type of recombination event from the tree names and add to columns so it can be used for analysis (for all dfs)
   vector <- 1:length(df$tree2)
@@ -129,8 +131,7 @@ ts_csvs <- csvs[grep("testStatistics",csvs)]
 for (csv in ts_csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
-  measure_vars <- c("PHI_observed","prop_resolved_quartets","proportion_recombinant_triplets","splittable_percentage","pdm_difference","neighbour_net_untrimmed","neighbour_net_trimmed",
-                    "split_decomposition_untrimmed","split_decomposition_trimmed","mean_delta_q", "median_delta_q", "mode_delta_q", "sCF_mean", "sCF_median")
+  measure_vars <- c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","tree_proportion","mean_delta_q", "median_delta_q")
   melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
   output_name <- gsub(".csv","_melted.csv",csv)
   write.csv(melt_df, file = output_name, row.names = FALSE)
@@ -140,11 +141,12 @@ for (csv in ts_csvs){
 p_csvs <- csvs[grep("p_value",csvs)]
 for (csv in p_csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
-  id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape","proportion_tree2","number_of_events","id")
-  measure_vars <- c("PHI_p_value","PHI_observed_p_value","X3Seq_p_value","num_recombinant_sequences_p_value","likelihood_mapping_p_value","splittable_percentage_p_value",
-                    "pdm_difference_p_value","neighbour_net_untrimmed_p_value", "neighbour_net_trimmed_p_value","split_decomposition_untrimmed_p_value","split_decomposition_trimmed_p_value",
-                    "mean_delta_q_p_value", "median_delta_q_p_value","mode_delta_q_p_value", "mean_sCF_p_value", "median_sCF_p_value")
+  id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape",
+               "proportion_tree2","number_of_events","id")
+  measure_vars <- c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value", "tree_proportion_p_value","mean_delta_q_p_value", 
+                    "median_delta_q_p_value")
   melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
   output_name <- gsub(".csv","_melted.csv",csv)
   write.csv(melt_df, file = output_name, row.names = FALSE)
 }
+

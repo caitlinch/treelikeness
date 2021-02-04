@@ -251,8 +251,8 @@ phylo.fixedtrees.run1sim <- function(row, program_paths, tree_folder){
   n_taxa <- length(tree1$tip.label) #ntaxa = number of labels on the tree
   # Make somewhere to store the results
   df_names <- c("alignment","method","n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id",
-                "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","num_quartets",
-                "num_resolved_quartets","prop_resolved_quartets","num_partially_resolved_quartets","num_unresolved_quartets","neighbour_net_trimmed","mean_delta_q","median_delta_q",
+                "PHI_mean","PHI_variance","PHI_observed","PHI_sig","3SEQ_num_recombinant_triplets","3SEQ_num_distinct_recombinant_sequences","3SEQ_p_value","LM_num_quartets",
+                "LM_num_resolved_quartets","LM_prop_resolved_quartets","LM_num_partially_resolved_quartets","LM_num_unresolved_quartets","tree_proportion","mean_delta_q","median_delta_q",
                 "mode_delta_q")
   df <- data.frame(matrix(nrow=0,ncol=length(df_names))) # create an empty dataframe of the correct size
   # collect all the variables
