@@ -512,7 +512,7 @@ phylo.collate.bootstrap <- function(alignment_folder, exec_paths, tree_folder ){
   output_df <- data.frame(matrix(nrow=0,ncol=19)) # make somewhere to store the results
   output_df <- rbind(output_df,op_row,stringsAsFactors = FALSE) # place row in dataframe
   names(output_df) <- c("n_taxa","n_sites","tree_age","tree1","proportion_tree1","tree2","proportion_tree2","id","PHI_p_value",
-                        "3Seq_p_value","likelihood_mapping_p_value","tree_proportion_p_value","mean_delta_q_p_value",
+                        "3Seq_p_value","LM_p_value","tree_proportion_p_value","mean_delta_q_p_value",
                         "median_delta_q_p_value","mode_delta_q_p_value")
   p_value_csv <- paste0(alignment_folder,"p_value.csv")
   write.csv(output_df,file = p_value_csv)
