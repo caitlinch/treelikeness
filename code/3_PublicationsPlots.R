@@ -259,8 +259,8 @@ e$event_asfactor <- as.factor(e$number_of_events)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
-                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Proportion of recombinant triplets","(3SEQ)")),
-                             expression(atop("Proportion of resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(e, aes(x = event_asfactor, y = value)) +
@@ -269,9 +269,9 @@ p <- ggplot(e, aes(x = event_asfactor, y = value)) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
-ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.png"), plot = p, units = "in", height = 6.6, width = 9)
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.png"), plot = p, units = "in", height = 6, width = 8)
 
 
 cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.pdf"), height = 6.6, width = 9)
@@ -281,8 +281,19 @@ ggplot(e, aes(x = event_asfactor, y = value)) +
   scale_x_discrete(name = "\n Number of introgression events \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
+dev.off()
+
+svg(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_numberOfEvents_freey.svg"), height = 6.6, width = 9)
+ggplot(e, aes(x = event_asfactor, y = value)) +
+  geom_boxplot(outlier.size = 1, outlier.alpha = 0.5, outlier.colour = "gray55", lwd = 0.4) +
+  facet_wrap(~group, scales = "free_y", labeller = label_parsed, ncol = 3) +
+  scale_x_discrete(name = "\n Number of introgression events \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) 
 dev.off()
 
 
@@ -378,35 +389,50 @@ ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_
 num_events <- c(rep(seq(0,8,1),6))
 f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
 f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
-                     labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Proportion of recombinant triplets","(3SEQ)")),
-                                expression(atop("Proportion of resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                     labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
+                                expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                                 expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(f, aes(x = num_events, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 8),
-        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 12),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 12), legend.text = element_text(size = 12), legend.title = element_text(size = 12)) +
   scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,1), breaks = seq(0,8,1), limits = c(0,8), minor_breaks = c()) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
-                     labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+                     labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 8, height = 6)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.pdf"), width = 8, height = 6)
 ggplot(f, aes(x = num_events, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 8),
-        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 8), legend.title = element_text(size = 10)) +
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 12),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 12), legend.text = element_text(size = 12), legend.title = element_text(size = 12)) +
   scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,1), breaks = seq(0,8,1), limits = c(0,8), minor_breaks = c()) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
-                     labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+                     labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
+dev.off()
+
+svg(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp2_statisticalSignificance_summaryLines_fixedy.svg"), width = 8, height = 6)
+ggplot(f, aes(x = num_events, y = value)) +
+  geom_line(size=0.5) +
+  facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 12),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 12), legend.text = element_text(size = 12), legend.title = element_text(size = 12)) +
+  scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,1), breaks = seq(0,8,1), limits = c(0,8), minor_breaks = c()) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 dev.off()
@@ -469,7 +495,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group~age, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
@@ -483,7 +509,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group~age, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
   theme(axis.text.x = element_text(size = 10), axis.title.x = element_text(size = 12), axis.title.y = element_text(size = 12),
@@ -502,7 +528,7 @@ dev.off()
 
 
 
-#### Plot 7: Plot the test statistic values for both reciprocal and non-reciprocal events, for increasing proportion of DNA introgressed ####
+#### Plot 7: Plot the test statistic values for both reciprocal and non-reciprocal events, for increasing proportion of introgressed DNA ####
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree_age == tree_length)
@@ -562,7 +588,7 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
   ylab("\n Test statistic value \n") +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
@@ -576,7 +602,7 @@ ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_grid(group ~ fac_event_type, scale = "free_y", labeller = label_parsed) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
   ylab("\n Test statistic value \n") +
   geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3) +
   geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) +
@@ -596,7 +622,7 @@ dev.off()
 
 
 
-#### Plot 8: one tree depth, test statistic value for increasing proportion of DNA introgressed ####
+#### Plot 8: one tree depth, test statistic value for increasing proportion of introgressed DNA ####
 e = subset(ts3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -606,8 +632,8 @@ e$type = paste(e$tree2_event_type, e$tree2_event_position)
 e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
 e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
-                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Proportion of recombinant triplets","(3SEQ)")),
-                             expression(atop("Proportion of resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
+                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 # create a vector of the r^2 values from each variable
@@ -632,15 +658,15 @@ r2_plot <- unlist(lapply(r2_raw,reformat.r2))
 replace_inds <- which(r2_plot == 0)
 r2_plot <- as.character(r2_plot)
 r2_plot[replace_inds] <- "0.000" # replace the 0 with 0.000 (as R^2 was calculated to 3dp)
-r2_plot <- paste0(" = ", r2_plot)
+r2_plot <- paste0("  = ", r2_plot)
 
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
 e_eq <- data.frame(variable = var_list, x_pos = rep(0.0, 6) , y1_pos = rep(1.1,6), y2_pos = c(0.525, 0.0875, 1.01, 0.4, 0.5, 1),
-                   r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2 ",
+                   r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2  ",
                    group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
                                   ordered = TRUE, 
-                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Proportion of recombinant triplets","(3SEQ)")),
-                                             expression(atop("Proportion of resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                                  labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
+                                             expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) ) ) 
 
 # Plot points with regression line and r^2 value
@@ -648,34 +674,48 @@ p <- ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
-  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
-ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6.57, width = 9)
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 5) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 5)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.png"), plot = p, units = "in", height = 6, width = 8)
 
 cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.pdf"), height = 6.57, width = 9)
 ggplot(e, aes(x = proportion_tree2, y = value)) +
   geom_point(colour = "gray55", alpha = 0.2) +
   geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
   facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n") +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
   ylab("\n Test statistic value \n") +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 10), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
-  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 3) + 
-  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 3)
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 5) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 5)
+dev.off()
+
+svg(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_increasingProportionTree2_regression_freey.svg"), height = 6.57, width = 9)
+ggplot(e, aes(x = proportion_tree2, y = value)) +
+  geom_point(colour = "gray55", alpha = 0.2) +
+  geom_smooth(method = "lm", se=TRUE, color="black", formula = y ~ x) +
+  facet_wrap(~group, scale = "free_y", labeller = label_parsed, ncol=3) +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n") +
+  ylab("\n Test statistic value \n") +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 12), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"))) + 
+  geom_text(data = e_eq, aes(x = x_pos, y = y2_pos, label = rsquare), parse = TRUE, hjust = 0, size = 5) + 
+  geom_text(data = e_eq, aes(x = r2_x_pos, y = y2_pos, label = rsq), parse = FALSE, hjust = 0, size = 5)
 dev.off()
 
 
 
 
 
-#### Plot 9: Statistical significance for increasing proportion of DNA introgressed, as histogram ####
+#### Plot 9: Statistical significance for increasing proportion of introgressed DNA, as histogram ####
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -703,7 +743,7 @@ ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_Statistica
 patchwork <- p
 cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_StatisticalSignificance_fixedy_withTitle.pdf"), height = 9, width = 9)
 patchwork + 
-  plot_annotation(title = "Proportion of DNA introgressed",
+  plot_annotation(title = "Proportion of introgressed DNA",
                   theme = theme(plot.title = element_text(hjust = 0.5, size = 12), text = element_text(family = "")))
 dev.off()
 
@@ -723,7 +763,7 @@ dev.off()
 
 
 
-#### Plot 10: Statistical significance for increasing proportion of DNA introgressed, as plot ####
+#### Plot 10: Statistical significance for increasing proportion of introgressed DNA, as plot ####
 e = subset(bs3_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
@@ -753,35 +793,50 @@ ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_
 proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
 f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
 f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
-                     labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Proportion of recombinant triplets","(3SEQ)")),
-                                expression(atop("Proportion of resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
+                     labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
+                                expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                                 expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 p <- ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 8),
-        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 10), legend.title = element_text(size = 10)) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text.x = element_text(size = 12),
+        legend.text = element_text(size = 12), legend.title = element_text(size = 12)) +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
-                     labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+                     labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
-ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 7.5, height = 6)
+ggsave(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.png"), plot = p, units = "in", width = 8.5, height = 6)
 
-cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.pdf"), width = 7.5, height = 6)
+cairo_pdf(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.pdf"), width = 8, height = 6)
 ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
   geom_line(size=0.5) +
   facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
   theme_bw() + 
-  theme(axis.text.x = element_text(size = 8), axis.title.x = element_text(size = 10), axis.title.y = element_text(size = 10),
-        axis.text.y = element_text(size = 8), strip.text = element_text(size = 8), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 8),
-        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 10), legend.text = element_text(size = 10), legend.title = element_text(size = 10)) +
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text.x = element_text(size = 12),
+        legend.text = element_text(size = 12), legend.title = element_text(size = 12)) +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
-                     labels = seq(0,100,10), breaks = seq(0,100,10), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+                     labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
+dev.off()
+
+svg(filename = paste0(plots_folder,run_id,"_td",tree_length,"_exp3_statisticalSignificance_summaryLines_fixedy.svg"), width = 8, height = 6)
+ggplot(f, aes(x = proportion_introgressed_DNA, y = value)) +
+  geom_line(size=0.5) +
+  facet_wrap(~variable, labeller = label_parsed, nrow = 3, ncol = 3) +
+  theme_bw() + 
+  theme(axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text.x = element_text(size = 12),
+        legend.text = element_text(size = 12), legend.title = element_text(size = 12)) +
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.1), breaks = seq(0,0.5,0.1), minor_breaks = c(), limits = c(0,0.5)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,20), breaks = seq(0,100,20), minor_breaks = seq(0,100,5), limits = c(0,100)) + 
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
   scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05")
 dev.off()
@@ -837,7 +892,7 @@ p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) +
   theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
                      labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
@@ -965,7 +1020,7 @@ p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) +
   theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
         axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
         strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
-  scale_x_continuous(name = "\n Proportion of DNA introgressed \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
   scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
                      labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
   geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
