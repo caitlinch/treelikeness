@@ -143,7 +143,7 @@ for (csv in p_csvs){
   df <- read.csv(csv, stringsAsFactors = FALSE)
   id_vars <- c("n_taxa","n_sites","tree_age","tree1_tree_shape","proportion_tree1","tree2_event_position","tree2_event_type","tree2_tree_shape",
                "proportion_tree2","number_of_events","id")
-  measure_vars <- c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value", "tree_proportion_p_value","mean_delta_q_p_value", 
+  measure_vars <- c("PHI_p_value","X3Seq_p_value","LM_p_value", "tree_proportion_p_value","mean_delta_q_p_value", 
                     "median_delta_q_p_value")
   melt_df <- melt(df, id = id_vars, measure.vars = measure_vars)
   output_name <- gsub(".csv","_melted.csv",csv)
