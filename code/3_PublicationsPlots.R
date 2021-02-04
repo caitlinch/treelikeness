@@ -67,15 +67,15 @@ e = subset(ts2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_event_type != "reciprocal")
 e$age = factor(e$tree_age, ordered = TRUE)
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+e = e[e$variable %in% c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 r2_raw <- c()
-var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+var_list <- c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion")
 eq_var_list <- rep(var_list, each = 4)
 age_list <- c(0.05, 0.1, 0.5, 1)
 
@@ -113,7 +113,7 @@ r2_plot <- paste0(" = ", r2_plot)
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
 e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 24) , y1_pos = rep(1.1,24), y2_pos = rep(c(4.3, 0.003, 1.05, 0.45, 0.45, 1), each = 4), age = rep(c(0.05, 0.1, 0.5, 1.0), 6),
                    r2_x_pos = rep(0.6, 24), rsq = r2_plot, rsquare = "R^2 ",
-                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                   group = factor(eq_var_list,levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), 
                                   ordered = TRUE, 
                                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
@@ -162,15 +162,15 @@ e = subset(e, tree2_event_type != "none")
 e = subset(e, tree_age == tree_length)
 e$tree2_event_type = factor(e$tree2_event_type, ordered = TRUE)
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+e = e[e$variable %in% c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 r2_raw <- c()
-var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+var_list <- c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion")
 eq_var_list <- rep(var_list, each = 2)
 event_list <- c("nonreciprocal","reciprocal")
 for (var in var_list){
@@ -205,7 +205,7 @@ e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 12) , y1_pos = rep(1
                    y2_pos = rep(c(1.67, 0.003, 1.02, 0.28, 0.28, 1.05), each = 2),
                    r2_x_pos = rep(0.5, 12), rsq = r2_plot, rsquare = "R^2 ", tree2_event_type = rep(c("nonreciprocal","reciprocal"),6),
                    fac_event_type = factor(rep(event_list,6), ordered = TRUE, labels = c("Nonreciprocal","Reciprocal")),
-                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                   group = factor(eq_var_list,levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), 
                                   ordered = TRUE, 
                                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
@@ -256,9 +256,9 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "reciprocal")
 e$event_asfactor <- as.factor(e$number_of_events)
-e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+e = e[e$variable %in% c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
                              expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
@@ -305,9 +305,9 @@ e = subset(bs2_df, tree1_tree_shape == 'balanced')
 e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "reciprocal")
-e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
@@ -355,13 +355,13 @@ e = subset(e, tree2_event_type != "reciprocal")
 e = subset(e, tree2_event_type != "none")
 e = subset(e, variable != "PHI_observed_p_value")
 e = subset(e, variable != "num_recombinant_sequences_p_value")
-e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
 
 e_none = subset(bs2_df, tree1_tree_shape == 'balanced')
 e_none = subset(e_none, tree2_tree_shape == 'balanced')
 e_none = subset(e_none, tree_age == tree_length)
 e_none = subset(e_none, tree2_event_type == "none")
-e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
 
 # to make new df for the plot
 PHI_p_value <- c(nrow(e_none[e_none$variable == "PHI_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
@@ -370,25 +370,25 @@ PHI_p_value <- c(nrow(e_none[e_none$variable == "PHI_p_value" & e_none$value <= 
 X3SEQ_p_value <- c(nrow(e_none[e_none$variable == "X3Seq_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                    nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                    nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "likelihood_mapping_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "LM_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
 mean_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mean_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                           nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                           nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
 mode_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mode_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                           nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                           nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "neighbour_net_trimmed_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "tree_proportion_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                   nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                   nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
 
 value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
 value = value/20*100 # 20 replicates performed for each event - divide by 20 to get percentage
-ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("neighbour_net_trimmed_p_value",9))
+ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("LM_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("tree_proportion_p_value",9))
 num_events <- c(rep(seq(0,8,1),6))
 f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
-f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                      labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
                                 expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                                 expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
@@ -446,15 +446,15 @@ e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$age = factor(e$tree_age, ordered = TRUE)
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+e = e[e$variable %in% c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 r2_raw <- c()
-var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+var_list <- c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion")
 eq_var_list <- rep(var_list, each = 4)
 age_list <- c(0.05, 0.1, 0.5, 1)
 for (var in var_list){
@@ -485,7 +485,7 @@ r2_plot <- paste0(" = ", r2_plot)
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
 e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 24) , y1_pos = rep(1.1,24), y2_pos = rep(c(0.6, 0.11, 1.05, 0.45, 0.5, 1), each = 4), age = rep(c(0.05, 0.1, 0.5, 1.0), 6),
                    r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2 ",
-                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                   group = factor(eq_var_list,levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), 
                                   ordered = TRUE, 
                                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
@@ -534,15 +534,15 @@ e = subset(e, tree2_event_type != "none")
 e = subset(e, tree_age == tree_length)
 e$tree2_event_type = factor(e$tree2_event_type, ordered = TRUE)
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+e = e[e$variable %in% c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 r2_raw <- c()
-var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+var_list <- c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion")
 eq_var_list <- rep(var_list, each = 2)
 event_list <- c("nonreciprocal","reciprocal")
 for (var in var_list){
@@ -576,7 +576,7 @@ e_eq <- data.frame(variable = eq_var_list, x_pos = rep(0.0, 12) , y1_pos = rep(1
                    y2_pos = rep(c(0.3875, 0.0875, 1.02, 0.28, 0.12, 1.05), each = 2),
                    r2_x_pos = rep(0.05, 6), rsq = r2_plot, rsquare = "R^2 ", tree2_event_type = rep(c("nonreciprocal","reciprocal"),6),
                    fac_event_type = factor(rep(event_list,6), ordered = TRUE, labels = c("Nonreciprocal","Reciprocal")),
-                   group = factor(eq_var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                   group = factor(eq_var_list,levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), 
                                   ordered = TRUE, 
                                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
@@ -629,16 +629,16 @@ e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
 e$type = paste(e$tree2_event_type, e$tree2_event_position)
-e = e[e$variable %in% c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"),]
+e = e[e$variable %in% c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
                              expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
 
 # create a vector of the r^2 values from each variable
 r2_raw <- c()
-var_list <- c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed")
+var_list <- c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion")
 for (var in var_list){
   # get only entries with this variable
   var_df <- e[(e$variable == var),]
@@ -663,7 +663,7 @@ r2_plot <- paste0("  = ", r2_plot)
 # Make a dataframe of variables r^2 values, vectors for plot placement and equation for the plot
 e_eq <- data.frame(variable = var_list, x_pos = rep(0.0, 6) , y1_pos = rep(1.1,6), y2_pos = c(0.525, 0.0875, 1.01, 0.4, 0.5, 1),
                    r2_x_pos = rep(0.035, 6), rsq = r2_plot, rsquare = "R^2  ",
-                   group = factor(var_list,levels = c("PHI_observed","proportion_recombinant_triplets","prop_resolved_quartets","mean_delta_q","mode_delta_q","neighbour_net_trimmed"), 
+                   group = factor(var_list,levels = c("PHI_observed","X3SEQ_proportion_recombinant_triplets","LM_prop_resolved_quartets","mean_delta_q","mode_delta_q","tree_proportion"), 
                                   ordered = TRUE, 
                                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
                                              expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
@@ -721,9 +721,9 @@ e = subset(e, tree2_tree_shape == 'balanced')
 e = subset(e, tree_age == tree_length)
 e = subset(e, tree2_event_type != "none")
 e = subset(e, tree2_event_type != "reciprocal")
-e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
 # Have to reorder variables so the grid comes out in the right way - do this using a new column that's a factor
-e$group <- factor(e$variable, levels = c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+e$group <- factor(e$variable, levels = c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                   labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. trip.","(3SEQ)")),
                              expression(atop("Prop. res. quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                              expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
@@ -771,28 +771,28 @@ e = subset(e, tree2_event_type != "reciprocal")
 e = subset(e, tree2_event_type != "none")
 e = subset(e, variable != "PHI_observed_p_value")
 e = subset(e, variable != "num_recombinant_sequences_p_value")
-e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
 
 # to make new df for the plot
 PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                  nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                    nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+likelihood_mapping_p_value <- c(nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                           nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                           nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                   nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                   nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
 
 
 value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
-ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("neighbour_net_trimmed_p_value",6))
+ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("LM_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("tree_proportion_p_value",6))
 proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
 f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
-f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                      labels = c(expression(atop("PHI","(PhiPack)")), expression(atop("Prop. recomb. triplets","(3SEQ)")),
                                 expression(atop("Prop. resolved quartets","(IQ-Tree)")), expression(atop(paste('Mean ', delta["q"]),paste("(", delta," plots)"))),
                                 expression(atop(paste('Mode ', delta["q"]),paste("(", delta," plots)"))), expression(atop("Tree proportion","(this paper)")) ) )
@@ -857,28 +857,28 @@ for (tl in tree_lengths){
   e = subset(e, tree2_event_type != "none")
   e = subset(e, variable != "PHI_observed_p_value")
   e = subset(e, variable != "num_recombinant_sequences_p_value")
-  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
   
   # to make new df for the plot
   PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                    nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                      nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-  likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  likelihood_mapping_p_value <- c(nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                  nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                             nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                             nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-  neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                     nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   
   
   value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
-  ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("neighbour_net_trimmed_p_value",6))
+  ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("LM_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("tree_proportion_p_value",6))
   proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
   f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
-  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                        labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
   f$tree_age <- tl
   datalist[[ind]] <- f
@@ -914,13 +914,13 @@ for (tl in tree_lengths){
   e = subset(e, tree2_event_type != "none")
   e = subset(e, variable != "PHI_observed_p_value")
   e = subset(e, variable != "num_recombinant_sequences_p_value")
-  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
   
   e_none = subset(bs2_df, tree1_tree_shape == 'balanced')
   e_none = subset(e_none, tree2_tree_shape == 'balanced')
   e_none = subset(e_none, tree_age == tree_length)
   e_none = subset(e_none, tree2_event_type == "none")
-  e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
   
   # to make new df for the plot
   PHI_p_value <- c(nrow(e_none[e_none$variable == "PHI_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
@@ -929,25 +929,25 @@ for (tl in tree_lengths){
   X3SEQ_p_value <- c(nrow(e_none[e_none$variable == "X3Seq_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                      nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                      nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-  likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "likelihood_mapping_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "LM_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                  nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                  nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
   mean_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mean_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                             nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                             nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
   mode_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mode_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                             nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                             nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-  neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "neighbour_net_trimmed_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "tree_proportion_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                     nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                     nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
   
   value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
   value = value/20*100 # 20 replicates performed for each event - divide by 20 to get percentage
-  ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("neighbour_net_trimmed_p_value",9))
+  ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("LM_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("tree_proportion_p_value",9))
   num_events <- c(rep(seq(0,8,1),6))
   f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
-  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                        labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
   f$tree_age <- tl
   datalist[[ind]] <- f
@@ -984,28 +984,28 @@ for (et in event_types){
   e = subset(e, tree2_event_type == et)
   e = subset(e, variable != "PHI_observed_p_value")
   e = subset(e, variable != "num_recombinant_sequences_p_value")
-  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
   
   # to make new df for the plot
   PHI_p_value <- c(nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                    nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   X3SEQ_p_value <- c(nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                      nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-  likelihood_mapping_p_value <- c(nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  likelihood_mapping_p_value <- c(nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                  nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   mean_delta_q_p_value <- c(nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                             nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   mode_delta_q_p_value <- c(nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
                             nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
-  neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
-                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.1,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.2,]),
+                                     nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.3,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.4,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$proportion_tree2 == 0.5,]))
   
   
   value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
-  ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("likelihood_mapping_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("neighbour_net_trimmed_p_value",6))
+  ts <- c(rep("PHI_p_value",6), rep("X3SEQ_p_value",6), rep("LM_p_value",6), rep("mean_delta_q_p_value",6), rep("mode_delta_q_p_value",6), rep("tree_proportion_p_value",6))
   proportion_introgressed_DNA <- c(rep(seq(0,0.5,0.1),6))
   f <- data.frame(proportion_introgressed_DNA,ts,value,stringsAsFactors = FALSE)
-  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                        labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
   f$event_type <- et
   datalist[[ind]] <- f
@@ -1041,13 +1041,13 @@ for (et in event_types){
   e = subset(e, tree2_event_type == et)
   e = subset(e, variable != "PHI_observed_p_value")
   e = subset(e, variable != "num_recombinant_sequences_p_value")
-  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  e = e[e$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
   
   e_none = subset(bs2_df, tree1_tree_shape == 'balanced')
   e_none = subset(e_none, tree2_tree_shape == 'balanced')
   e_none = subset(e_none, tree_age == tree_length)
   e_none = subset(e_none, tree2_event_type == "none")
-  e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"),]
+  e_none = e_none[e_none$variable %in% c("PHI_p_value","X3Seq_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"),]
   
   # to make new df for the plot
   PHI_p_value <- c(nrow(e_none[e_none$variable == "PHI_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "PHI_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
@@ -1056,25 +1056,25 @@ for (et in event_types){
   X3SEQ_p_value <- c(nrow(e_none[e_none$variable == "X3Seq_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                      nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                      nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "X3Seq_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-  likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "likelihood_mapping_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                  nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "likelihood_mapping_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  likelihood_mapping_p_value <- c(nrow(e_none[e_none$variable == "LM_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                  nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                  nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "LM_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
   mean_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mean_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                             nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                             nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mean_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
   mode_delta_q_p_value <- c(nrow(e_none[e_none$variable == "mode_delta_q_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
                             nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
                             nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "mode_delta_q_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
-  neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "neighbour_net_trimmed_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
-                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
-                                     nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "neighbour_net_trimmed_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
+  neighbour_net_trimmed_p_value <- c(nrow(e_none[e_none$variable == "tree_proportion_p_value" & e_none$value <= 0.05 & e_none$number_of_events == 0,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 1,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 2,]),
+                                     nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 3,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 4,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 5,]),
+                                     nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 6,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 7,]),nrow(e[e$variable == "tree_proportion_p_value" & e$value <= 0.05 & e$number_of_events == 8,]))
   
   value <- c(PHI_p_value, X3SEQ_p_value, likelihood_mapping_p_value, mean_delta_q_p_value, mode_delta_q_p_value, neighbour_net_trimmed_p_value)
   value = value/20*100 # 20 replicates performed for each event - divide by 20 to get percentage
-  ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("likelihood_mapping_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("neighbour_net_trimmed_p_value",9))
+  ts <- c(rep("PHI_p_value",9), rep("X3SEQ_p_value",9), rep("LM_p_value",9), rep("mean_delta_q_p_value",9), rep("mode_delta_q_p_value",9), rep("tree_proportion_p_value",9))
   num_events <- c(rep(seq(0,8,1),6))
   f <- data.frame(num_events,ts,value,stringsAsFactors = FALSE)
-  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","likelihood_mapping_p_value","mean_delta_q_p_value","mode_delta_q_p_value","neighbour_net_trimmed_p_value"), ordered = TRUE, 
+  f$variable <- factor(ts, levels = c("PHI_p_value","X3SEQ_p_value","LM_p_value","mean_delta_q_p_value","mode_delta_q_p_value","tree_proportion_p_value"), ordered = TRUE, 
                        labels = c("PHI", expression("`3SEQ`"), "IQ-Tree", expression(paste('Mean ', delta["q"])), expression(paste('Mode ', delta["q"])), expression("`Tree prop.`") ) )
   f$event_type <- et
   datalist[[ind]] <- f
