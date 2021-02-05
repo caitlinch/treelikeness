@@ -1,19 +1,19 @@
-# A new test statistic for treelikeness
+# A novel test statistic for quantifying trelikeness
 ##### March 6th 2020
 
-This repository contains code to simulate a series of sequence alignments and estimate a series of treelikeness and introgression metrics, including a new test for treelikeness called tree proportion. 
+This repository contains code to simulate a series of sequence alignments and estimate a series of treelikeness and introgression metrics, including a new test for treelikeness called tree proportion. Tree proportion represents the proportion of information from an alignment that is included in the phylogenetic tree estimated from that alignment.
 
 ***
 ### Instructions to reproduce the simulations and analyses
 1. Clone the `caitlinch/treelikeness` repo
     * The repo contains 2 folders: `code` and `trees`
         * `code`: contains all code necessary to run or replicate the analysis.
-            * Numbered files are a step in the pipeline. To replicate the analysis, run each of the four numbered files sequentially:
+            * Numbered files are a step in the pipeline. To replicate the analysis, run each of the three numbered files sequentially:
                 * `1_simulateAlignmentsRunTestStatistics.R`
                 * `2_CollateData.R`
                 * `3_PublicationsPlots.R`
             * The `func` prefix indicates files that contain functions used for simulation and analysis
-        * `trees`: contains .txt files of the Newick trees used to fix topology in the simulations.
+        * `trees`: contains .txt files of the Newick trees used in the simulations.
 2. Download necessary software:
     * IQ-Tree (http://www.iqtree.org/)
     * 3SEQ (http://mol.ax/software/3seq/)
@@ -21,16 +21,16 @@ This repository contains code to simulate a series of sequence alignments and es
     * SplitsTree v4 (https://uni-tuebingen.de/fakultaeten/mathematisch-naturwissenschaftliche-fakultaet/fachbereiche/informatik/lehrstuehle/algorithms-in-bioinformatics/software/splitstree/)
 3. Prepare scripts
     * Create an output folder (to store alignments and other files that are created during the simulations) and a results folder (to store the test statistic and statistical test results and the plots)
-    * Open scripts numbered 1-4 in the `code` folder. Open each file, go to `Step 2` and update the file paths for your own machine
+    * Open scripts numbered 1-3 in the `code` folder. Open each file, go to `Step 2` and update the file paths for your own machine.
 4. Run Part 1
-    * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will run entirely sequentially. Edit this variable to increae the number of cores and therefore the number of simultaneous analyses
+    * Determine how many cores to use and set `num_cores`. `num_cores = 1` means the script will run entirely sequentially. Edit this variable to increase the number of cores and therefore the number of simultaneous analyses
     * By default, the number of parametric bootstrap replicates performed is 199. To change this, edit the `num_reps` variable
     * Run the file `1_simulateAlignmentsRunTestStatistics.R`
-        * This will generate all of the simulation data for all three experiments, and apply each test statistic or metric to each alignment
-        * This will perform a parametric bootstrap on the experiment 3 simulated alignments to determine whether the test statistics perform well as a statistical test.
+        * This will generate all of the simulation data for all experiments, and apply each test statistic or metric to each alignment
+        * This will perform a parametric bootstrap on the simulated alignments to calculate the statistical test for tree proportion.
 5. Run Part 2
     * Run the file `2_CollateData.R`
-        * The raw test statistic data has been collated into one csv file per experiment, plus one csv for the p values from the parametric bootstrap performed in experiment 3.
+        * The raw test statistic data has been collated into one csv file per experiment. The p-value data has also been collated into one csv file per experiment.
 6. Run Part 3
     * Run the file `3_PublicationPlots.R`
         * This will generate a number of plots depicting the results of the experiments
@@ -61,7 +61,9 @@ If you use this method, please reference:
     * Likelihood mapping
         * When using likelihood mapping:
             * Strimmer K, von Haeseler A. 1997. Likelihood-mapping: a simple method to visualize phylogenetic content of a sequence alignment. _Proc Natl Acad Sci U S A_, 94(13):6815-6819.
-        * When using the IQTree 2 implementation of likelihood mapping:
+        * When using the IQTree 1 implementation of likelihood mapping, also cite:
+            * Nguyen L-T, Schmidt HA, von Haeseler A, Minh BQ. 2015. IQ-TREE: A fast and effective stochastic algorithm for estimating maximum likelihood phylogenies, _Mol. Biol. Evol._, 32(1):268-274.
+        * When using the IQTree 2 implementation of likelihood mapping, also cite:
             * Minh BQ, Schmidt HA, Chernomor O, Schrempf D, Woodhams MD, von Haeseler A, Lanfear R. 2020. IQ-TREE 2: New models and efficient methods for phylogenetic inference in the genomic era, _Mol. Biol. Evol._, 37(5):1530-1534
     * PhiPack
         * When using PhiPack:
