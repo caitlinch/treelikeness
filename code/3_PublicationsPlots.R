@@ -901,6 +901,21 @@ p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) +
 
 ggsave(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines.png"), plot = p, units = "in", height = 10.9, width = 9.51)
 
+svg(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines.svg"))
+ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ tree_age, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Total tree depth (substitutions per site)")
+dev.off()
 
 ## For experiment 2 (increasing number of events)
 tree_lengths = c(0.05,0.10,0.50,1.00)
@@ -971,6 +986,22 @@ p <- ggplot(df, aes(x = num_events, y = value)) +
 
 ggsave(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines.png"), plot = p, units = "in", height = 10.9, width = 9.51)
 
+svg(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines.svg"))
+ggplot(df, aes(x = num_events, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ tree_age, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,2), breaks = seq(0,8,2), limits = c(0,8), minor_breaks = seq(0,8,1)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Total tree depth (substitutions per site)")
+dev.off()
+
 #### Plots 14 and 15: p-value lines both event types ####
 # for experiment 1 (increasing proportion of DNA)
 datalist <- list(1,2)
@@ -1028,6 +1059,22 @@ p <- ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) +
   labs(subtitle = "Type of introgression event")
 
 ggsave(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines_eventType.png"), plot = p, units = "in")
+
+svg(filename = paste0(plots_folder,run_id,"_exp3_propDNA_allPValueLines_eventType.svg"))
+ggplot(df, aes(x = proportion_introgressed_DNA, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ et_factor, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Proportion of introgressed DNA \n", labels = seq(0,0.5,0.25), breaks = seq(0,0.5,0.25), limits = c(0,0.5), minor_breaks = seq(0,0.5,0.25/2)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Type of introgression event")
+dev.off()
 
 # for experiment 2 (increasing number of events)
 datalist <- list(1,2)
@@ -1097,4 +1144,20 @@ p <- ggplot(df, aes(x = num_events, y = value)) +
   labs(subtitle = "Type of introgression event")
 
 ggsave(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines_eventType.png"), plot = p, units = "in")
+
+svg(filename = paste0(plots_folder,run_id,"_exp2_numEvents_allPValueLines_eventType.svg"))
+ggplot(df, aes(x = num_events, y = value)) + 
+  geom_line(size = 0.5) + 
+  facet_grid(variable ~ et_factor, labeller = label_parsed) +
+  theme_bw() + 
+  theme(plot.subtitle = element_text(hjust = 0.5, size = 14), axis.text.x = element_text(size = 12), axis.title.x = element_text(size = 14), axis.title.y = element_text(size = 14),
+        axis.text.y = element_text(size = 12), strip.text = element_text(size = 14), strip.text.x = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14),
+        strip.text.y = element_text(margin = margin(0.1,0,0.1,0, "cm"), size = 14), legend.text = element_text(size = 12), legend.title = element_text(size = 14)) + 
+  scale_x_continuous(name = "\n Number of introgression events \n", labels = seq(0,8,2), breaks = seq(0,8,2), limits = c(0,8), minor_breaks = seq(0,8,1)) + 
+  scale_y_continuous(name = "\n Percent of simulations that reject the null hypothesis (%) \n (p-value < 0.05) \n",
+                     labels = seq(0,100,25), breaks = seq(0,100,25), minor_breaks = seq(0,100,25/2), limits = c(0,100)) +
+  geom_hline(aes(yintercept = 5, colour = "red"), linetype = "dashed", size = 0.5) + 
+  scale_colour_manual("Ideal false\npositive rate\n", values="red", labels = "5% when\n\u03b1 = 0.05") +
+  labs(subtitle = "Type of introgression event")
+dev.off()
 
