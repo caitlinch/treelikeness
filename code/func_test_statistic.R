@@ -5,6 +5,7 @@ library(phytools)
 library(seqinr)
 library(ape)
 library(phangorn)
+library(stringr)
 
 # Function to call IQ-tree and run it
 call.IQTREE <- function(iqtree_path,alignment_path){
@@ -411,7 +412,7 @@ test.monophyly <- function(split, tree){
 
 # Tree proportion
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
-tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = FALSE, tree_path = FALSE, run_IQTREE = FALSE, seq_type){
+tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = TRUE, tree_path = FALSE, run_IQTREE = FALSE, seq_type){
   # network_algorithm takes values "split decomposition" or "neighbournet", default is "neighbournet"
   # trimmed takes values TRUE or FALSE, default is FALSE (all branches in network included in tree)
   
@@ -564,8 +565,7 @@ call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm, se
       }
       writeLines(nexus,alignment_path_converted) # output the edited nexus file
     }
-    plot_path <- gsub(".fasta.nexus","",alignment_path_converted)
-  } else if (suffix == "phy"){
+  } else if (suffix == "phy" | suffix == "phylip"){
     # If the file is a phy file, convert it to nexus file format
     alignment_path_converted <- paste0(alignment_path,"_blocks.nexus")
     if (file.exists(alignment_path_converted) == FALSE){
@@ -581,7 +581,6 @@ call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm, se
       }
       writeLines(nexus,alignment_path_converted) # output the edited nexus file
     }
-    plot_path <- gsub(".fasta.nexus","",alignment_path_converted)
   } else if (suffix == "nexus" | suffix == "nex"){
     alignment_path_converted <- paste0(alignment_path,"_blocks.",suffix)
     if (file.exists(alignment_path_converted) == FALSE){
@@ -597,7 +596,6 @@ call.SplitsTree <- function(splitstree_path,alignment_path,network_algorithm, se
       }
       writeLines(nexus,alignment_path_converted) # output the edited nexus file
     }
-    plot_path <- gsub(suffix,"",alignment_path_converted)
   } 
   output_path <- splits.filename(alignment_path) # create an output path
   if (network_algorithm == "split decomposition"){
