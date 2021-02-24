@@ -178,7 +178,8 @@ After running this function, look for the file `XXXXXX_pValues.csv` (here it wou
 ### Attribution and citations
 If you use this method, please reference:
 
-1. This repository (http://github.com/caitlinch/treelikeness)
+1. This repository (http://github.com/caitlinch/treelikeness) and our preprint
+    * Cherryh C, Minh BQ, Lanfear R. 2021, A test statistic to quantify treelikeness in phylogenetics. bioRxiv 2021.02.16.431544 [Preprint] doi: https://doi.org/10.1101/2021.02.16.431544
 2. The programs and methods used within this analysis
     * IQ-Tree
         * If using IQ-Tree 1:
