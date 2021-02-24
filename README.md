@@ -1,6 +1,6 @@
 # A test statistic to quantify trelikeness in phylogenetics
-#### Caitlin Cherryh, Bui Quang Minh, Rob Lanfear
-##### March 6th 2020
+### Caitlin Cherryh, Bui Quang Minh, Rob Lanfear
+##### February 24 2021
 
 This repository contains code to simulate a series of sequence alignments and estimate a series of treelikeness and introgression metrics, including a new test for treelikeness called tree proportion. Tree proportion represents the proportion of information from an alignment that is included in the phylogenetic tree estimated from that alignment. 
 
@@ -8,7 +8,7 @@ Our preprint with more details about our methods and results can be found [here]
 
 ***
 ### How to calculate the tree proportion
-**1. Load the function**
+##### **1. Load the function**
 
 The tree proportion function is in the file `treelikeness/code/func_test_statistic.R`. 
 
@@ -16,7 +16,7 @@ The tree proportion function is in the file `treelikeness/code/func_test_statist
 # If I cloned the treelikeness repository to the location "~/Repos"
 source("~/Repos/treelikeness/code/func_test_statistic.R")
 ```
-**2. Prepare filepaths**
+##### **2. Prepare filepaths**
 
 There are two example alignments in the folder `treelikeness/worked_example/`:
 
@@ -40,8 +40,8 @@ one_tree_alignment <- "~/Repos/treelikeness/worked_example/one_tree_example_alig
 two_tree_alignment <- "~/Repos/treelikeness/worked_example/two_tree_example_alignment.nexus" 
 ```
 
-**3. Calculate the tree proportion**
-
+##### **3. Calculate the tree proportion**
+The function to calculate the tree proportion is:
 ```{r}
 tree.proportion(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = TRUE, 
                 tree_path = FALSE, run_IQTREE = FALSE, seq_type)
@@ -77,34 +77,23 @@ Calculating the tree proportion will generate a number of files:
 * a "XXXXX_splits.nex" file (where XXXXX is the name of the alignment) - contains the splits calculated in SplitsTree
 * any files generated from an IQ-Tree run
 
-**4. Perform the statistical test **
+##### **4. Perform the statistical test**
 
-The statistical test is used to ask whether the asumption of treelikeness can be rejected for any given alignment.
+The statistical test is used to ask whether the assumption of treelikeness can be rejected for any given alignment.
 
 The statistical test can be performed on our simulation data using the `phylo.parametric.bootstrap` function in the `treelikeness/code/func_parametric_bootstrap.R` script. See `treelikeness/code/1_simulateAlignmentsRunTestStatistics.R` for more details.
 
 If you are using empirical phylogenetic data, you will need to clone the github repository `caitlinch/empirical_treelikeness` from [here](https://github.com/caitlinch/empirical_treelikeness) and source the `empirical_treelikeness/code/func_empirical.R` script.
 
-```{r}
-# How to apply the tree proportion statistical test to empirical data
+The function to calculate the statistical test on empirical data is:
 
+```{r}
 # If I cloned the empirical_treelikeness repository to the location "~/Repos":
 source("~/Repos/empirical_treelikeness/code/func_empirical.R")
 
-tree.proportion.test.statistic(loci_path = one_tree_alignment, loci_name = "one_tree_alignment", 
-                               loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
-                               loci_output_folder = "~/Documents/treelikeness_example/one_tree/",
-                               iqtree_path, splitstree_path, number_of_replicates = 199, 
-                               allowable_proportion_missing_sites = NA, iqtree.num_threads = "AUTO", 
-                               num_of_cores = 1)
-  
-
-tree.proportion.test.statistic(loci_path = two_tree_alignment, loci_name = "two_tree_alignment", 
-                               loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
-                               loci_output_folder = "~/Documents/treelikeness_example/two_trees/", 
-                               iqtree_path, splitstree_path, number_of_replicates = 199, 
-                               allowable_proportion_missing_sites = NA, iqtree.num_threads = "AUTO", 
-                               num_of_cores = 1)
+tree.proportion.test.statistic(loci_path, loci_name, loci_alphabet, loci_model, loci_dataset, 
+                               loci_output_folder, iqtree_path, splitstree_path, number_of_replicates, 
+                               allowable_proportion_missing_sites, iqtree.num_threads, num_of_cores)
 ```
 
 The parameters for the function are:
@@ -127,12 +116,31 @@ The parameters for the function are:
     + If `"AUTO`", IQ-Tree will automatically determine the number of threads to use (recommended when setting `num_of_cores = 1`)
     + If set to another integer, IQ-Tree will use that many threads.
     + When running multiple bootstrap replicates simultaneously in parallel, we recommend setting `iqtree.num_threads = 1`
-* `num_of_cores`: The number of bootstrap replicates to run parallel simultaneously.
+* `num_of_cores`: the number of cores to use for the computation (i.e. the number of bootstrap replicates to run parallel simultaneously).
     + If set to 1, each bootstrap replicate will run sequentially
     + At higher values, that number of bootstrap replicates will be run parallel (using mclapply)
 
+To apply the statistical test on the example alignments:
 
-After running this function, look for the file `XXXXXX_pValues.csv` (here it would be `one_tree_alignment_pValues.csv` and `two_tree_alignment_pValues.csv`). This file will contain the tree proportion result and the tree proportion statistical test result. A p-value of less than 0.05 indicates the assumption of treelikeness can be rejected for the alignment in question.
+```{r}
+# How to apply the tree proportion statistical test to empirical data
+tree.proportion.test.statistic(loci_path = one_tree_alignment, loci_name = "one_tree_alignment", 
+                               loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
+                               loci_output_folder = "~/Documents/treelikeness_example/one_tree/",
+                               iqtree_path, splitstree_path, number_of_replicates = 199, 
+                               allowable_proportion_missing_sites = NA, iqtree.num_threads = "AUTO", 
+                               num_of_cores = 1)
+  
+
+tree.proportion.test.statistic(loci_path = two_tree_alignment, loci_name = "two_tree_alignment", 
+                               loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
+                               loci_output_folder = "~/Documents/treelikeness_example/two_trees/", 
+                               iqtree_path, splitstree_path, number_of_replicates = 199, 
+                               allowable_proportion_missing_sites = NA, iqtree.num_threads = "AUTO", 
+                               num_of_cores = 1)
+```
+
+After running this function, look for the file `XXXXXX_pValues.csv` (here it would be `one_tree_alignment_pValues.csv` and `two_tree_alignment_pValues.csv`). This file will contain the tree proportion and the tree proportion statistical test results. A p-value of less than 0.05 indicates the assumption of treelikeness can be rejected for the alignment in question.
 
 ***
 ### Reproducing our simulations and analyses
