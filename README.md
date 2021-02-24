@@ -91,7 +91,7 @@ The function to calculate the statistical test on empirical data is:
 # If I cloned the empirical_treelikeness repository to the location "~/Repos":
 source("~/Repos/empirical_treelikeness/code/func_empirical.R")
 
-tree.proportion.test.statistic(loci_path, loci_name, loci_alphabet, loci_model, loci_dataset, 
+tree.proportion.statistical.test(loci_path, loci_name, loci_alphabet, loci_model, loci_dataset, 
                                loci_output_folder, iqtree_path, splitstree_path, number_of_replicates, 
                                allowable_proportion_missing_sites, iqtree.num_threads, num_of_cores)
 ```
@@ -124,7 +124,7 @@ To apply the statistical test on the example alignments:
 
 ```{r}
 # How to apply the tree proportion statistical test to empirical data
-tree.proportion.test.statistic(loci_path = one_tree_alignment, loci_name = "one_tree_alignment", 
+tree.proportion.statistical.test(loci_path = one_tree_alignment, loci_name = "one_tree_alignment", 
                                loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
                                loci_output_folder = "~/Documents/treelikeness_example/one_tree/",
                                iqtree_path, splitstree_path, number_of_replicates = 199, 
@@ -132,7 +132,7 @@ tree.proportion.test.statistic(loci_path = one_tree_alignment, loci_name = "one_
                                num_of_cores = 1)
   
 
-tree.proportion.test.statistic(loci_path = two_tree_alignment, loci_name = "two_tree_alignment", 
+tree.proportion.statistical.test(loci_path = two_tree_alignment, loci_name = "two_tree_alignment", 
                                loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
                                loci_output_folder = "~/Documents/treelikeness_example/two_trees/", 
                                iqtree_path, splitstree_path, number_of_replicates = 199, 
