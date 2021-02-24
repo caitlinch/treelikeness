@@ -21,7 +21,7 @@ source("~/Repos/treelikeness/code/func_test_statistic.R")
 There are two example alignments in the folder `treelikeness/worked_example/`:
 
 * `one_tree_example_alignment.nexus`: 1000 base pairs simulated along a balanced 8 taxon tree (treelike)
-* `two_tree_example_alignment.nexus`: 1000 base pairs simulated along a balanced 8 taxon tree containing one divergent introgression event
+* `two_tree_example_alignment.nexus`: 1000 base pairs simulated along a balanced 8 taxon tree containing one introgression event
 
 You will also need to have SplitsTree and IQ-Tree downloaded and installed. 
 
@@ -29,11 +29,13 @@ You will also need to have SplitsTree and IQ-Tree downloaded and installed.
 * On MacOS, it will be `path/to/splitstree4/SplitsTree.app/Contents/MacOS/JavaApplicationStub`
 
 ```{r}
-# Paths to programs (if I store the programs in the location "~/Executables")
+# Paths to programs (if I store the programs in the location "~/Executables"):
 splitstree_path <- "~/Executables/SplitsTree.app/Contents/MacOS/JavaApplicationStub"
 iqtree_path <- "~/Executables/iqtree-2.0/bin/iqtree"
 
 # Paths to alignments
+# If you plan to perform the parametric bootstrap to calculate the statistical test, put each alignment in a separate folder
+# The parametric bootstrap process will generate *n* folders (where *n* is the number of bootstrap replicates)
 one_tree_alignment <- "~/Repos/treelikeness/worked_example/one_tree_example_alignment.nexus" 
 two_tree_alignment <- "~/Repos/treelikeness/worked_example/two_tree_example_alignment.nexus" 
 ```
@@ -75,8 +77,65 @@ Calculating the tree proportion will generate a number of files:
 * a "XXXXX_splits.nex" file (where XXXXX is the name of the alignment) - contains the splits calculated in SplitsTree
 * any files generated from an IQ-Tree run
 
+**4. Perform the statistical test **
+
+The statistical test is used to ask whether the asumption of treelikeness can be rejected for any given alignment.
+
+The statistical test can be performed on our simulation data using the `phylo.parametric.bootstrap` function in the `treelikeness/code/func_parametric_bootstrap.R` script. See `treelikeness/code/1_simulateAlignmentsRunTestStatistics.R` for more details.
+
+If you are using empirical phylogenetic data, you will need to clone the github repository `caitlinch/empirical_treelikeness` from [here](https://github.com/caitlinch/empirical_treelikeness) and source the `empirical_treelikeness/code/func_empirical.R` script.
+
+```{r}
+# How to apply the tree proportion statistical test to empirical data
+
+# If I cloned the empirical_treelikeness repository to the location "~/Repos":
+source("~/Repos/empirical_treelikeness/code/func_empirical.R")
+
+tree.proportion.test.statistic(loci_path = one_tree_alignment, loci_name = "one_tree_alignment", 
+                               loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
+                               loci_output_folder = "~/Documents/treelikeness_example/one_tree/",
+                               iqtree_path, splitstree_path, number_of_replicates = 199, 
+                               allowable_proportion_missing_sites = NA, iqtree.num_threads = "AUTO", 
+                               num_of_cores = 1)
+  
+
+tree.proportion.test.statistic(loci_path = two_tree_alignment, loci_name = "two_tree_alignment", 
+                               loci_alphabet = "dna", loci_model = "MFP", loci_dataset = "test", 
+                               loci_output_folder = "~/Documents/treelikeness_example/two_trees/", 
+                               iqtree_path, splitstree_path, number_of_replicates = 199, 
+                               allowable_proportion_missing_sites = NA, iqtree.num_threads = "AUTO", 
+                               num_of_cores = 1)
+```
+
+The parameters for the function are:
+
+* `loci_path`: location of alignment file (currently takes FASTA, PHYLIP and Nexus as above). The original alignment will remain untouched, as the alignment will be copied into the `loci_output_folder`
+* `loci_name`: an indicative name for the alignment (e.g. loci/gene name)
+* `loci_alphabet`: either `"dna"` or `"protein"`
+* `loci_model`: either `"MFP"` or a model of sequence evolution. 
+    + If you are unsure of the best model of evolution for the alignment, use `"MFP"` and IQ-Tree will select the best model using ModelFinder
+    + You may also specify the a model of sequence evolution. Models must be available in both phangorn::simSeq and in IQ-Tree. Use the IQ-Tree naming convention.
+* `loci_dataset`: indicative name of dataset. Useful when collating results from multiple datasets.
+* `loci_output_folder`: folder where output will be saved. 
+* `iqtree_path `: path to IQ-Tree program
+* `splitstree_path`: path to SplitsTree program
+* `number_of_replicates`: how many bootstrap replicates to conduct. We used 199 in our analyses. 
+* `allowable_proportion_missing_sites`:
+    + If set to `NA`, the alignment will be untouched
+    + If set to a value between 0 and 1, each sequence in the alignment with that proportion or more of missing sites will be removed. E.g. if set to 0.5, every sequence with 50% or more sites missing will be removed
+* `iqtree.num_threads`: set to `"AUTO"` or an integer
+    + If `"AUTO`", IQ-Tree will automatically determine the number of threads to use (recommended when setting `num_of_cores = 1`)
+    + If set to another integer, IQ-Tree will use that many threads.
+    + When running multiple bootstrap replicates simultaneously in parallel, we recommend setting `iqtree.num_threads = 1`
+* `num_of_cores`: The number of bootstrap replicates to run parallel simultaneously.
+    + If set to 1, each bootstrap replicate will run sequentially
+    + At higher values, that number of bootstrap replicates will be run parallel (using mclapply)
+
+
+After running this function, look for the file `XXXXXX_pValues.csv` (here it would be `one_tree_alignment_pValues.csv` and `two_tree_alignment_pValues.csv`). This file will contain the tree proportion result and the tree proportion statistical test result. A p-value of less than 0.05 indicates the assumption of treelikeness can be rejected for the alignment in question.
+
 ***
-### Instructions to reproduce the simulations and analyses
+### Reproducing our simulations and analyses
 1. Clone the `caitlinch/treelikeness` repo
     * The repo contains 2 folders: `code` and `trees`
         * `code`: contains all code necessary to run or replicate the analysis.
