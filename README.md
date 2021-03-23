@@ -1,4 +1,4 @@
-# A test statistic to quantify trelikeness in phylogenetics
+# A test statistic to quantify treelikeness in phylogenetics
 ### Caitlin Cherryh, Bui Quang Minh, Rob Lanfear
 ##### February 24 2021
 
