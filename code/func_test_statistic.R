@@ -413,6 +413,7 @@ test.monophyly <- function(split, tree){
 # Tree proportion
 # Find which splits are in the tree and sum those split weights, divide by sum of all split weights#
 tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "neighbournet", trimmed = TRUE, tree_path = FALSE, run_IQTREE = FALSE, seq_type){
+  print(path)
   # network_algorithm takes values "split decomposition" or "neighbournet", default is "neighbournet"
   # trimmed takes values TRUE or FALSE, default is FALSE (all branches in network included in tree)
   
@@ -423,10 +424,13 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
     call.IQTREE(iqpath,path) # path = path to alignment
   }
   
-  # Calculate the split decomposition
-  call.SplitsTree(splitstree_path,path,network_algorithm, seq_type)
   # Retrieve the file name for the splits output file
   splits.filepath <- splits.filename(path)
+  # If the file doesn't exist, create it by running SplitsTree
+  if (file.exists(splits.filepath) == FALSE){
+    # Calculate the split decomposition
+    call.SplitsTree(splitstree_path,path,network_algorithm, seq_type) 
+  }
   
   # Get the number of splits by opening the splits block and reading the number after "nsplits-"
   splits_text <- readLines(splits.filepath)
