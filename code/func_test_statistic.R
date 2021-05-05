@@ -441,10 +441,10 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
   # If there are, calculate the tree proportion and return it
   if (is.na(suppressWarnings(as.numeric(nsplits)))==TRUE){
     # If nsplits is not a number, return the ts as NA (can't calculate a tree proportion)
-    ts <- NA
+    ts <- "Non-numeric number of splits"
   } else if (as.numeric(nsplits) == 0){
     # If no splits, return NA (can't calculate a tree proportion)
-    ts <- NA
+    ts <- "Zero splits"
   } else if (as.numeric(nsplits) > 0){
     # Otherwise, if the network does contain more than 0 splits:
     # Extract the splits 
@@ -457,55 +457,51 @@ tree.proportion <- function(iqpath, splitstree_path, path, network_algorithm = "
       # if a tree is provided, open that tree
       tree <- read.tree(tree_path)
     }
+
+    # Collect all the attributes of the splits using lapply    
+    split_attributes_list <- lapply(1:length(splits), function(x) split.attributes(splits[x], tree))
+    # Collate all the attributes of the splits into a dataframe
+    split_atts <- as.data.frame(matrix(unlist(split_attributes_list), nrow = length(split_attributes_list), byrow = TRUE))
+    names(split_atts) <- c("is_split_in_tree", "isolation_index","is_split_trivial")
+    split_atts[,c(1,3)] <- lapply(split_atts[,c(1,3)], as.logical) # turn first and third column back into logical type
     
-    # Create empty sums to store the sum of isolation index weights in
-    tree_ii_sum <- 0 
-    all_ii_sum <- 0
-    trimmed_ii_sum <- 0
-    
-    # Iterate through each of the rows in the splits dataframe and collect the splits
-    for (i in 1:length(splits)){
-      # For each split, get the split weight, whether it's trivial, and whether it's in the tree
-      split_atts <- split.attributes(splits[i],tree)
-      
-      # Add the isolation index to the sum of all isolation indexes
-      all_ii_sum <- all_ii_sum + split_atts$isolation_index
-      # If the split is not trivial, add the isolation index to the sum of all non-trivial split isolation indexes
-      if (split_atts$is_split_trivial == FALSE){
-        trimmed_ii_sum <- trimmed_ii_sum + split_atts$isolation_index
+    # Check how many non-trivial branches are present
+    num_nontrivial_branches <- length(which(split_atts$is_split_trivial == FALSE))
+    if (num_nontrivial_branches == 0){
+      # This alignment is a star tree
+      # If there are no non-trivial branches, there is no conflict between splits
+      # Therefore, we will assign this alignment a tree proportion of 1
+      ts <- 1
+    } else if (num_nontrivial_branches > 0){
+      # If there are non-trivial branches, calculate the tree proportion the normal way
+      if (trimmed == FALSE){
+        # Add up the isolation indexes for the splits in the tree
+        # If not trimmed, add every monophyletic split up (include all trivial and non-trivial splits)
+        tree_ii_sum <- sum(split_atts[split_atts$is_split_in_tree == "TRUE",]$isolation_index)
+        # Add all isolation indexes together to get all_ii_sum
+        all_ii_sum <- sum(split_atts$isolation_index)
+        # Calculate the tree proportion by dividing the sum of split weights in the tree by the sum of all split weights
+        # If no trimming, calculate by dividing by the sum of ALL isolation indexes
+        ts <- tree_ii_sum / all_ii_sum
+      } else if (trimmed == TRUE){
+        # If trimmed, add ONLY the non-trivial splits (e.g. only splits with >1 species - ignore terminal branches)
+        # Sum up all splits in the tree that are non-trivial
+        tree_ii_sum <- sum(split_atts[((split_atts$is_split_in_tree == "TRUE") & (split_atts$is_split_trivial == FALSE)),]$isolation_index)
+        # Add the isolation indexes of only the non-trivial branches to get the trimmed_ii_sum 
+        trimmed_ii_sum <- sum(split_atts[split_atts$is_split_trivial == FALSE,]$isolation_index)
+        # Calculate the tree proportion by dividing the sum of split weights in the tree by the sum of all split weights
+        # If trimming trivial splits, calculate test statistic by dividing by only the non-trivial splits
+        ts <- tree_ii_sum / trimmed_ii_sum
       }
-      
-      # Add up the isolation index if the split is in the tree
-      if (split_atts$is_split_in_tree == TRUE){
-        if (trimmed == FALSE){
-          # If not trimmed, add every monophyletic split up (include all trivial and non-trivial splits)
-          tree_ii_sum <- tree_ii_sum + split_atts$isolation_index
-        } else if (trimmed == TRUE){
-          # If not trimmed, add ONLY the non-trivial splits (e.g. only splits with >1 species - ignore terminal branches)
-          if (split_atts$is_split_trivial == FALSE){
-            # Check that the split is non-trivial: if it is, add it to the running total
-            tree_ii_sum <- tree_ii_sum + split_atts$isolation_index
-          }
-        }
-      }
-    }
-    
-    # Calculate the tree proportion by dividing the sum of split weights in the tree by the sum of all split weights
-    # Use the tree_ii_sum which will already have pruned out the trivial splits if trimmed == TRUE
-    if (trimmed == FALSE){
-      # If no trimming, calculate by dividing by the sum of ALL isolation indexes
-      ts <- tree_ii_sum / all_ii_sum
-    } else if (trimmed == TRUE){
-      # If trimming trivial splits, calculate test statistic by dividing by only the non-trivial splits
-      ts <- tree_ii_sum / trimmed_ii_sum
     }
   }
+  
   # Return the test statistic result
   return(ts)
 }
 
 # Function to get details about a split: whether it's monophyletic (and if so the isolation index), and whether it's trivial
-split.attributes <- function(split, tree){
+split.attributes <- function(split, tree, long_output = FALSE){
   # Extract the bipartition subsets from the tree
   ss1 <- split[[1]] # get the indices of all taxa in the split
   taxa <- attr(split,"labels") # get the names of all taxa in the tree
@@ -532,15 +528,30 @@ split.attributes <- function(split, tree){
   # If both are true then add the split weight to the sum of split weights from splits in the tree
   # (if one is true, the other must be true - reduces to (A,B) where A and B are the two monophyletic clades)
   # Checks both just to be sure 
-  # If they're not both tre
+  # If they're not both true, the split is not in the tree
   if (ss1_mono == TRUE && ss2_mono == TRUE){
     in.tree <- TRUE # Split is in tree
   } else {
     in.tree <- FALSE # Split is not in tree
   }
   ii <- attr(split, "weights") # isolation index will equal the weight of the split (comes directly from the network) - this doesn't depend on whether the split is in the tree or not
-  vals <- c(as.list(in.tree),ii,trivial)
-  names(vals) <- c("is_split_in_tree","isolation_index","is_split_trivial")
+  
+  # Decide whether to output simple info (long_output == FALSE) or the list of taxa on each size (long_output == TRUE)
+  if (long_output == TRUE){
+    # Format output
+    op_ss1 <- paste(ss1_taxa, collapse = ", ")
+    balance_ss1 <- length(ss1_taxa)
+    op_ss2 <- paste(ss2_taxa, collapse = ", ")
+    balance_ss2 <- length(ss2_taxa)
+    
+    # Assemble output
+    vals <- c(as.list(in.tree),ii,trivial, balance_ss1, balance_ss2, op_ss1, op_ss2)
+    names(vals) <- c("is_split_in_tree","isolation_index","is_split_trivial", "split_side_1_size", "split_side_2_size", "split_side_1_taxa", "split_side_2_taxa")
+  } else if (long_output == FALSE){
+    # Assemble output
+    vals <- c(as.list(in.tree),ii,trivial)
+    names(vals) <- c("is_split_in_tree","isolation_index","is_split_trivial")
+  }
   return(vals)
 }
 
